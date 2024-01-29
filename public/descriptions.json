@@ -1,0 +1,47 @@
+{
+    "the-quest-board": {
+      "name": "The Quest Board",
+      "last_updated": "Jan 2024",
+      "start_date": "Dec 2023",
+      "contributors": "Alice C.",
+      "thumbnail": "",
+      "screenshot_one": "/tqb1.png",
+      "screenshot_two": "/tqb2.png",
+      "github_link": "https://github.com/Djbrl/the-quest-board",
+      "summary": "The Quest Board is a website that allows artists to find commissions on reddit. This project is an experimentation with web-scraping using puppeteer inside of a Dockerized application."
+    },
+    "minishell": {
+      "name": "minishell",
+      "last_updated": "May 2023",
+      "start_date": "Mar 2023",
+      "contributors": "Jamal R.",
+      "thumbnail": "",
+      "screenshot_one": "min1.png",
+      "screenshot_two": "",
+      "github_link": "https://github.com/Djbrl/minishell",
+      "summary": "A robust shell implementation in C with bash-4.3 syntax."
+    },
+    "ft_irc": {
+      "name": "ft_irc",
+      "last_updated": "Aug 2023",
+      "start_date": "Jul 203",
+      "contributors": "Theo B, Camille B.",
+      "thumbnail": "",
+      "screenshot_one": "/irc1.png",
+      "screenshot_two": "/irc2.png",
+      "github_link": "https://github.com/Djbrl/ft_irc",
+      "summary": "A fully fledged IRC Server built in C++98."
+    },
+    "transcendence": {
+      "name": "transcendence",
+      "last_updated": "Dec 2023",
+      "start_date": "Sep 2023",
+      "contributors": "Matthieu G, Anaïs B, Loan L, Aymeric B.",
+      "thumbnail": "",
+      "screenshot_one": "",
+      "screenshot_two": "",
+      "github_link": "https://github.com/Djbrl/transcendence",
+      "summary": "A pong web-app with a live chat, persistent user relationships, and robust authentication."
+    }
+  }
+  
