@@ -1,48 +1,57 @@
 <template>
   <div class="site-shell">
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{{ copy.skip }}</a>
 
     <header class="intro" id="top">
-      <div class="masthead">
-        <div>
-          <p class="path-label"><span>~/</span>djibril-sy</p>
-          <h1>Djibril Sy</h1>
-          <p class="role-line">Product engineer · Dakar, Sénégal</p>
-        </div>
+      <div class="hero-controls">
+        <a
+          class="language-toggle"
+          :href="isFrench ? '/?lang=en' : '/'"
+          :aria-label="copy.switchLanguage"
+        >
+          <span :class="{ active: isFrench }">FR</span>
+          <span aria-hidden="true">/</span>
+          <span :class="{ active: !isFrench }">EN</span>
+        </a>
 
-        <p class="availability">
-          <span class="availability-dot" aria-hidden="true"></span>
-          Available for selected freelance projects
-        </p>
+        <button
+          class="theme-toggle"
+          type="button"
+          :aria-label="isDark ? copy.lightMode : copy.darkMode"
+          :title="isDark ? copy.lightMode : copy.darkMode"
+          @click="toggleTheme"
+        >
+          <span class="theme-dot" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="masthead">
+        <h1>Djibril Sy</h1>
+        <p class="role-line">{{ copy.role }}</p>
       </div>
 
       <p class="focus-line">
         <span aria-hidden="true">→</span>
-        product systems, useful interfaces, local tooling, platforms,
-        infrastructure &amp; delivery
+        {{ copy.focus }}
       </p>
 
-      <p class="intro-copy">
-        I design and ship web, mobile and desktop products from first model to
-        production. My work sits between product thinking, backend architecture
-        and interfaces that make complicated systems feel straightforward.
-      </p>
+      <p class="intro-copy">{{ copy.intro }}</p>
 
-      <nav class="primary-nav" aria-label="Primary navigation">
-        <a href="#work"><span>01</span>Selected work</a>
-        <a href="#experience"><span>02</span>Client work</a>
-        <a href="#background"><span>03</span>Background</a>
-        <a href="#contact"><span>04</span>Contact</a>
+      <nav class="primary-nav" :aria-label="copy.primaryNavigation">
+        <a href="#work"><span>_</span>{{ copy.navWork }}</a>
+        <a href="#experience"><span>_</span>{{ copy.navClients }}</a>
+        <a href="#background"><span>_</span>{{ copy.navBackground }}</a>
+        <a href="#contact"><span>_</span>{{ copy.navContact }}</a>
       </nav>
     </header>
 
     <main id="main">
       <section class="section" id="work" aria-labelledby="work-title">
         <div class="section-heading">
-          <p class="section-number">01</p>
+          <p class="section-number">_</p>
           <div>
-            <h2 id="work-title">Selected work</h2>
-            <p>Products I have taken from an idea or constraint to a working system.</p>
+            <h2 id="work-title">{{ copy.workTitle }}</h2>
+            <p>{{ copy.workIntro }}</p>
           </div>
         </div>
 
@@ -61,17 +70,17 @@
                 :href="project.href"
                 target="_blank"
                 rel="noreferrer"
-                :aria-label="`${project.name} — open project`"
+                :aria-label="`${project.name} — ${copy.openProject}`"
               >
-                <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
+                <span class="project-number">_</span>
 
                 <span class="project-copy">
                   <span class="project-title-row">
                     <strong>{{ project.name }}</strong>
-                    <span>{{ project.meta }}</span>
+                    <span>{{ localize(project.meta) }}</span>
                   </span>
-                  <span class="project-description">{{ project.description }}</span>
-                  <span class="project-tags" aria-label="Technologies">
+                  <span class="project-description">{{ localize(project.description) }}</span>
+                  <span class="project-tags" :aria-label="copy.technologies">
                     <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
                   </span>
                 </span>
@@ -79,10 +88,10 @@
                 <span class="project-arrow" aria-hidden="true">↗</span>
               </a>
 
-              <figure class="mobile-project-media">
+              <figure class="mobile-project-media" :class="project.previewClass">
                 <img
                   :src="project.image"
-                  :alt="project.alt"
+                  :alt="localize(project.alt)"
                   :class="project.imageFit === 'contain' ? 'contain' : ''"
                   loading="lazy"
                 />
@@ -91,7 +100,7 @@
           </div>
 
           <aside class="project-preview" aria-live="polite">
-            <div class="preview-window">
+            <figure class="preview-window">
               <div class="preview-toolbar" aria-hidden="true">
                 <span></span><span></span><span></span>
                 <p>{{ activeProject.domain }}</p>
@@ -100,121 +109,135 @@
                 <img
                   :key="activeProject.image"
                   :src="activeProject.image"
-                  :alt="activeProject.alt"
+                  :alt="localize(activeProject.alt)"
                   :class="activeProject.imageFit === 'contain' ? 'contain' : ''"
                 />
               </div>
               <figcaption>
-                <span>{{ activeProject.short }}</span>
+                <span>{{ localize(activeProject.short) }}</span>
                 <span>{{ activeProject.year }}</span>
               </figcaption>
-            </div>
-            <p class="preview-hint"><span>hover / focus</span> to inspect work</p>
+            </figure>
+            <p class="preview-hint"><span>{{ copy.hover }}</span> {{ copy.inspect }}</p>
           </aside>
         </div>
       </section>
 
       <section class="section" id="experience" aria-labelledby="experience-title">
         <div class="section-heading">
-          <p class="section-number">02</p>
+          <p class="section-number">_</p>
           <div>
-            <h2 id="experience-title">Client work</h2>
-            <p>Recent engagements where product decisions and implementation met.</p>
+            <h2 id="experience-title">{{ copy.clientsTitle }}</h2>
+            <p>{{ copy.clientsIntro }}</p>
           </div>
         </div>
 
-        <div class="experience-list">
-          <article v-for="item in experience" :key="item.company" class="experience-item">
-            <p class="experience-period">{{ item.period }}</p>
-            <div>
-              <h3>
-                <a v-if="item.href" :href="item.href" target="_blank" rel="noreferrer">
-                  {{ item.company }} <span aria-hidden="true">↗</span>
-                </a>
-                <span v-else>{{ item.company }}</span>
-              </h3>
-              <p class="experience-role">{{ item.role }}</p>
-            </div>
-            <p class="experience-description">{{ item.description }}</p>
-          </article>
+        <div class="project-index client-index">
+          <div class="project-list">
+            <article
+              v-for="(project, index) in clientProjects"
+              :key="project.name"
+              class="project-item"
+              :class="{ active: activeClientIndex === index }"
+              @mouseenter="activeClientIndex = index"
+              @focusin="activeClientIndex = index"
+            >
+              <a
+                class="project-link"
+                :href="project.href"
+                target="_blank"
+                rel="noreferrer"
+                :aria-label="`${project.name} — ${copy.openProject}`"
+              >
+                <span class="project-number">_</span>
+
+                <span class="project-copy">
+                  <span class="project-title-row">
+                    <strong>{{ project.name }}</strong>
+                    <span>{{ localize(project.meta) }}</span>
+                  </span>
+                  <span class="project-description">{{ localize(project.description) }}</span>
+                  <span class="project-tags" :aria-label="copy.technologies">
+                    <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+                  </span>
+                </span>
+
+                <span class="project-arrow" aria-hidden="true">↗</span>
+              </a>
+
+              <figure class="mobile-project-media" :class="project.previewClass">
+                <img
+                  :src="project.image"
+                  :alt="localize(project.alt)"
+                  loading="lazy"
+                />
+              </figure>
+            </article>
+          </div>
+
+          <aside class="project-preview" aria-live="polite">
+            <figure class="preview-window">
+              <div class="preview-toolbar" aria-hidden="true">
+                <span></span><span></span><span></span>
+                <p>{{ activeClient.domain }}</p>
+              </div>
+              <div class="preview-media preview-top">
+                <img
+                  :key="activeClient.image"
+                  :src="activeClient.image"
+                  :alt="localize(activeClient.alt)"
+                />
+              </div>
+              <figcaption>
+                <span>{{ localize(activeClient.short) }}</span>
+                <span>{{ activeClient.year }}</span>
+              </figcaption>
+            </figure>
+            <p class="preview-hint"><span>{{ copy.hover }}</span> {{ copy.inspect }}</p>
+          </aside>
         </div>
       </section>
 
       <section class="section" id="background" aria-labelledby="background-title">
         <div class="section-heading">
-          <p class="section-number">03</p>
+          <p class="section-number">_</p>
           <div>
-            <h2 id="background-title">Background</h2>
-            <p>Engineering fundamentals, product range and a visual practice.</p>
+            <h2 id="background-title">{{ copy.backgroundTitle }}</h2>
+            <p>{{ copy.backgroundIntro }}</p>
           </div>
         </div>
 
         <div class="background-grid">
           <div class="about-copy">
-            <p>
-              I trained at <strong>42 Paris</strong> and studied electrical engineering
-              and industrial computing at <strong>UVSQ</strong>. That systems background
-              still shapes how I work: understand the moving parts, remove unnecessary
-              ones, then make the whole thing observable and dependable.
-            </p>
-            <p>
-              I also work in visual development for games and publishing. It is a useful
-              counterweight to engineering—composition, hierarchy and clarity matter in
-              software too.
-            </p>
+            <p v-html="copy.aboutSystems"></p>
+            <p>{{ copy.aboutVisual }}</p>
           </div>
 
-          <div class="capability-columns">
-            <div>
-              <h3>Build</h3>
-              <p>TypeScript, Python, PHP, Rust, Java, C, C++</p>
+          <aside class="highlights" :aria-labelledby="`highlights-${locale}`">
+            <p class="highlights-label" :id="`highlights-${locale}`">{{ copy.highlights }}</p>
+            <div class="highlights-list">
+              <article v-for="highlight in highlights" :key="highlight.title" class="highlight-item">
+                <span class="highlight-marker" aria-hidden="true">_</span>
+                <div>
+                  <p class="highlight-meta">{{ localize(highlight.meta) }}</p>
+                  <h3>{{ highlight.title }}</h3>
+                  <p>{{ localize(highlight.description) }}</p>
+                </div>
+              </article>
             </div>
-            <div>
-              <h3>Shape</h3>
-              <p>Vue 3, Nuxt, React, Electron, Tailwind</p>
-            </div>
-            <div>
-              <h3>Ship</h3>
-              <p>Docker, Supabase, PostgreSQL, Vercel, AWS, DigitalOcean, EAS</p>
-            </div>
-            <div>
-              <h3>Share</h3>
-              <p>Git Peer Class · bilingual workshops · technical communication</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="education-strip" aria-label="Education">
-          <div>
-            <span>2022—2023</span>
-            <strong>42 Paris</strong>
-            <p>Computer science programme</p>
-          </div>
-          <div>
-            <span>2018—2020</span>
-            <strong>UVSQ</strong>
-            <p>Electrical engineering &amp; industrial computing</p>
-          </div>
-          <div>
-            <span>Dakar / remote</span>
-            <strong>French &amp; English</strong>
-            <p>Available across time zones</p>
-          </div>
+          </aside>
         </div>
       </section>
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <p class="terminal-note"><span>$</span> open new-collaboration</p>
-        <h2 id="contact-title">Have a useful problem?</h2>
-        <p>
-          I’m available for product builds, modernization work and integrations—especially
-          when the brief is still messy and someone needs to turn it into a working system.
-        </p>
+        <p class="terminal-note"><span>_</span> {{ copy.collaboration }}</p>
+        <h2 id="contact-title">{{ copy.contactTitle }}</h2>
+        <p>{{ copy.contactIntro }}</p>
         <a class="email-link" href="mailto:sydjbrl@gmail.com">
           sydjbrl@gmail.com <span aria-hidden="true">↗</span>
         </a>
 
-        <nav class="contact-links" aria-label="Contact and profile links">
+        <nav class="contact-links" :aria-label="copy.contactNavigation">
           <a href="https://github.com/djbrl" target="_blank" rel="noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noreferrer">LinkedIn</a>
           <a href="/documents/djibril-sy-cv.pdf" target="_blank">CV / résumé</a>
@@ -223,159 +246,311 @@
     </main>
 
     <footer class="site-footer">
-      <p>Djibril Sy · product engineer</p>
-      <a href="#top">Back to top ↑</a>
+      <p>Djibril Sy · {{ copy.footerRole }}</p>
+      <a href="#top">{{ copy.backToTop }} ↑</a>
       <p>Dakar, Sénégal · 2026</p>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-type Project = {
+type LocalizedText = { fr: string; en: string };
+
+type PortfolioProject = {
   name: string;
-  meta: string;
+  meta: LocalizedText;
   year: string;
-  short: string;
-  description: string;
+  short: LocalizedText;
+  description: LocalizedText;
   tags: string[];
   href: string;
   image: string;
-  alt: string;
+  alt: LocalizedText;
   domain: string;
   imageFit?: 'cover' | 'contain';
   previewClass?: string;
 };
 
-const projects: Project[] = [
-  {
-    name: 'CyberLab',
-    meta: 'client platform · RSF',
-    year: '2026',
-    short: 'security learning & simulation',
-    description:
-      'A phishing-simulation and security-learning platform with campaign orchestration, delivery events, learner journeys and role-aware administration.',
-    tags: ['NestJS', 'Vue 3', 'Supabase'],
-    href: 'https://github.com/Djbrl/cyberlab',
-    image: '/work/cyberlab.png',
-    alt: 'CyberLab security awareness platform interface',
-    domain: 'cyberlab / campaign-control',
-    previewClass: 'preview-top',
+const route = useRoute();
+const locale = computed<'fr' | 'en'>(() => (route.query.lang === 'en' ? 'en' : 'fr'));
+const isFrench = computed(() => locale.value === 'fr');
+const localize = (value: LocalizedText) => value[locale.value];
+
+const translations = {
+  fr: {
+    skip: 'Aller au contenu',
+    switchLanguage: 'Afficher le site en anglais',
+    lightMode: 'Passer au thème clair',
+    darkMode: 'Passer au thème sombre',
+    role: 'Ingénieur produit · Dakar, Sénégal',
+    focus: 'systèmes produits, interfaces utiles, outils locaux, plateformes, infrastructure & livraison',
+    intro:
+      'Je conçois et mets en production des produits web, mobiles et desktop, du premier modèle au système exploitable. Mon travail se situe à l’intersection du produit, de l’architecture backend et d’interfaces qui rendent les systèmes complexes lisibles.',
+    primaryNavigation: 'Navigation principale',
+    navWork: 'Projets sélectionnés',
+    navClients: 'Missions client',
+    navBackground: 'Parcours',
+    navContact: 'Contact',
+    workTitle: 'Projets sélectionnés',
+    workIntro: 'Des produits indépendants menés d’une idée ou d’une contrainte jusqu’à un système fonctionnel.',
+    clientsTitle: 'Missions client',
+    clientsIntro: 'Des collaborations récentes où les décisions produit et la réalisation technique se rejoignent.',
+    backgroundTitle: 'Parcours',
+    backgroundIntro: 'Fondamentaux d’ingénierie, pratique visuelle et transmission.',
+    aboutSystems:
+      'Formé à <strong>42 Paris</strong> et en génie électrique et informatique industrielle à <strong>l’UVSQ</strong>, j’aborde les produits comme des systèmes : comprendre les pièces, retirer le superflu, puis rendre l’ensemble observable et fiable.',
+    aboutVisual:
+      'Je travaille aussi en développement visuel pour le jeu et l’édition. Cette pratique nourrit mon travail d’ingénieur : composition, hiérarchie et clarté comptent autant dans une interface que dans une image.',
+    highlights: 'Temps forts',
+    collaboration: 'nouvelle-collaboration',
+    contactTitle: 'Un problème utile à résoudre ?',
+    contactIntro:
+      'Je suis disponible pour des créations produit, des modernisations et des intégrations — surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
+    contactNavigation: 'Liens de contact et profils',
+    footerRole: 'ingénieur produit',
+    backToTop: 'Retour en haut',
+    openProject: 'ouvrir le projet',
+    technologies: 'Technologies',
+    hover: 'survoler / cibler',
+    inspect: 'pour découvrir',
+    description: 'Portfolio de Djibril Sy, ingénieur produit à Dakar, spécialisé dans les produits web, mobiles et desktop.',
+    socialDescription: 'Produits web, mobiles et desktop, du premier modèle jusqu’à la mise en production.',
   },
+  en: {
+    skip: 'Skip to content',
+    switchLanguage: 'Display the site in French',
+    lightMode: 'Switch to light theme',
+    darkMode: 'Switch to dark theme',
+    role: 'Product engineer · Dakar, Senegal',
+    focus: 'product systems, useful interfaces, local tooling, platforms, infrastructure & delivery',
+    intro:
+      'I design and ship web, mobile and desktop products from first model to production. My work sits between product thinking, backend architecture and interfaces that make complicated systems feel straightforward.',
+    primaryNavigation: 'Primary navigation',
+    navWork: 'Selected work',
+    navClients: 'Client work',
+    navBackground: 'Background',
+    navContact: 'Contact',
+    workTitle: 'Selected work',
+    workIntro: 'Independent products taken from an idea or constraint to a working system.',
+    clientsTitle: 'Client work',
+    clientsIntro: 'Recent engagements where product decisions and implementation meet.',
+    backgroundTitle: 'Background',
+    backgroundIntro: 'Engineering fundamentals, visual practice and knowledge sharing.',
+    aboutSystems:
+      'I trained at <strong>42 Paris</strong> and studied electrical engineering and industrial computing at <strong>UVSQ</strong>. I still approach products as systems: understand the moving parts, remove what is unnecessary, then make the whole dependable and observable.',
+    aboutVisual:
+      'I also work in visual development for games and publishing. That practice informs my engineering: composition, hierarchy and clarity matter as much in an interface as they do in an image.',
+    highlights: 'Highlights',
+    collaboration: 'new-collaboration',
+    contactTitle: 'Have a useful problem?',
+    contactIntro:
+      'I’m available for product builds, modernization work and integrations—especially when the brief is still messy and someone needs to turn it into a working system.',
+    contactNavigation: 'Contact and profile links',
+    footerRole: 'product engineer',
+    backToTop: 'Back to top',
+    openProject: 'open project',
+    technologies: 'Technologies',
+    hover: 'hover / focus',
+    inspect: 'to inspect',
+    description: 'Portfolio of Djibril Sy, a Dakar-based product engineer building web, mobile and desktop products.',
+    socialDescription: 'Web, mobile and desktop products shaped from first model to production.',
+  },
+};
+
+const copy = computed(() => translations[locale.value]);
+
+const projects: PortfolioProject[] = [
   {
-    name: 'The Quest Board',
-    meta: 'independent product · live',
+    name: 'TheQuestBoard',
+    meta: { fr: 'produit indépendant · en ligne', en: 'independent product · live' },
     year: '2023—2026',
-    short: 'commission discovery for artists',
-    description:
-      'A live product that turns illustration hiring posts into a searchable board and sends personalized Discord alerts to artists.',
-    tags: ['Vue 3', 'NestJS', 'Discord', 'Postgres'],
+    short: { fr: 'repérage de commandes pour artistes', en: 'commission discovery for artists' },
+    description: {
+      fr: 'Un produit en ligne qui transforme les annonces de recrutement d’illustrateurs en tableau consultable et envoie aux artistes des alertes Discord personnalisées.',
+      en: 'A live product that turns illustration hiring posts into a searchable board and sends personalized Discord alerts to artists.',
+    },
+    tags: ['Vue 3', 'NestJS', 'Discord', 'PostgreSQL'],
     href: 'https://www.thequestboard.co',
     image: '/tqb1.png',
-    alt: 'The Quest Board interface',
+    alt: { fr: 'Interface de TheQuestBoard', en: 'TheQuestBoard interface' },
     domain: 'thequestboard.co',
   },
   {
-    name: 'Multiprise',
-    meta: 'macOS app · open source',
+    name: 'SkinDiff',
+    meta: { fr: 'produit social · League of Legends', en: 'social product · League of Legends' },
     year: '2026',
-    short: 'one control center for local projects',
-    description:
-      'A desktop control center that discovers project services, assigns collision-free ports, owns process groups and brings logs and previews into one workspace.',
+    short: { fr: 'lookbook social de collections', en: 'a social lookbook for collections' },
+    description: {
+      fr: 'Un outil de création et de comparaison de collections coordonnées en duo ou en équipe, avec profils publics, connexion Discord et commande slash.',
+      en: 'A collection builder and comparison tool for coordinated duo and full-team looks, with public profiles, Discord sign-in and a slash command.',
+    },
+    tags: ['Nuxt', 'Vue 3', 'Discord', 'Supabase'],
+    href: 'https://github.com/Djbrl/skindiff',
+    image: '/work/skindiff.png',
+    alt: { fr: 'Visuel du lookbook social SkinDiff', en: 'SkinDiff social lookbook artwork' },
+    domain: 'skindiff / compare-collections',
+  },
+  {
+    name: 'Multiprise',
+    meta: { fr: 'application macOS · open source', en: 'macOS app · open source' },
+    year: '2026',
+    short: { fr: 'centre de contrôle pour projets locaux', en: 'one control center for local projects' },
+    description: {
+      fr: 'Un centre de contrôle desktop qui découvre les services d’un projet, attribue des ports sans conflit, gère les processus et rassemble logs et aperçus dans un seul espace.',
+      en: 'A desktop control center that discovers project services, assigns collision-free ports, owns process groups and brings logs and previews into one workspace.',
+    },
     tags: ['Electron', 'TypeScript', 'Vue 3'],
     href: 'https://github.com/Djbrl/multiprise',
     image: '/work/multiprise.svg',
-    alt: 'Multiprise application mark',
+    alt: { fr: 'Symbole de l’application Multiprise', en: 'Multiprise application mark' },
     domain: 'multiprise / local-orchestrator',
     imageFit: 'contain',
     previewClass: 'preview-electric',
   },
+];
+
+const clientProjects: PortfolioProject[] = [
   {
-    name: 'SkinDiff',
-    meta: 'social product · League of Legends',
-    year: '2026',
-    short: 'a social lookbook for collections',
-    description:
-      'A collection builder and comparison tool for coordinated duo and full-team looks, with public profiles, Discord sign-in and a slash command.',
-    tags: ['Nuxt', 'Vue 3', 'Discord', 'Supabase'],
-    href: 'https://github.com/Djbrl/skindiff',
-    image: '/work/skindiff.png',
-    alt: 'SkinDiff social lookbook artwork',
-    domain: 'skindiff / compare-collections',
+    name: 'MAEIC',
+    meta: { fr: 'programme exécutif · MINAPRO', en: 'executive programme · MINAPRO' },
+    year: '2025—2026',
+    short: { fr: 'parcours bilingue & opérations', en: 'bilingual journey & operations' },
+    description: {
+      fr: 'Conception d’un parcours d’onboarding bilingue sur invitation, avec machine à états déterministe, planification des sessions, analytics et emails transactionnels.',
+      en: 'Built a bilingual, invitation-only onboarding journey with a deterministic state machine, session planning, analytics and transactional email.',
+    },
+    tags: ['TypeScript', 'Supabase', 'Analytics'],
+    href: 'https://minaproai.nelamservices.com',
+    image: '/work/maeic.png',
+    alt: { fr: 'Page d’accueil du programme MAEIC', en: 'MAEIC programme landing page' },
+    domain: 'minaproai.nelamservices.com',
+    previewClass: 'preview-top',
   },
   {
-    name: 'ft_irc',
-    meta: 'systems project · 42 Paris',
-    year: '2023',
-    short: 'an IRC server from the protocol up',
-    description:
-      'A C++ IRC server built around RFC 1459, non-blocking sockets, channels, direct messages and concurrent client handling with poll.',
-    tags: ['C++', 'Sockets', 'Networking'],
-    href: 'https://github.com/Djbrl/ft_irc',
-    image: '/irc1.png',
-    alt: 'Terminal output from the ft_irc server',
-    domain: 'localhost:8080 / ft_irc',
-    previewClass: 'preview-terminal',
+    name: 'TousLesPros',
+    meta: { fr: 'plateforme professionnelle · Sénégal', en: 'professional platform · Senegal' },
+    year: '2026',
+    short: { fr: 'travail & entrepreneuriat au Sénégal', en: 'work & entrepreneurship in Senegal' },
+    description: {
+      fr: 'Refonte d’un portail sénégalais de découverte professionnelle et création de son application mobile, avec sessions sécurisées, cache hors ligne, cartes et livraisons EAS.',
+      en: 'Rebuilt a Senegal-focused professional discovery portal and delivered its mobile app, including secure sessions, offline caching, maps and EAS releases.',
+    },
+    tags: ['Nuxt', 'Vue 3', 'Expo', 'PostgreSQL'],
+    href: 'https://touslespros.sn',
+    image: '/work/touslespros-live.png',
+    alt: { fr: 'Page d’accueil de TousLesPros', en: 'TousLesPros landing page' },
+    domain: 'touslespros.sn',
+    previewClass: 'preview-top',
+  },
+  {
+    name: 'CyberLab',
+    meta: { fr: 'sensibilisation cybersécurité · RSF', en: 'cybersecurity awareness · RSF' },
+    year: '2026',
+    short: { fr: 'apprentissage & simulation du phishing', en: 'phishing learning & simulation' },
+    description: {
+      fr: 'Une plateforme de simulation du phishing et de sensibilisation, avec orchestration de campagnes, événements de livraison, parcours apprenants et administration par rôles.',
+      en: 'A phishing-simulation and security-learning platform with campaign orchestration, delivery events, learner journeys and role-aware administration.',
+    },
+    tags: ['NestJS', 'Vue 3', 'Supabase'],
+    href: 'https://cyberlab-web-ten.vercel.app/',
+    image: '/work/cyberlab-live.png',
+    alt: { fr: 'Page d’accueil de CyberLab', en: 'CyberLab landing page' },
+    domain: 'cyberlab-web-ten.vercel.app',
+    previewClass: 'preview-top',
   },
 ];
 
-const experience = [
+const highlights = [
   {
-    period: '2025—2026',
-    company: 'MINAPRO AI Executive Cohort',
-    role: 'Full-stack engineer · Dakar / remote',
-    description:
-      'Built a bilingual, invitation-only onboarding and operations system with a deterministic state machine, session planning, analytics and transactional email.',
+    title: '42 Paris',
+    meta: { fr: '2022—2023 · informatique', en: '2022—2023 · computer science' },
+    description: {
+      fr: 'Formation intensive par projets, du C aux systèmes, réseaux et architectures logicielles.',
+      en: 'Intensive project-based training spanning C, systems, networking and software architecture.',
+    },
   },
   {
-    period: '2026',
-    company: 'TousLesPros',
-    role: 'Full-stack & mobile engineer · Dakar',
-    description:
-      'Rebuilt a Senegal-focused professional discovery portal and delivered its Expo mobile client, including secure sessions, offline caching, maps and EAS releases.',
-    href: 'https://touslespros.vercel.app',
+    title: 'UVSQ',
+    meta: { fr: '2018—2020 · DUT GEII', en: '2018—2020 · electrical engineering' },
+    description: {
+      fr: 'Génie électrique et informatique industrielle : électronique, automatismes et programmation.',
+      en: 'Electrical engineering and industrial computing: electronics, automation and programming.',
+    },
   },
   {
-    period: 'Internship',
-    company: 'GAINDÉ 2000',
-    role: 'Software development intern · Dakar',
-    description:
-      'Early professional software-development experience inside one of Senegal’s established digital-services organizations.',
+    title: 'Riot Games & QuasiReal Publishing',
+    meta: { fr: 'développement visuel & illustration', en: 'visual development & illustration' },
+    description: {
+      fr: 'Travaux créatifs pour le jeu et l’édition, entre narration visuelle, composition et production d’images.',
+      en: 'Creative work for games and publishing, spanning visual storytelling, composition and image production.',
+    },
+  },
+  {
+    title: 'Git Peer Class',
+    meta: { fr: 'transmission · apprentissage entre pairs', en: 'teaching · peer learning' },
+    description: {
+      fr: 'Ateliers pratiques autour de Git et des méthodes de collaboration pour aider d’autres développeurs à gagner en autonomie.',
+      en: 'Hands-on Git and collaboration workshops helping other developers become more autonomous.',
+    },
   },
 ];
 
 const activeProjectIndex = ref(0);
+const activeClientIndex = ref(0);
 const activeProject = computed(() => projects[activeProjectIndex.value]);
+const activeClient = computed(() => clientProjects[activeClientIndex.value]);
 
-useHead({
-  title: 'Djibril Sy — Product Engineer in Dakar',
+const isDark = ref(false);
+
+const applyTheme = () => {
+  if (!import.meta.client) return;
+  document.documentElement.dataset.theme = isDark.value ? 'dark' : 'light';
+  localStorage.setItem('portfolio-theme', isDark.value ? 'dark' : 'light');
+};
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  applyTheme();
+};
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('portfolio-theme');
+  isDark.value = savedTheme
+    ? savedTheme === 'dark'
+    : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme();
+});
+
+useHead(() => ({
+  title: isFrench.value
+    ? 'Djibril Sy — Ingénieur produit à Dakar'
+    : 'Djibril Sy — Product Engineer in Dakar',
   link: [{ rel: 'canonical', href: 'https://djibrilsy.vercel.app/' }],
   meta: [
-    {
-      name: 'description',
-      content:
-        'Portfolio of Djibril Sy, a Dakar-based product engineer building web, mobile and desktop products.',
-    },
-    { name: 'theme-color', content: '#f1f0ec' },
+    { name: 'description', content: copy.value.description },
+    { name: 'theme-color', content: isDark.value ? '#10100f' : '#f1f0ec' },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: 'https://djibrilsy.vercel.app/' },
-    { property: 'og:title', content: 'Djibril Sy — Product Engineer in Dakar' },
     {
-      property: 'og:description',
-      content:
-        'Web, mobile and desktop products shaped from first model to production.',
+      property: 'og:title',
+      content: isFrench.value
+        ? 'Djibril Sy — Ingénieur produit à Dakar'
+        : 'Djibril Sy — Product Engineer in Dakar',
     },
+    { property: 'og:description', content: copy.value.socialDescription },
     { property: 'og:image', content: 'https://djibrilsy.vercel.app/og.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Djibril Sy — Product Engineer in Dakar' },
     {
-      name: 'twitter:description',
-      content:
-        'Web, mobile and desktop products shaped from first model to production.',
+      name: 'twitter:title',
+      content: isFrench.value
+        ? 'Djibril Sy — Ingénieur produit à Dakar'
+        : 'Djibril Sy — Product Engineer in Dakar',
     },
+    { name: 'twitter:description', content: copy.value.socialDescription },
     { name: 'twitter:image', content: 'https://djibrilsy.vercel.app/og.png' },
   ],
-  htmlAttrs: { lang: 'en' },
-});
+  htmlAttrs: { lang: locale.value },
+}));
 </script>
