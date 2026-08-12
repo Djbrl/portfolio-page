@@ -37,32 +37,31 @@
       </p>
 
       <p class="intro-copy">{{ copy.intro }}</p>
+
+      <nav class="primary-nav" :aria-label="copy.primaryNavigation">
+        <a href="#work"><span>01</span>{{ copy.workTitle }}</a>
+        <a href="#highlights"><span>02</span>{{ copy.highlights }}</a>
+        <a href="#contact"><span>03</span>{{ copy.navContact }}</a>
+      </nav>
     </header>
 
-    <nav class="section-nav" :aria-label="copy.primaryNavigation">
-      <a href="#work"><span>01</span>{{ copy.navWork }}</a>
-      <a href="#client-projects"><span>02</span>{{ copy.navClients }}</a>
-      <a href="#background"><span>03</span>{{ copy.navBackground }}</a>
-      <a href="#contact"><span>04</span>{{ copy.navContact }}</a>
-    </nav>
-
     <main id="main">
-      <section class="section" id="work" aria-labelledby="work-title">
-        <div class="section-heading">
-          <p class="section-number">01</p>
-          <div>
-            <h2 id="work-title">{{ copy.workTitle }}</h2>
-            <p>{{ copy.workIntro }}</p>
-          </div>
-        </div>
+      <section class="section work-section" id="work" aria-labelledby="work-title">
+        <div class="work-layout">
+          <div class="projects-column">
+            <div class="compact-heading">
+              <p class="section-number">01</p>
+              <div>
+                <h2 id="work-title">{{ copy.workTitle }}</h2>
+                <p>{{ copy.workIntro }}</p>
+              </div>
+            </div>
 
-        <div class="project-index">
           <div class="project-list">
             <article
               v-for="(project, index) in allProjects"
               :key="project.name"
               class="project-item"
-              :id="index === projects.length ? 'client-projects' : undefined"
             >
               <button
                 class="project-trigger"
@@ -120,26 +119,17 @@
               </div>
             </article>
           </div>
-        </div>
-      </section>
-
-      <section class="section" id="background" aria-labelledby="background-title">
-        <div class="section-heading">
-          <p class="section-number">03</p>
-          <div>
-            <h2 id="background-title">{{ copy.backgroundTitle }}</h2>
-            <p>{{ copy.backgroundIntro }}</p>
-          </div>
-        </div>
-
-        <div class="background-grid">
-          <div class="about-copy">
-            <p v-html="copy.aboutSystems"></p>
-            <p>{{ copy.aboutVisual }}</p>
           </div>
 
-          <aside class="highlights" :aria-labelledby="`highlights-${locale}`">
-            <p class="highlights-label" :id="`highlights-${locale}`">{{ copy.highlights }}</p>
+          <aside class="highlights-column" id="highlights" :aria-labelledby="`highlights-${locale}`">
+            <div class="compact-heading">
+              <p class="section-number">02</p>
+              <div>
+                <h2 :id="`highlights-${locale}`">{{ copy.highlights }}</h2>
+                <p>{{ copy.backgroundIntro }}</p>
+              </div>
+            </div>
+
             <div class="highlights-list">
               <article v-for="(highlight, index) in highlights" :key="highlight.title" class="highlight-item">
                 <button
@@ -172,7 +162,7 @@
       </section>
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <p class="terminal-note"><span>04</span> {{ copy.collaboration }}</p>
+        <p class="terminal-note"><span>03</span> {{ copy.collaboration }}</p>
         <h2 id="contact-title">{{ copy.contactTitle }}</h2>
         <p>{{ copy.contactIntro }}</p>
         <a class="email-link" href="mailto:sydjbrl@gmail.com">
@@ -237,7 +227,7 @@ const translations = {
     navBackground: 'Parcours',
     navContact: 'Contact',
     workTitle: 'Projets',
-    workIntro: 'Six produits personnels et missions client, présentés comme un index. Ouvrez une entrée pour découvrir le problème, l’approche et la réalisation.',
+    workIntro: 'Produits personnels et missions client. Cliquez pour ouvrir le détail.',
     backgroundTitle: 'Parcours',
     backgroundIntro: 'Fondamentaux d’ingénierie, pratique visuelle et transmission.',
     aboutSystems:
@@ -273,7 +263,7 @@ const translations = {
     navBackground: 'Background',
     navContact: 'Contact',
     workTitle: 'Projects',
-    workIntro: 'Six independent products and client engagements, presented as an index. Open an entry to see the problem, approach and implementation.',
+    workIntro: 'Independent products and client work. Click to open the details.',
     backgroundTitle: 'Background',
     backgroundIntro: 'Engineering fundamentals, visual practice and knowledge sharing.',
     aboutSystems:
