@@ -1,5 +1,5 @@
 <template>
-  <div class="site-shell" :class="{ 'is-language-switching': isLanguageSwitching }">
+  <div class="site-shell">
     <a class="skip-link" href="#main">{{ copy.skip }}</a>
 
     <header class="intro" id="top">
@@ -8,11 +8,8 @@
           class="language-toggle"
           type="button"
           :aria-label="copy.switchLanguage"
-          :aria-busy="isLanguageSwitching"
-          :disabled="isLanguageSwitching"
           @click="switchLanguage"
         >
-          <span v-if="isLanguageSwitching" class="language-spinner" aria-hidden="true"></span>
           <span :class="{ active: isFrench }">FR</span>
           <span aria-hidden="true">/</span>
           <span :class="{ active: !isFrench }">EN</span>
@@ -29,52 +26,30 @@
         </button>
       </div>
 
-      <div class="masthead language-content">
+      <div class="masthead">
         <h1>Djibril Sy</h1>
         <p class="role-line">{{ copy.role }}</p>
       </div>
 
-      <p class="focus-line language-content">
+      <p class="focus-line">
         <span class="focus-arrow" aria-hidden="true">→</span>
-        <span class="focus-terms">
-          <template v-for="(term, index) in copy.focus" :key="term">
-            <span class="focus-term">{{ term }}</span><span v-if="index < copy.focus.length - 1" class="focus-separator">, </span>
-          </template>
-        </span>
+        <span class="focus-terms">{{ copy.focus.join(', ') }}</span>
       </p>
 
-      <p class="intro-copy language-content">{{ copy.intro }}</p>
-
-      <nav class="primary-nav language-content" :aria-label="copy.primaryNavigation">
-        <a href="#work"><span>_</span>{{ copy.navWork }}</a>
-        <a href="#experience"><span>_</span>{{ copy.navClients }}</a>
-        <a href="#background"><span>_</span>{{ copy.navBackground }}</a>
-        <a href="#contact"><span>_</span>{{ copy.navContact }}</a>
-      </nav>
+      <p class="intro-copy">{{ copy.intro }}</p>
     </header>
 
-    <nav
-      class="floating-nav"
-      :class="{ visible: showFloatingNav }"
-      :aria-label="copy.continuousNavigation"
-      :aria-hidden="!showFloatingNav"
-    >
-      <a
-        v-for="item in floatingNavigation"
-        :key="item.id"
-        :href="`#${item.id}`"
-        :class="{ active: activeSection === item.id }"
-        :tabindex="showFloatingNav ? 0 : -1"
-      >
-        <span aria-hidden="true">_</span>
-        {{ item.label }}
-      </a>
+    <nav class="section-nav" :aria-label="copy.primaryNavigation">
+      <a href="#work"><span>01</span>{{ copy.navWork }}</a>
+      <a href="#client-projects"><span>02</span>{{ copy.navClients }}</a>
+      <a href="#background"><span>03</span>{{ copy.navBackground }}</a>
+      <a href="#contact"><span>04</span>{{ copy.navContact }}</a>
     </nav>
 
-    <main id="main" class="language-content">
+    <main id="main">
       <section class="section" id="work" aria-labelledby="work-title">
         <div class="section-heading">
-          <p class="section-number">_</p>
+          <p class="section-number">01</p>
           <div>
             <h2 id="work-title">{{ copy.workTitle }}</h2>
             <p>{{ copy.workIntro }}</p>
@@ -84,12 +59,10 @@
         <div class="project-index">
           <div class="project-list">
             <article
-              v-for="(project, index) in projects"
+              v-for="(project, index) in allProjects"
               :key="project.name"
               class="project-item"
-              :class="{ active: activeProjectIndex === index }"
-              @mouseenter="activeProjectIndex = index"
-              @focusin="activeProjectIndex = index"
+              :id="index === projects.length ? 'client-projects' : undefined"
             >
               <button
                 class="project-trigger"
@@ -98,7 +71,16 @@
                 :aria-controls="`project-details-${index}`"
                 @click="toggleProject(index)"
               >
-                <span class="project-number">_</span>
+                <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
+
+                <span class="project-thumbnail" :class="project.previewClass">
+                  <img
+                    :src="project.image"
+                    :alt="localize(project.alt)"
+                    :class="project.imageFit === 'contain' ? 'contain' : ''"
+                    loading="lazy"
+                  />
+                </span>
 
                 <span class="project-copy">
                   <span class="project-title-row">
@@ -133,142 +115,17 @@
                       >{{ copy.visitProject }} <span aria-hidden="true">↗</span></a>
                     </div>
 
-                    <figure class="mobile-project-media" :class="project.previewClass">
-                      <img
-                        :src="project.image"
-                        :alt="localize(project.alt)"
-                        :class="project.imageFit === 'contain' ? 'contain' : ''"
-                        loading="lazy"
-                      />
-                    </figure>
                   </div>
                 </div>
               </div>
             </article>
           </div>
-
-          <aside class="project-preview" aria-live="polite">
-            <figure class="preview-window">
-              <div class="preview-toolbar" aria-hidden="true">
-                <p>{{ activeProject.domain }}</p>
-              </div>
-              <div class="preview-media" :class="activeProject.previewClass">
-                <img
-                  :key="activeProject.image"
-                  :src="activeProject.image"
-                  :alt="localize(activeProject.alt)"
-                  :class="activeProject.imageFit === 'contain' ? 'contain' : ''"
-                />
-              </div>
-              <figcaption>
-                <span>{{ localize(activeProject.short) }}</span>
-                <span>{{ activeProject.year }}</span>
-              </figcaption>
-            </figure>
-            <p class="preview-hint"><span>{{ copy.hover }}</span> {{ copy.inspect }}</p>
-          </aside>
-        </div>
-      </section>
-
-      <section class="section" id="experience" aria-labelledby="experience-title">
-        <div class="section-heading">
-          <p class="section-number">_</p>
-          <div>
-            <h2 id="experience-title">{{ copy.clientsTitle }}</h2>
-            <p>{{ copy.clientsIntro }}</p>
-          </div>
-        </div>
-
-        <div class="project-index client-index">
-          <div class="project-list">
-            <article
-              v-for="(project, index) in clientProjects"
-              :key="project.name"
-              class="project-item"
-              :class="{ active: activeClientIndex === index }"
-              @mouseenter="activeClientIndex = index"
-              @focusin="activeClientIndex = index"
-            >
-              <button
-                class="project-trigger"
-                type="button"
-                :aria-expanded="expandedClientIndex === index"
-                :aria-controls="`client-details-${index}`"
-                @click="toggleClient(index)"
-              >
-                <span class="project-number">_</span>
-
-                <span class="project-copy">
-                  <span class="project-title-row">
-                    <strong>{{ project.name }}</strong>
-                    <span>{{ localize(project.meta) }}</span>
-                  </span>
-                  <span class="project-summary">{{ localize(project.short) }}</span>
-                </span>
-
-                <span class="project-toggle" aria-hidden="true">{{ expandedClientIndex === index ? '−' : '+' }}</span>
-              </button>
-
-              <div
-                :id="`client-details-${index}`"
-                class="project-disclosure"
-                :class="{ open: expandedClientIndex === index }"
-              >
-                <div>
-                  <div class="project-detail-panel">
-                    <p class="project-description">{{ localize(project.description) }}</p>
-                    <p class="project-detail">{{ localize(project.detail) }}</p>
-                    <div class="project-detail-footer">
-                      <span class="project-tags" :aria-label="copy.technologies">
-                        <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
-                      </span>
-                      <a
-                        class="project-cta"
-                        :href="project.href"
-                        target="_blank"
-                        rel="noreferrer"
-                        :aria-label="`${project.name} — ${copy.openProject}`"
-                      >{{ copy.visitProject }} <span aria-hidden="true">↗</span></a>
-                    </div>
-
-                    <figure class="mobile-project-media" :class="project.previewClass">
-                      <img
-                        :src="project.image"
-                        :alt="localize(project.alt)"
-                        loading="lazy"
-                      />
-                    </figure>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <aside class="project-preview" aria-live="polite">
-            <figure class="preview-window">
-              <div class="preview-toolbar" aria-hidden="true">
-                <p>{{ activeClient.domain }}</p>
-              </div>
-              <div class="preview-media preview-top">
-                <img
-                  :key="activeClient.image"
-                  :src="activeClient.image"
-                  :alt="localize(activeClient.alt)"
-                />
-              </div>
-              <figcaption>
-                <span>{{ localize(activeClient.short) }}</span>
-                <span>{{ activeClient.year }}</span>
-              </figcaption>
-            </figure>
-            <p class="preview-hint"><span>{{ copy.hover }}</span> {{ copy.inspect }}</p>
-          </aside>
         </div>
       </section>
 
       <section class="section" id="background" aria-labelledby="background-title">
         <div class="section-heading">
-          <p class="section-number">_</p>
+          <p class="section-number">03</p>
           <div>
             <h2 id="background-title">{{ copy.backgroundTitle }}</h2>
             <p>{{ copy.backgroundIntro }}</p>
@@ -292,7 +149,7 @@
                   :aria-controls="`highlight-details-${index}`"
                   @click="toggleHighlight(index)"
                 >
-                  <span class="highlight-marker" aria-hidden="true">_</span>
+                  <span class="highlight-marker" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
                   <span>
                     <span class="highlight-meta">{{ localize(highlight.meta) }}</span>
                     <strong>{{ highlight.title }}</strong>
@@ -315,7 +172,7 @@
       </section>
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <p class="terminal-note"><span>_</span> {{ copy.collaboration }}</p>
+        <p class="terminal-note"><span>04</span> {{ copy.collaboration }}</p>
         <h2 id="contact-title">{{ copy.contactTitle }}</h2>
         <p>{{ copy.contactIntro }}</p>
         <a class="email-link" href="mailto:sydjbrl@gmail.com">
@@ -330,7 +187,7 @@
       </section>
     </main>
 
-    <footer class="site-footer language-content">
+    <footer class="site-footer">
       <p>Djibril Sy · {{ copy.footerRole }}</p>
       <a href="#top">{{ copy.backToTop }} ↑</a>
       <p>Dakar, Sénégal · 2026</p>
@@ -339,7 +196,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 type LocalizedText = { fr: string; en: string };
 
@@ -379,14 +236,8 @@ const translations = {
     navClients: 'Missions client',
     navBackground: 'Parcours',
     navContact: 'Contact',
-    continuousNavigation: 'Navigation persistante',
-    navWorkShort: 'Projets',
-    navClientsShort: 'Clients',
-    navBackgroundShort: 'Parcours',
-    workTitle: 'Projets sélectionnés',
-    workIntro: 'Des produits indépendants menés d’une idée ou d’une contrainte jusqu’à un système fonctionnel.',
-    clientsTitle: 'Missions client',
-    clientsIntro: 'Des collaborations récentes où les décisions produit et la réalisation technique se rejoignent.',
+    workTitle: 'Projets',
+    workIntro: 'Six produits personnels et missions client, présentés comme un index. Ouvrez une entrée pour découvrir le problème, l’approche et la réalisation.',
     backgroundTitle: 'Parcours',
     backgroundIntro: 'Fondamentaux d’ingénierie, pratique visuelle et transmission.',
     aboutSystems:
@@ -404,8 +255,6 @@ const translations = {
     openProject: 'ouvrir le projet',
     visitProject: 'Voir le projet',
     technologies: 'Technologies',
-    hover: 'survoler / cliquer',
-    inspect: 'pour explorer',
     description: 'Portfolio de Djibril Sy, ingénieur produit à Dakar, spécialisé dans les produits web, mobiles et desktop.',
     socialDescription: 'Produits web, mobiles et desktop, du premier modèle jusqu’à la mise en production.',
   },
@@ -423,14 +272,8 @@ const translations = {
     navClients: 'Client work',
     navBackground: 'Background',
     navContact: 'Contact',
-    continuousNavigation: 'Persistent navigation',
-    navWorkShort: 'Work',
-    navClientsShort: 'Clients',
-    navBackgroundShort: 'About',
-    workTitle: 'Selected work',
-    workIntro: 'Independent products taken from an idea or constraint to a working system.',
-    clientsTitle: 'Client work',
-    clientsIntro: 'Recent engagements where product decisions and implementation meet.',
+    workTitle: 'Projects',
+    workIntro: 'Six independent products and client engagements, presented as an index. Open an entry to see the problem, approach and implementation.',
     backgroundTitle: 'Background',
     backgroundIntro: 'Engineering fundamentals, visual practice and knowledge sharing.',
     aboutSystems:
@@ -448,8 +291,6 @@ const translations = {
     openProject: 'open project',
     visitProject: 'Visit project',
     technologies: 'Technologies',
-    hover: 'hover / click',
-    inspect: 'to explore',
     description: 'Portfolio of Djibril Sy, a Dakar-based product engineer building web, mobile and desktop products.',
     socialDescription: 'Web, mobile and desktop products shaped from first model to production.',
   },
@@ -617,65 +458,29 @@ const highlights = [
   },
 ];
 
-const activeProjectIndex = ref(0);
-const activeClientIndex = ref(0);
+const allProjects = [...projects, ...clientProjects];
 const expandedProjectIndex = ref<number | null>(null);
-const expandedClientIndex = ref<number | null>(null);
 const expandedHighlightIndex = ref<number | null>(null);
-const activeProject = computed(() => projects[activeProjectIndex.value]);
-const activeClient = computed(() => clientProjects[activeClientIndex.value]);
-const isLanguageSwitching = ref(false);
-const showFloatingNav = ref(false);
-const activeSection = ref('work');
-
-const floatingNavigation = computed(() => [
-  { id: 'work', label: copy.value.navWorkShort },
-  { id: 'experience', label: copy.value.navClientsShort },
-  { id: 'background', label: copy.value.navBackgroundShort },
-  { id: 'contact', label: copy.value.navContact },
-]);
 
 const toggleProject = (index: number) => {
-  activeProjectIndex.value = index;
   expandedProjectIndex.value = expandedProjectIndex.value === index ? null : index;
-};
-
-const toggleClient = (index: number) => {
-  activeClientIndex.value = index;
-  expandedClientIndex.value = expandedClientIndex.value === index ? null : index;
 };
 
 const toggleHighlight = (index: number) => {
   expandedHighlightIndex.value = expandedHighlightIndex.value === index ? null : index;
 };
 
-const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration));
-
-const switchLanguage = async () => {
-  if (isLanguageSwitching.value || !import.meta.client) return;
-
-  isLanguageSwitching.value = true;
-  await wait(180);
+const switchLanguage = () => {
+  if (!import.meta.client) return;
   locale.value = locale.value === 'fr' ? 'en' : 'fr';
 
   const url = new URL(window.location.href);
   if (locale.value === 'en') url.searchParams.set('lang', 'en');
   else url.searchParams.delete('lang');
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
-
-  await nextTick();
-  await wait(260);
-  isLanguageSwitching.value = false;
 };
 
 const isDark = ref(false);
-let sectionObserver: IntersectionObserver | undefined;
-
-const updateFloatingNavigation = () => {
-  const hero = document.querySelector<HTMLElement>('.intro');
-  if (!hero) return;
-  showFloatingNav.value = window.scrollY >= hero.offsetHeight - 100;
-};
 
 const applyTheme = () => {
   if (!import.meta.client) return;
@@ -694,34 +499,6 @@ onMounted(() => {
     ? savedTheme === 'dark'
     : window.matchMedia('(prefers-color-scheme: dark)').matches;
   applyTheme();
-
-  updateFloatingNavigation();
-  window.addEventListener('scroll', updateFloatingNavigation, { passive: true });
-  window.addEventListener('resize', updateFloatingNavigation, { passive: true });
-
-  sectionObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-      if (visible[0]?.target.id) activeSection.value = visible[0].target.id;
-      for (const entry of entries) {
-        if (entry.isIntersecting) entry.target.classList.add('is-curated-visible');
-      }
-    },
-    { rootMargin: '-28% 0px -54% 0px', threshold: [0, 0.1, 0.35, 0.7] },
-  );
-
-  for (const id of ['work', 'experience', 'background', 'contact']) {
-    const section = document.getElementById(id);
-    if (section) sectionObserver.observe(section);
-  }
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', updateFloatingNavigation);
-  window.removeEventListener('resize', updateFloatingNavigation);
-  sectionObserver?.disconnect();
 });
 
 useHead(() => ({
