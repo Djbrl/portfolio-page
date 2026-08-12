@@ -39,27 +39,26 @@
       <p class="intro-copy">{{ copy.intro }}</p>
 
       <nav class="primary-nav" :aria-label="copy.primaryNavigation">
-        <a href="#work"><span>01</span>{{ copy.workTitle }}</a>
-        <a href="#highlights"><span>02</span>{{ copy.highlights }}</a>
-        <a href="#contact"><span>03</span>{{ copy.navContact }}</a>
+        <a href="#work"><span>01</span>{{ copy.navWork }}</a>
+        <a href="#experience"><span>02</span>{{ copy.navClients }}</a>
+        <a href="#background"><span>03</span>{{ copy.navBackground }}</a>
+        <a href="#contact"><span>04</span>{{ copy.navContact }}</a>
       </nav>
     </header>
 
     <main id="main">
-      <section class="section work-section" id="work" aria-labelledby="work-title">
-        <div class="work-layout">
-          <div class="projects-column">
-            <div class="compact-heading">
-              <p class="section-number">01</p>
-              <div>
-                <h2 id="work-title">{{ copy.workTitle }}</h2>
-                <p>{{ copy.workIntro }}</p>
-              </div>
-            </div>
+      <section class="section project-section" id="work" aria-labelledby="work-title">
+        <div class="section-heading">
+          <p class="section-number">01</p>
+          <div>
+            <h2 id="work-title">{{ copy.workTitle }}</h2>
+            <p>{{ copy.workIntro }}</p>
+          </div>
+        </div>
 
-          <div class="project-list">
+        <div class="project-list project-list-limited">
             <article
-              v-for="(project, index) in allProjects"
+              v-for="(project, index) in projects"
               :key="project.name"
               class="project-item"
             >
@@ -118,18 +117,98 @@
                 </div>
               </div>
             </article>
-          </div>
-          </div>
+        </div>
+      </section>
 
-          <aside class="highlights-column" id="highlights" :aria-labelledby="`highlights-${locale}`">
-            <div class="compact-heading">
-              <p class="section-number">02</p>
+      <section class="section project-section" id="experience" aria-labelledby="experience-title">
+        <div class="section-heading">
+          <p class="section-number">02</p>
+          <div>
+            <h2 id="experience-title">{{ copy.clientsTitle }}</h2>
+            <p>{{ copy.clientsIntro }}</p>
+          </div>
+        </div>
+
+        <div class="project-list project-list-limited">
+          <article
+            v-for="(project, index) in clientProjects"
+            :key="project.name"
+            class="project-item"
+          >
+            <button
+              class="project-trigger"
+              type="button"
+              :aria-expanded="expandedClientIndex === index"
+              :aria-controls="`client-details-${index}`"
+              @click="toggleClient(index)"
+            >
+              <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
+
+              <span class="project-thumbnail" :class="project.previewClass">
+                <img
+                  :src="project.image"
+                  :alt="localize(project.alt)"
+                  :class="project.imageFit === 'contain' ? 'contain' : ''"
+                  loading="lazy"
+                />
+              </span>
+
+              <span class="project-copy">
+                <span class="project-title-row">
+                  <strong>{{ project.name }}</strong>
+                  <span>{{ localize(project.meta) }}</span>
+                </span>
+                <span class="project-summary">{{ localize(project.short) }}</span>
+              </span>
+
+              <span class="project-toggle" aria-hidden="true">{{ expandedClientIndex === index ? '−' : '+' }}</span>
+            </button>
+
+            <div
+              :id="`client-details-${index}`"
+              class="project-disclosure"
+              :class="{ open: expandedClientIndex === index }"
+            >
               <div>
-                <h2 :id="`highlights-${locale}`">{{ copy.highlights }}</h2>
-                <p>{{ copy.backgroundIntro }}</p>
+                <div class="project-detail-panel">
+                  <p class="project-description">{{ localize(project.description) }}</p>
+                  <p class="project-detail">{{ localize(project.detail) }}</p>
+                  <div class="project-detail-footer">
+                    <span class="project-tags" :aria-label="copy.technologies">
+                      <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+                    </span>
+                    <a
+                      class="project-cta"
+                      :href="project.href"
+                      target="_blank"
+                      rel="noreferrer"
+                      :aria-label="`${project.name} — ${copy.openProject}`"
+                    >{{ copy.visitProject }} <span aria-hidden="true">↗</span></a>
+                  </div>
+                </div>
               </div>
             </div>
+          </article>
+        </div>
+      </section>
 
+      <section class="section about-section" id="background" aria-labelledby="background-title">
+        <div class="section-heading">
+          <p class="section-number">03</p>
+          <div>
+            <h2 id="background-title">{{ copy.backgroundTitle }}</h2>
+            <p>{{ copy.backgroundIntro }}</p>
+          </div>
+        </div>
+
+        <div class="background-grid">
+          <div class="about-copy">
+            <p v-html="copy.aboutSystems"></p>
+            <p>{{ copy.aboutVisual }}</p>
+          </div>
+
+          <aside class="highlights" :aria-labelledby="`highlights-${locale}`">
+            <p class="highlights-label" :id="`highlights-${locale}`">{{ copy.highlights }}</p>
             <div class="highlights-list">
               <article v-for="(highlight, index) in highlights" :key="highlight.title" class="highlight-item">
                 <button
@@ -162,7 +241,7 @@
       </section>
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <p class="terminal-note"><span>03</span> {{ copy.collaboration }}</p>
+        <p class="terminal-note"><span>04</span> {{ copy.collaboration }}</p>
         <h2 id="contact-title">{{ copy.contactTitle }}</h2>
         <p>{{ copy.contactIntro }}</p>
         <a class="email-link" href="mailto:sydjbrl@gmail.com">
@@ -224,11 +303,13 @@ const translations = {
     primaryNavigation: 'Navigation principale',
     navWork: 'Projets sélectionnés',
     navClients: 'Missions client',
-    navBackground: 'Parcours',
+    navBackground: 'À propos',
     navContact: 'Contact',
-    workTitle: 'Projets',
-    workIntro: 'Produits personnels et missions client. Cliquez pour ouvrir le détail.',
-    backgroundTitle: 'Parcours',
+    workTitle: 'Projets sélectionnés',
+    workIntro: 'Des produits indépendants menés d’une idée ou d’une contrainte jusqu’à un système fonctionnel.',
+    clientsTitle: 'Missions client',
+    clientsIntro: 'Des collaborations où les décisions produit et la réalisation technique se rejoignent.',
+    backgroundTitle: 'À propos',
     backgroundIntro: 'Fondamentaux d’ingénierie, pratique visuelle et transmission.',
     aboutSystems:
       'Formé à <strong>42 Paris</strong> et en génie électrique et informatique industrielle à <strong>l’UVSQ</strong>, j’aborde les produits comme des systèmes : comprendre les pièces, retirer le superflu, puis rendre l’ensemble observable et fiable.',
@@ -260,11 +341,13 @@ const translations = {
     primaryNavigation: 'Primary navigation',
     navWork: 'Selected work',
     navClients: 'Client work',
-    navBackground: 'Background',
+    navBackground: 'About me',
     navContact: 'Contact',
-    workTitle: 'Projects',
-    workIntro: 'Independent products and client work. Click to open the details.',
-    backgroundTitle: 'Background',
+    workTitle: 'Selected work',
+    workIntro: 'Independent products taken from an idea or constraint to a working system.',
+    clientsTitle: 'Client work',
+    clientsIntro: 'Collaborations where product decisions and technical implementation meet.',
+    backgroundTitle: 'About me',
     backgroundIntro: 'Engineering fundamentals, visual practice and knowledge sharing.',
     aboutSystems:
       'I trained at <strong>42 Paris</strong> and studied electrical engineering and industrial computing at <strong>UVSQ</strong>. I still approach products as systems: understand the moving parts, remove what is unnecessary, then make the whole dependable and observable.',
@@ -448,12 +531,16 @@ const highlights = [
   },
 ];
 
-const allProjects = [...projects, ...clientProjects];
 const expandedProjectIndex = ref<number | null>(null);
+const expandedClientIndex = ref<number | null>(null);
 const expandedHighlightIndex = ref<number | null>(null);
 
 const toggleProject = (index: number) => {
   expandedProjectIndex.value = expandedProjectIndex.value === index ? null : index;
+};
+
+const toggleClient = (index: number) => {
+  expandedClientIndex.value = expandedClientIndex.value === index ? null : index;
 };
 
 const toggleHighlight = (index: number) => {

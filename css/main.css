@@ -223,9 +223,10 @@ h1 {
 }
 
 .primary-nav {
-  width: fit-content;
-  display: grid;
-  gap: 5px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px clamp(28px, 4vw, 58px);
   margin-top: 0;
 }
 
@@ -234,7 +235,7 @@ h1 {
   gap: 8px;
   align-items: baseline;
   width: fit-content;
-  font-size: 15px;
+  font-size: clamp(16px, 1.45vw, 21px);
   font-weight: 690;
   letter-spacing: -0.025em;
   transition: color 160ms ease;
@@ -254,33 +255,17 @@ h1 {
 }
 
 .section {
-  padding: 52px 0 64px;
+  padding: 78px 0 92px;
   border-bottom: 1px solid var(--ink);
   scroll-margin-top: 30px;
 }
 
-.work-section {
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-}
-
-.work-layout {
-  width: 100%;
+.section-heading {
   display: grid;
-  grid-template-columns: minmax(0, 0.98fr) minmax(350px, 0.78fr);
-  gap: clamp(54px, 7vw, 112px);
+  grid-template-columns: minmax(70px, 0.18fr) 1fr;
+  gap: 24px;
   align-items: start;
-}
-
-.compact-heading {
-  display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
-  min-height: 76px;
-  margin-bottom: 16px;
+  margin-bottom: 42px;
 }
 
 .section-number {
@@ -290,21 +275,25 @@ h1 {
   font-size: 16px;
 }
 
-.compact-heading h2 {
+.section-heading h2 {
   margin: 0;
-  font-size: clamp(28px, 2.7vw, 42px);
-  font-weight: 650;
-  letter-spacing: -0.055em;
-  line-height: 1;
+  font-size: clamp(42px, 5.4vw, 78px);
+  font-weight: 560;
+  letter-spacing: -0.065em;
+  line-height: 0.96;
 }
 
-.compact-heading div > p {
-  width: min(100%, 520px);
-  margin: 8px 0 0;
+.section-heading div > p {
+  width: min(100%, 660px);
+  margin: 14px 0 0;
   color: var(--muted);
-  font-size: 11px;
-  line-height: 1.4;
-  letter-spacing: -0.012em;
+  font-size: 15px;
+  line-height: 1.44;
+  letter-spacing: -0.022em;
+}
+
+.project-list-limited {
+  width: min(100%, 1120px);
 }
 
 .project-list {
@@ -514,12 +503,45 @@ h1 {
   border-color: var(--accent);
 }
 
+.background-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: clamp(62px, 8vw, 124px);
+  align-items: start;
+}
+
+.about-copy {
+  max-width: 780px;
+}
+
+.about-copy p {
+  margin: 0 0 26px;
+  font-size: clamp(22px, 2.35vw, 36px);
+  letter-spacing: -0.046em;
+  line-height: 1.16;
+}
+
+.about-copy strong {
+  font-weight: 680;
+}
+
+.highlights-label {
+  margin: 0;
+  padding: 2px 0 15px;
+  border-bottom: 1px solid var(--line);
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .highlight-item {
   border-bottom: 1px solid var(--line);
 }
 
 .highlights-list {
-  border-top: 1px solid var(--line);
+  border-top: 0;
 }
 
 .highlight-marker {
@@ -708,9 +730,9 @@ h1 {
     padding-inline: 19px;
   }
 
-  .work-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
-    gap: 38px;
+  .background-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
   }
 }
 
@@ -753,30 +775,35 @@ h1 {
   }
 
   .primary-nav {
-    gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+  }
+
+  .primary-nav a {
+    font-size: 14px;
   }
 
   .section {
     padding: 48px 0 62px;
   }
 
-  .work-section {
-    min-height: auto;
+  .section-heading {
     display: block;
+    margin-bottom: 30px;
   }
 
-  .work-layout {
-    grid-template-columns: 1fr;
-    gap: 54px;
+  .section-number {
+    margin-bottom: 10px;
   }
 
-  .compact-heading {
-    min-height: 68px;
-    margin-bottom: 12px;
+  .section-heading h2 {
+    font-size: clamp(41px, 13vw, 64px);
   }
 
-  .compact-heading h2 {
-    font-size: 31px;
+  .section-heading div > p {
+    margin-top: 10px;
+    font-size: 13px;
   }
 
   .project-trigger {
@@ -835,6 +862,10 @@ h1 {
 
   .project-cta {
     margin-top: 12px;
+  }
+
+  .about-copy p {
+    font-size: clamp(22px, 7vw, 32px);
   }
 
   .contact-section {
