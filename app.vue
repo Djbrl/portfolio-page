@@ -161,7 +161,7 @@ type PortfolioProject = {
 };
 
 const route = useRoute();
-const locale = ref<'fr' | 'en'>(route.query.lang === 'en' ? 'en' : 'fr');
+const locale = ref<'fr' | 'en'>(route.query.lang === 'fr' ? 'fr' : 'en');
 const isFrench = computed(() => locale.value === 'fr');
 const localize = (value: LocalizedText) => value[locale.value];
 
@@ -375,7 +375,7 @@ const switchLanguage = () => {
   locale.value = locale.value === 'fr' ? 'en' : 'fr';
 
   const url = new URL(window.location.href);
-  if (locale.value === 'en') url.searchParams.set('lang', 'en');
+  if (locale.value === 'fr') url.searchParams.set('lang', 'fr');
   else url.searchParams.delete('lang');
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 };
@@ -395,9 +395,7 @@ const toggleTheme = () => {
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('portfolio-theme');
-  isDark.value = savedTheme
-    ? savedTheme === 'dark'
-    : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  isDark.value = savedTheme === 'dark';
   applyTheme();
 
   if (!workSection.value) return;
@@ -425,12 +423,12 @@ useHead(() => ({
   title: isFrench.value
     ? 'Djibril Sy | Ingénieur produit'
     : 'Djibril Sy | Product Engineer',
-  link: [{ rel: 'canonical', href: 'https://djibrilsy.vercel.app/' }],
+  link: [{ rel: 'canonical', href: 'https://djbrl.vercel.app/' }],
   meta: [
     { name: 'description', content: copy.value.description },
     { name: 'theme-color', content: isDark.value ? '#10100f' : '#f1f0ec' },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://djibrilsy.vercel.app/' },
+    { property: 'og:url', content: 'https://djbrl.vercel.app/' },
     {
       property: 'og:title',
       content: isFrench.value
@@ -438,7 +436,7 @@ useHead(() => ({
         : 'Djibril Sy | Product Engineer',
     },
     { property: 'og:description', content: copy.value.socialDescription },
-    { property: 'og:image', content: 'https://djibrilsy.vercel.app/og.png' },
+    { property: 'og:image', content: 'https://djbrl.vercel.app/og.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
     {
       name: 'twitter:title',
@@ -447,7 +445,7 @@ useHead(() => ({
         : 'Djibril Sy | Product Engineer',
     },
     { name: 'twitter:description', content: copy.value.socialDescription },
-    { name: 'twitter:image', content: 'https://djibrilsy.vercel.app/og.png' },
+    { name: 'twitter:image', content: 'https://djbrl.vercel.app/og.png' },
   ],
   htmlAttrs: { lang: locale.value },
 }));
