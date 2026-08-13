@@ -1,5 +1,7 @@
 import { access, writeFile } from 'node:fs/promises';
 
+if (process.env.VERCEL) process.exit(0);
+
 await access(new URL('../dist/server/index.js', import.meta.url));
 
 const wranglerConfig = {

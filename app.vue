@@ -40,14 +40,13 @@
 
       <nav class="primary-nav" :aria-label="copy.primaryNavigation">
         <a href="#work">{{ copy.navWork }}</a>
-        <a href="#experience">{{ copy.navClients }}</a>
         <a href="#background">{{ copy.navBackground }}</a>
         <a href="#contact">{{ copy.navContact }}</a>
       </nav>
     </header>
 
     <main id="main">
-      <section class="section project-section" id="work" aria-labelledby="work-title">
+      <section ref="workSection" class="section project-section" id="work" aria-labelledby="work-title">
         <div class="section-heading">
           <p class="section-number">01</p>
           <div>
@@ -56,15 +55,20 @@
           </div>
         </div>
 
-        <div class="project-index">
-          <div class="project-list">
+        <div
+          class="work-grid"
+          :class="{ 'motion-ready': workMotionReady, 'in-view': workVisible }"
+        >
+          <div
+            v-for="(column, columnIndex) in projectColumns"
+            :key="columnIndex"
+            class="project-list work-column"
+            :class="columnIndex === 0 ? 'work-column-left' : 'work-column-right'"
+          >
             <article
-              v-for="(project, index) in projects"
+              v-for="(project, index) in column"
               :key="project.name"
               class="project-item"
-              :class="{ active: activeProjectIndex === index }"
-              @mouseenter="activeProjectIndex = index"
-              @focusin="activeProjectIndex = index"
             >
               <a
                 class="project-link"
@@ -73,7 +77,7 @@
                 rel="noreferrer"
                 :aria-label="`${project.name}, ${copy.openProject}`"
               >
-                <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
+                <span class="project-number">{{ String(columnIndex * 3 + index + 1).padStart(2, '0') }}</span>
 
                 <span class="project-copy">
                   <span class="project-title-row">
@@ -88,108 +92,14 @@
 
                 <span class="project-arrow" aria-hidden="true">↗</span>
               </a>
-
-              <figure class="mobile-project-media" :class="project.previewClass">
-                <DotSolid
-                  v-if="project.media === 'dot-solid'"
-                  :label="localize(project.alt)"
-                />
-                <img
-                  v-else
-                  :src="project.image"
-                  :alt="localize(project.alt)"
-                  :class="project.imageFit === 'contain' ? 'contain' : ''"
-                  loading="lazy"
-                />
-              </figure>
             </article>
           </div>
-
-          <aside class="project-preview" aria-live="polite">
-            <figure class="preview-window">
-              <div class="preview-toolbar" aria-hidden="true"><p>{{ activeProject.domain }}</p></div>
-              <div class="preview-media" :class="activeProject.previewClass">
-                <DotSolid
-                  v-if="activeProject.media === 'dot-solid'"
-                  :label="localize(activeProject.alt)"
-                />
-                <img
-                  v-else
-                  :key="activeProject.image"
-                  :src="activeProject.image"
-                  :alt="localize(activeProject.alt)"
-                  :class="activeProject.imageFit === 'contain' ? 'contain' : ''"
-                />
-              </div>
-              <figcaption><span>{{ localize(activeProject.short) }}</span><span>{{ activeProject.year }}</span></figcaption>
-            </figure>
-          </aside>
-        </div>
-      </section>
-
-      <section class="section project-section" id="experience" aria-labelledby="experience-title">
-        <div class="section-heading">
-          <p class="section-number">02</p>
-          <div>
-            <h2 id="experience-title">{{ copy.clientsTitle }}</h2>
-            <p>{{ copy.clientsIntro }}</p>
-          </div>
-        </div>
-
-        <div class="project-index client-index">
-          <div class="project-list">
-          <article
-            v-for="(project, index) in clientProjects"
-            :key="project.name"
-            class="project-item"
-            :class="{ active: activeClientIndex === index }"
-            @mouseenter="activeClientIndex = index"
-            @focusin="activeClientIndex = index"
-          >
-            <a
-              class="project-link"
-              :href="project.href"
-              target="_blank"
-              rel="noreferrer"
-              :aria-label="`${project.name}, ${copy.openProject}`"
-            >
-              <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
-
-              <span class="project-copy">
-                <span class="project-title-row">
-                  <strong>{{ project.name }}</strong>
-                  <span>{{ localize(project.meta) }}</span>
-                </span>
-                <span class="project-description">{{ localize(project.description) }}</span>
-                <span class="project-tags" :aria-label="copy.technologies">
-                  <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
-                </span>
-              </span>
-
-              <span class="project-arrow" aria-hidden="true">↗</span>
-            </a>
-
-            <figure class="mobile-project-media" :class="project.previewClass">
-              <img :src="project.image" :alt="localize(project.alt)" loading="lazy" />
-            </figure>
-          </article>
-          </div>
-
-          <aside class="project-preview" aria-live="polite">
-            <figure class="preview-window">
-              <div class="preview-toolbar" aria-hidden="true"><p>{{ activeClient.domain }}</p></div>
-              <div class="preview-media preview-top">
-                <img :key="activeClient.image" :src="activeClient.image" :alt="localize(activeClient.alt)" />
-              </div>
-              <figcaption><span>{{ localize(activeClient.short) }}</span><span>{{ activeClient.year }}</span></figcaption>
-            </figure>
-          </aside>
         </div>
       </section>
 
       <section class="section about-section" id="background" aria-labelledby="background-title">
         <div class="section-heading">
-          <p class="section-number">03</p>
+          <p class="section-number">02</p>
           <div>
             <h2 id="background-title">{{ copy.backgroundTitle }}</h2>
             <p>{{ copy.backgroundIntro }}</p>
@@ -205,7 +115,7 @@
       </section>
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
-        <p class="terminal-note"><span>04</span> {{ copy.collaboration }}</p>
+        <p class="terminal-note"><span>03</span> {{ copy.collaboration }}</p>
         <h2 id="contact-title">{{ copy.contactTitle }}</h2>
         <p>{{ copy.contactIntro }}</p>
         <a class="email-link" href="mailto:sydjbrl@gmail.com">
@@ -229,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 type LocalizedText = { fr: string; en: string };
 
@@ -267,21 +177,18 @@ const translations = {
       'Je conçois et mets en production des produits web, mobiles et desktop, du premier modèle au système exploitable. Mon travail se situe à l’intersection du produit, de l’architecture backend et d’interfaces qui rendent les systèmes complexes lisibles.',
     primaryNavigation: 'Navigation principale',
     navWork: 'Projets sélectionnés',
-    navClients: 'Missions client',
     navBackground: 'À propos',
     navContact: 'Contact',
     workTitle: 'Projets sélectionnés',
-    workIntro: 'Des produits indépendants menés d’une idée ou d’une contrainte jusqu’à un système fonctionnel.',
-    clientsTitle: 'Missions client',
-    clientsIntro: 'Des collaborations où les décisions produit et la réalisation technique se rejoignent.',
+    workIntro: 'Des produits indépendants et des plateformes client menés d’une idée ou d’une contrainte jusqu’à un système fonctionnel.',
     backgroundTitle: 'À propos',
     backgroundIntro: 'Fondamentaux d’ingénierie, pratique visuelle et transmission.',
     aboutSystems:
       'Formé à <strong>42 Paris</strong> et en génie électrique et informatique industrielle à <strong>l’UVSQ</strong>, j’aborde les produits comme des systèmes : comprendre les pièces, retirer le superflu, puis rendre l’ensemble observable et fiable.',
     aboutVisual:
-      'Je travaille aussi en développement visuel pour le jeu et l’édition. Cette pratique nourrit mon travail d’ingénieur : composition, hiérarchie et clarté comptent autant dans une interface que dans une image.',
+      'Je travaille aussi en développement visuel dans le milieu du jeu vidéo et de l’édition, ayant travaillé pour des clients tels que QuasiReal Publishing, Wolfpack Games Studio et Riot Games.',
     collaboration: 'nouvelle-collaboration',
-    contactTitle: 'Un problème utile à résoudre ?',
+    contactTitle: 'Un problème à résoudre ?',
     contactIntro:
       'Je suis disponible pour des créations produit, des modernisations et des intégrations, surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
     contactNavigation: 'Liens de contact et profils',
@@ -304,21 +211,18 @@ const translations = {
       'I design and ship web, mobile and desktop products from first model to production. My work sits between product thinking, backend architecture and interfaces that make complicated systems feel straightforward.',
     primaryNavigation: 'Primary navigation',
     navWork: 'Selected work',
-    navClients: 'Client work',
     navBackground: 'About me',
     navContact: 'Contact',
     workTitle: 'Selected work',
-    workIntro: 'Independent products taken from an idea or constraint to a working system.',
-    clientsTitle: 'Client work',
-    clientsIntro: 'Collaborations where product decisions and technical implementation meet.',
+    workIntro: 'Independent products and client platforms taken from an idea or constraint to a working system.',
     backgroundTitle: 'About me',
     backgroundIntro: 'Engineering fundamentals, visual practice and knowledge sharing.',
     aboutSystems:
       'I trained at <strong>42 Paris</strong> and studied electrical engineering and industrial computing at <strong>UVSQ</strong>. I still approach products as systems: understand the moving parts, remove what is unnecessary, then make the whole dependable and observable.',
     aboutVisual:
-      'I also work in visual development for games and publishing. That practice informs my engineering: composition, hierarchy and clarity matter as much in an interface as they do in an image.',
+      'I also work in visual development for video games and publishing, with clients including QuasiReal Publishing, Wolfpack Games Studio and Riot Games.',
     collaboration: 'new-collaboration',
-    contactTitle: 'Have a useful problem?',
+    contactTitle: 'Have a problem to solve?',
     contactIntro:
       'I’m available for product builds, modernization work and integrations, especially when the brief is still messy and someone needs to turn it into a working system.',
     contactNavigation: 'Contact and profile links',
@@ -369,7 +273,7 @@ const projects: PortfolioProject[] = [
       en: 'The product combines visual composition, public sharing and community workflows in a lightweight experience built around League of Legends players.',
     },
     tags: ['Nuxt', 'Vue 3', 'Discord', 'Supabase'],
-    href: 'https://github.com/Djbrl/skindiff',
+    href: 'https://skindiff.lol',
     image: '/work/skindiff.png',
     alt: { fr: 'Visuel du lookbook social SkinDiff', en: 'SkinDiff social lookbook artwork' },
     domain: 'skindiff / compare-collections',
@@ -424,8 +328,8 @@ const clientProjects: PortfolioProject[] = [
     year: '2026',
     short: { fr: 'travail & entrepreneuriat au Sénégal', en: 'work & entrepreneurship in Senegal' },
     description: {
-      fr: 'Le portail professionnel de Bount-bi qui rend visibles les métiers, savoir-faire et opportunités au Sénégal, avec annuaire, profils, recherche, favoris, contenus, appels d’offres et financements sur le web et mobile.',
-      en: 'Bount-bi’s professional portal for making skills, services and opportunities more visible in Senegal, combining a directory, profiles, search, saved professionals, editorial content, tenders and funding across web and mobile.',
+      fr: 'Refonte complète de TousLesPros, le portail professionnel de Bount-bi qui rend visibles les métiers, savoir-faire et opportunités au Sénégal, avec annuaire, profils, recherche, favoris, contenus, appels d’offres et financements sur le web et mobile.',
+      en: 'A complete rebuild of TousLesPros, Bount-bi’s professional portal for making skills, services and opportunities more visible in Senegal, combining a directory, profiles, search, saved professionals, editorial content, tenders and funding across web and mobile.',
     },
     detail: {
       fr: 'Le même écosystème relie recherche d’opportunités, profils, favoris et contenus éditoriaux sur le web comme sur iOS et Android.',
@@ -460,10 +364,11 @@ const clientProjects: PortfolioProject[] = [
   },
 ];
 
-const activeProjectIndex = ref(0);
-const activeClientIndex = ref(0);
-const activeProject = computed(() => projects[activeProjectIndex.value]);
-const activeClient = computed(() => clientProjects[activeClientIndex.value]);
+const projectColumns = [projects, [clientProjects[0], clientProjects[2], clientProjects[1]]];
+const workSection = ref<HTMLElement | null>(null);
+const workVisible = ref(false);
+const workMotionReady = ref(false);
+let workObserver: IntersectionObserver | null = null;
 
 const switchLanguage = () => {
   if (!import.meta.client) return;
@@ -494,7 +399,27 @@ onMounted(() => {
     ? savedTheme === 'dark'
     : window.matchMedia('(prefers-color-scheme: dark)').matches;
   applyTheme();
+
+  if (!workSection.value) return;
+
+  workMotionReady.value = true;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    workVisible.value = true;
+    return;
+  }
+
+  workObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry?.isIntersecting) return;
+      workVisible.value = true;
+      workObserver?.disconnect();
+    },
+    { threshold: 0.14 },
+  );
+  workObserver.observe(workSection.value);
 });
+
+onBeforeUnmount(() => workObserver?.disconnect());
 
 useHead(() => ({
   title: isFrench.value

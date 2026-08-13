@@ -16,7 +16,12 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   css: ['~/css/main.css'],
   // Cloudflare's worker output is a deployment concern; local dev uses Nitro's normal dev server.
-  nitro: process.env.NODE_ENV === 'production' ? productionNitro : {},
+  nitro:
+    process.env.NODE_ENV !== 'production'
+      ? {}
+      : process.env.VERCEL
+        ? { preset: 'vercel' }
+        : productionNitro,
   postcss: {
     plugins: {
       tailwindcss: {},
