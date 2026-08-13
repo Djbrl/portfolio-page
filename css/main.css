@@ -113,7 +113,7 @@ button {
 .hero-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 15px;
   min-height: 30px;
 }
@@ -503,15 +503,166 @@ h1 {
   border-color: var(--accent);
 }
 
-.background-grid {
+.project-index {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: clamp(62px, 8vw, 124px);
+  grid-template-columns: minmax(0, 1.06fr) minmax(360px, 0.94fr);
+  gap: clamp(42px, 5vw, 76px);
   align-items: start;
 }
 
+.project-link {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 22px;
+  gap: 15px;
+  align-items: start;
+  padding: 24px 0 25px;
+  transition: color 180ms ease, padding 180ms ease;
+}
+
+.project-link:hover,
+.project-link:focus-visible,
+.project-item.active .project-link {
+  color: var(--accent);
+}
+
+.project-link:hover,
+.project-link:focus-visible {
+  padding-left: 8px;
+}
+
+.project-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+
+.project-link .project-number {
+  margin-top: 5px;
+  font-size: 10px;
+}
+
+.project-link .project-title-row {
+  gap: 18px;
+}
+
+.project-link .project-title-row strong {
+  font-size: clamp(23px, 2.2vw, 34px);
+  font-weight: 680;
+  letter-spacing: -0.052em;
+  line-height: 1;
+}
+
+.project-link .project-title-row > span {
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+.project-link .project-description {
+  max-width: 680px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.project-link .project-tags {
+  gap: 6px 12px;
+  margin-top: 15px;
+  font-size: 9px;
+}
+
+.project-arrow {
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.project-link:hover .project-arrow,
+.project-link:focus-visible .project-arrow {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}
+
+.project-preview {
+  position: sticky;
+  top: 24px;
+}
+
+.preview-window {
+  margin: 0;
+  border: 1px solid var(--ink);
+  background: var(--paper-strong);
+}
+
+.preview-toolbar {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.preview-toolbar p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-media {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #deddd7;
+}
+
+.preview-media img,
+.mobile-project-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.preview-media img.contain,
+.mobile-project-media img.contain {
+  padding: 18%;
+  object-fit: contain;
+}
+
+.preview-media.preview-top img,
+.mobile-project-media.preview-top img {
+  object-position: center top;
+}
+
+.preview-media.preview-electric,
+.mobile-project-media.preview-electric {
+  background: var(--terminal);
+}
+
+.preview-window figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px;
+  border-top: 1px solid var(--ink);
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.mobile-project-media {
+  display: none;
+}
+
+.background-grid {
+  display: block;
+}
+
 .about-copy {
-  max-width: 780px;
+  max-width: 1080px;
 }
 
 .about-copy p {
@@ -734,6 +885,23 @@ h1 {
     grid-template-columns: 1fr;
     gap: 48px;
   }
+
+  .project-index {
+    display: block;
+  }
+
+  .project-preview {
+    display: none;
+  }
+
+  .mobile-project-media {
+    aspect-ratio: 16 / 9;
+    display: block;
+    overflow: hidden;
+    margin: 0 0 22px 49px;
+    border: 1px solid var(--line);
+    background: #deddd7;
+  }
 }
 
 @media (max-width: 720px) {
@@ -862,6 +1030,39 @@ h1 {
 
   .project-cta {
     margin-top: 12px;
+  }
+
+  .project-link {
+    grid-template-columns: 28px minmax(0, 1fr) 18px;
+    gap: 10px;
+    padding: 20px 0;
+  }
+
+  .project-link:hover,
+  .project-link:focus-visible {
+    padding-left: 0;
+  }
+
+  .project-link .project-title-row {
+    display: block;
+  }
+
+  .project-link .project-title-row strong {
+    display: block;
+    font-size: 23px;
+  }
+
+  .project-link .project-title-row > span {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .project-link .project-description {
+    font-size: 13px;
+  }
+
+  .mobile-project-media {
+    margin-left: 38px;
   }
 
   .about-copy p {

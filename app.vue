@@ -39,10 +39,10 @@
       <p class="intro-copy">{{ copy.intro }}</p>
 
       <nav class="primary-nav" :aria-label="copy.primaryNavigation">
-        <a href="#work"><span>01</span>{{ copy.navWork }}</a>
-        <a href="#experience"><span>02</span>{{ copy.navClients }}</a>
-        <a href="#background"><span>03</span>{{ copy.navBackground }}</a>
-        <a href="#contact"><span>04</span>{{ copy.navContact }}</a>
+        <a href="#work">{{ copy.navWork }}</a>
+        <a href="#experience">{{ copy.navClients }}</a>
+        <a href="#background">{{ copy.navBackground }}</a>
+        <a href="#contact">{{ copy.navContact }}</a>
       </nav>
     </header>
 
@@ -56,67 +56,54 @@
           </div>
         </div>
 
-        <div class="project-list project-list-limited">
+        <div class="project-index">
+          <div class="project-list">
             <article
               v-for="(project, index) in projects"
               :key="project.name"
               class="project-item"
+              :class="{ active: activeProjectIndex === index }"
+              @mouseenter="activeProjectIndex = index"
+              @focusin="activeProjectIndex = index"
             >
-              <button
-                class="project-trigger"
-                type="button"
-                :aria-expanded="expandedProjectIndex === index"
-                :aria-controls="`project-details-${index}`"
-                @click="toggleProject(index)"
+              <a
+                class="project-link"
+                :href="project.href"
+                target="_blank"
+                rel="noreferrer"
+                :aria-label="`${project.name}, ${copy.openProject}`"
               >
                 <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
-
-                <span class="project-thumbnail" :class="project.previewClass">
-                  <img
-                    :src="project.image"
-                    :alt="localize(project.alt)"
-                    :class="project.imageFit === 'contain' ? 'contain' : ''"
-                    loading="lazy"
-                  />
-                </span>
 
                 <span class="project-copy">
                   <span class="project-title-row">
                     <strong>{{ project.name }}</strong>
                     <span>{{ localize(project.meta) }}</span>
                   </span>
-                  <span class="project-summary">{{ localize(project.short) }}</span>
+                  <span class="project-description">{{ localize(project.description) }}</span>
+                  <span class="project-tags" :aria-label="copy.technologies">
+                    <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+                  </span>
                 </span>
 
-                <span class="project-toggle" aria-hidden="true">{{ expandedProjectIndex === index ? '−' : '+' }}</span>
-              </button>
+                <span class="project-arrow" aria-hidden="true">↗</span>
+              </a>
 
-              <div
-                :id="`project-details-${index}`"
-                class="project-disclosure"
-                :class="{ open: expandedProjectIndex === index }"
-              >
-                <div>
-                  <div class="project-detail-panel">
-                    <p class="project-description">{{ localize(project.description) }}</p>
-                    <p class="project-detail">{{ localize(project.detail) }}</p>
-                    <div class="project-detail-footer">
-                      <span class="project-tags" :aria-label="copy.technologies">
-                        <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
-                      </span>
-                      <a
-                        class="project-cta"
-                        :href="project.href"
-                        target="_blank"
-                        rel="noreferrer"
-                        :aria-label="`${project.name} — ${copy.openProject}`"
-                      >{{ copy.visitProject }} <span aria-hidden="true">↗</span></a>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+              <figure class="mobile-project-media" :class="project.previewClass">
+                <img :src="project.image" :alt="localize(project.alt)" :class="project.imageFit === 'contain' ? 'contain' : ''" loading="lazy" />
+              </figure>
             </article>
+          </div>
+
+          <aside class="project-preview" aria-live="polite">
+            <figure class="preview-window">
+              <div class="preview-toolbar" aria-hidden="true"><p>{{ activeProject.domain }}</p></div>
+              <div class="preview-media" :class="activeProject.previewClass">
+                <img :key="activeProject.image" :src="activeProject.image" :alt="localize(activeProject.alt)" :class="activeProject.imageFit === 'contain' ? 'contain' : ''" />
+              </div>
+              <figcaption><span>{{ localize(activeProject.short) }}</span><span>{{ activeProject.year }}</span></figcaption>
+            </figure>
+          </aside>
         </div>
       </section>
 
@@ -129,66 +116,54 @@
           </div>
         </div>
 
-        <div class="project-list project-list-limited">
+        <div class="project-index client-index">
+          <div class="project-list">
           <article
             v-for="(project, index) in clientProjects"
             :key="project.name"
             class="project-item"
+            :class="{ active: activeClientIndex === index }"
+            @mouseenter="activeClientIndex = index"
+            @focusin="activeClientIndex = index"
           >
-            <button
-              class="project-trigger"
-              type="button"
-              :aria-expanded="expandedClientIndex === index"
-              :aria-controls="`client-details-${index}`"
-              @click="toggleClient(index)"
+            <a
+              class="project-link"
+              :href="project.href"
+              target="_blank"
+              rel="noreferrer"
+              :aria-label="`${project.name}, ${copy.openProject}`"
             >
               <span class="project-number">{{ String(index + 1).padStart(2, '0') }}</span>
-
-              <span class="project-thumbnail" :class="project.previewClass">
-                <img
-                  :src="project.image"
-                  :alt="localize(project.alt)"
-                  :class="project.imageFit === 'contain' ? 'contain' : ''"
-                  loading="lazy"
-                />
-              </span>
 
               <span class="project-copy">
                 <span class="project-title-row">
                   <strong>{{ project.name }}</strong>
                   <span>{{ localize(project.meta) }}</span>
                 </span>
-                <span class="project-summary">{{ localize(project.short) }}</span>
+                <span class="project-description">{{ localize(project.description) }}</span>
+                <span class="project-tags" :aria-label="copy.technologies">
+                  <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
+                </span>
               </span>
 
-              <span class="project-toggle" aria-hidden="true">{{ expandedClientIndex === index ? '−' : '+' }}</span>
-            </button>
+              <span class="project-arrow" aria-hidden="true">↗</span>
+            </a>
 
-            <div
-              :id="`client-details-${index}`"
-              class="project-disclosure"
-              :class="{ open: expandedClientIndex === index }"
-            >
-              <div>
-                <div class="project-detail-panel">
-                  <p class="project-description">{{ localize(project.description) }}</p>
-                  <p class="project-detail">{{ localize(project.detail) }}</p>
-                  <div class="project-detail-footer">
-                    <span class="project-tags" :aria-label="copy.technologies">
-                      <span v-for="tag in project.tags" :key="tag">{{ tag }}</span>
-                    </span>
-                    <a
-                      class="project-cta"
-                      :href="project.href"
-                      target="_blank"
-                      rel="noreferrer"
-                      :aria-label="`${project.name} — ${copy.openProject}`"
-                    >{{ copy.visitProject }} <span aria-hidden="true">↗</span></a>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <figure class="mobile-project-media" :class="project.previewClass">
+              <img :src="project.image" :alt="localize(project.alt)" loading="lazy" />
+            </figure>
           </article>
+          </div>
+
+          <aside class="project-preview" aria-live="polite">
+            <figure class="preview-window">
+              <div class="preview-toolbar" aria-hidden="true"><p>{{ activeClient.domain }}</p></div>
+              <div class="preview-media preview-top">
+                <img :key="activeClient.image" :src="activeClient.image" :alt="localize(activeClient.alt)" />
+              </div>
+              <figcaption><span>{{ localize(activeClient.short) }}</span><span>{{ activeClient.year }}</span></figcaption>
+            </figure>
+          </aside>
         </div>
       </section>
 
@@ -206,37 +181,6 @@
             <p v-html="copy.aboutSystems"></p>
             <p>{{ copy.aboutVisual }}</p>
           </div>
-
-          <aside class="highlights" :aria-labelledby="`highlights-${locale}`">
-            <p class="highlights-label" :id="`highlights-${locale}`">{{ copy.highlights }}</p>
-            <div class="highlights-list">
-              <article v-for="(highlight, index) in highlights" :key="highlight.title" class="highlight-item">
-                <button
-                  class="highlight-trigger"
-                  type="button"
-                  :aria-expanded="expandedHighlightIndex === index"
-                  :aria-controls="`highlight-details-${index}`"
-                  @click="toggleHighlight(index)"
-                >
-                  <span class="highlight-marker" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
-                  <span>
-                    <span class="highlight-meta">{{ localize(highlight.meta) }}</span>
-                    <strong>{{ highlight.title }}</strong>
-                  </span>
-                  <span class="highlight-toggle" aria-hidden="true">{{ expandedHighlightIndex === index ? '−' : '+' }}</span>
-                </button>
-                <div
-                  :id="`highlight-details-${index}`"
-                  class="highlight-disclosure"
-                  :class="{ open: expandedHighlightIndex === index }"
-                >
-                  <div>
-                    <p>{{ localize(highlight.description) }}</p>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </aside>
         </div>
       </section>
 
@@ -259,7 +203,7 @@
     <footer class="site-footer">
       <p>Djibril Sy · {{ copy.footerRole }}</p>
       <a href="#top">{{ copy.backToTop }} ↑</a>
-      <p>Dakar, Sénégal · 2026</p>
+      <p>Polytech Alumni · Remote · 2026</p>
     </footer>
   </div>
 </template>
@@ -296,7 +240,7 @@ const translations = {
     switchLanguage: 'Afficher le site en anglais',
     lightMode: 'Passer au thème clair',
     darkMode: 'Passer au thème sombre',
-    role: 'Ingénieur produit · Dakar, Sénégal',
+    role: 'Ingénieur produit · Polytech Alumni · Remote',
     focus: ['systèmes produits', 'interfaces utiles', 'outils locaux', 'plateformes', 'infrastructure & livraison'],
     intro:
       'Je conçois et mets en production des produits web, mobiles et desktop, du premier modèle au système exploitable. Mon travail se situe à l’intersection du produit, de l’architecture backend et d’interfaces qui rendent les systèmes complexes lisibles.',
@@ -315,18 +259,17 @@ const translations = {
       'Formé à <strong>42 Paris</strong> et en génie électrique et informatique industrielle à <strong>l’UVSQ</strong>, j’aborde les produits comme des systèmes : comprendre les pièces, retirer le superflu, puis rendre l’ensemble observable et fiable.',
     aboutVisual:
       'Je travaille aussi en développement visuel pour le jeu et l’édition. Cette pratique nourrit mon travail d’ingénieur : composition, hiérarchie et clarté comptent autant dans une interface que dans une image.',
-    highlights: 'Temps forts',
     collaboration: 'nouvelle-collaboration',
     contactTitle: 'Un problème utile à résoudre ?',
     contactIntro:
-      'Je suis disponible pour des créations produit, des modernisations et des intégrations — surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
+      'Je suis disponible pour des créations produit, des modernisations et des intégrations, surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
     contactNavigation: 'Liens de contact et profils',
     footerRole: 'ingénieur produit',
     backToTop: 'Retour en haut',
     openProject: 'ouvrir le projet',
     visitProject: 'Voir le projet',
     technologies: 'Technologies',
-    description: 'Portfolio de Djibril Sy, ingénieur produit à Dakar, spécialisé dans les produits web, mobiles et desktop.',
+    description: 'Portfolio de Djibril Sy, ingénieur produit spécialisé dans les produits web, mobiles et desktop.',
     socialDescription: 'Produits web, mobiles et desktop, du premier modèle jusqu’à la mise en production.',
   },
   en: {
@@ -334,7 +277,7 @@ const translations = {
     switchLanguage: 'Display the site in French',
     lightMode: 'Switch to light theme',
     darkMode: 'Switch to dark theme',
-    role: 'Product engineer · Dakar, Senegal',
+    role: 'Product engineer · Polytech Alumni · Remote',
     focus: ['product systems', 'useful interfaces', 'local tooling', 'platforms', 'infrastructure & delivery'],
     intro:
       'I design and ship web, mobile and desktop products from first model to production. My work sits between product thinking, backend architecture and interfaces that make complicated systems feel straightforward.',
@@ -353,18 +296,17 @@ const translations = {
       'I trained at <strong>42 Paris</strong> and studied electrical engineering and industrial computing at <strong>UVSQ</strong>. I still approach products as systems: understand the moving parts, remove what is unnecessary, then make the whole dependable and observable.',
     aboutVisual:
       'I also work in visual development for games and publishing. That practice informs my engineering: composition, hierarchy and clarity matter as much in an interface as they do in an image.',
-    highlights: 'Highlights',
     collaboration: 'new-collaboration',
     contactTitle: 'Have a useful problem?',
     contactIntro:
-      'I’m available for product builds, modernization work and integrations—especially when the brief is still messy and someone needs to turn it into a working system.',
+      'I’m available for product builds, modernization work and integrations, especially when the brief is still messy and someone needs to turn it into a working system.',
     contactNavigation: 'Contact and profile links',
     footerRole: 'product engineer',
     backToTop: 'Back to top',
     openProject: 'open project',
     visitProject: 'Visit project',
     technologies: 'Technologies',
-    description: 'Portfolio of Djibril Sy, a Dakar-based product engineer building web, mobile and desktop products.',
+    description: 'Portfolio of Djibril Sy, a product engineer building web, mobile and desktop products.',
     socialDescription: 'Web, mobile and desktop products shaped from first model to production.',
   },
 };
@@ -375,7 +317,7 @@ const projects: PortfolioProject[] = [
   {
     name: 'TheQuestBoard',
     meta: { fr: 'produit indépendant · en ligne', en: 'independent product · live' },
-    year: '2023—2026',
+    year: '2023–2026',
     short: { fr: 'repérage de commandes pour artistes', en: 'commission discovery for artists' },
     description: {
       fr: 'Un produit en ligne qui transforme les annonces de recrutement d’illustrateurs en tableau consultable et envoie aux artistes des alertes Discord personnalisées.',
@@ -437,7 +379,7 @@ const clientProjects: PortfolioProject[] = [
   {
     name: 'MAEIC',
     meta: { fr: 'programme exécutif · MINAPRO', en: 'executive programme · MINAPRO' },
-    year: '2025—2026',
+    year: '2025–2026',
     short: { fr: 'parcours bilingue & opérations', en: 'bilingual journey & operations' },
     description: {
       fr: 'Conception d’un parcours d’onboarding bilingue sur invitation, avec machine à états déterministe, planification des sessions, analytics et emails transactionnels.',
@@ -496,56 +438,10 @@ const clientProjects: PortfolioProject[] = [
   },
 ];
 
-const highlights = [
-  {
-    title: '42 Paris',
-    meta: { fr: '2022—2023 · informatique', en: '2022—2023 · computer science' },
-    description: {
-      fr: 'Formation intensive par projets, du C aux systèmes, réseaux et architectures logicielles.',
-      en: 'Intensive project-based training spanning C, systems, networking and software architecture.',
-    },
-  },
-  {
-    title: 'UVSQ',
-    meta: { fr: '2018—2020 · DUT GEII', en: '2018—2020 · electrical engineering' },
-    description: {
-      fr: 'Génie électrique et informatique industrielle : électronique, automatismes et programmation.',
-      en: 'Electrical engineering and industrial computing: electronics, automation and programming.',
-    },
-  },
-  {
-    title: 'Riot Games & QuasiReal Publishing',
-    meta: { fr: 'développement visuel & illustration', en: 'visual development & illustration' },
-    description: {
-      fr: 'Travaux créatifs pour le jeu et l’édition, entre narration visuelle, composition et production d’images.',
-      en: 'Creative work for games and publishing, spanning visual storytelling, composition and image production.',
-    },
-  },
-  {
-    title: 'Git Peer Class',
-    meta: { fr: 'transmission · apprentissage entre pairs', en: 'teaching · peer learning' },
-    description: {
-      fr: 'Ateliers pratiques autour de Git et des méthodes de collaboration pour aider d’autres développeurs à gagner en autonomie.',
-      en: 'Hands-on Git and collaboration workshops helping other developers become more autonomous.',
-    },
-  },
-];
-
-const expandedProjectIndex = ref<number | null>(null);
-const expandedClientIndex = ref<number | null>(null);
-const expandedHighlightIndex = ref<number | null>(null);
-
-const toggleProject = (index: number) => {
-  expandedProjectIndex.value = expandedProjectIndex.value === index ? null : index;
-};
-
-const toggleClient = (index: number) => {
-  expandedClientIndex.value = expandedClientIndex.value === index ? null : index;
-};
-
-const toggleHighlight = (index: number) => {
-  expandedHighlightIndex.value = expandedHighlightIndex.value === index ? null : index;
-};
+const activeProjectIndex = ref(0);
+const activeClientIndex = ref(0);
+const activeProject = computed(() => projects[activeProjectIndex.value]);
+const activeClient = computed(() => clientProjects[activeClientIndex.value]);
 
 const switchLanguage = () => {
   if (!import.meta.client) return;
@@ -580,8 +476,8 @@ onMounted(() => {
 
 useHead(() => ({
   title: isFrench.value
-    ? 'Djibril Sy — Ingénieur produit à Dakar'
-    : 'Djibril Sy — Product Engineer in Dakar',
+    ? 'Djibril Sy | Ingénieur produit'
+    : 'Djibril Sy | Product Engineer',
   link: [{ rel: 'canonical', href: 'https://djibrilsy.vercel.app/' }],
   meta: [
     { name: 'description', content: copy.value.description },
@@ -591,8 +487,8 @@ useHead(() => ({
     {
       property: 'og:title',
       content: isFrench.value
-        ? 'Djibril Sy — Ingénieur produit à Dakar'
-        : 'Djibril Sy — Product Engineer in Dakar',
+        ? 'Djibril Sy | Ingénieur produit'
+        : 'Djibril Sy | Product Engineer',
     },
     { property: 'og:description', content: copy.value.socialDescription },
     { property: 'og:image', content: 'https://djibrilsy.vercel.app/og.png' },
@@ -600,8 +496,8 @@ useHead(() => ({
     {
       name: 'twitter:title',
       content: isFrench.value
-        ? 'Djibril Sy — Ingénieur produit à Dakar'
-        : 'Djibril Sy — Product Engineer in Dakar',
+        ? 'Djibril Sy | Ingénieur produit'
+        : 'Djibril Sy | Product Engineer',
     },
     { name: 'twitter:description', content: copy.value.socialDescription },
     { name: 'twitter:image', content: 'https://djibrilsy.vercel.app/og.png' },
