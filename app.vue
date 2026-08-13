@@ -90,7 +90,17 @@
               </a>
 
               <figure class="mobile-project-media" :class="project.previewClass">
-                <img :src="project.image" :alt="localize(project.alt)" :class="project.imageFit === 'contain' ? 'contain' : ''" loading="lazy" />
+                <DotSolid
+                  v-if="project.media === 'dot-solid'"
+                  :label="localize(project.alt)"
+                />
+                <img
+                  v-else
+                  :src="project.image"
+                  :alt="localize(project.alt)"
+                  :class="project.imageFit === 'contain' ? 'contain' : ''"
+                  loading="lazy"
+                />
               </figure>
             </article>
           </div>
@@ -99,7 +109,17 @@
             <figure class="preview-window">
               <div class="preview-toolbar" aria-hidden="true"><p>{{ activeProject.domain }}</p></div>
               <div class="preview-media" :class="activeProject.previewClass">
-                <img :key="activeProject.image" :src="activeProject.image" :alt="localize(activeProject.alt)" :class="activeProject.imageFit === 'contain' ? 'contain' : ''" />
+                <DotSolid
+                  v-if="activeProject.media === 'dot-solid'"
+                  :label="localize(activeProject.alt)"
+                />
+                <img
+                  v-else
+                  :key="activeProject.image"
+                  :src="activeProject.image"
+                  :alt="localize(activeProject.alt)"
+                  :class="activeProject.imageFit === 'contain' ? 'contain' : ''"
+                />
               </div>
               <figcaption><span>{{ localize(activeProject.short) }}</span><span>{{ activeProject.year }}</span></figcaption>
             </figure>
@@ -203,7 +223,7 @@
     <footer class="site-footer">
       <p>Djibril Sy · {{ copy.footerRole }}</p>
       <a href="#top">{{ copy.backToTop }} ↑</a>
-      <p>Polytech Alumni · Remote · 2026</p>
+      <p>42 Paris Alumni · Remote · 2026</p>
     </footer>
   </div>
 </template>
@@ -223,6 +243,7 @@ type PortfolioProject = {
   tags: string[];
   href: string;
   image: string;
+  media?: 'image' | 'dot-solid';
   alt: LocalizedText;
   domain: string;
   imageFit?: 'cover' | 'contain';
@@ -240,7 +261,7 @@ const translations = {
     switchLanguage: 'Afficher le site en anglais',
     lightMode: 'Passer au thème clair',
     darkMode: 'Passer au thème sombre',
-    role: 'Ingénieur produit · Polytech Alumni · Remote',
+    role: 'Ingénieur produit · 42 Paris Alumni · Remote',
     focus: ['systèmes produits', 'interfaces utiles', 'outils locaux', 'plateformes', 'infrastructure & livraison'],
     intro:
       'Je conçois et mets en production des produits web, mobiles et desktop, du premier modèle au système exploitable. Mon travail se situe à l’intersection du produit, de l’architecture backend et d’interfaces qui rendent les systèmes complexes lisibles.',
@@ -277,7 +298,7 @@ const translations = {
     switchLanguage: 'Display the site in French',
     lightMode: 'Switch to light theme',
     darkMode: 'Switch to dark theme',
-    role: 'Product engineer · Polytech Alumni · Remote',
+    role: 'Product engineer · 42 Paris Alumni · Remote',
     focus: ['product systems', 'useful interfaces', 'local tooling', 'platforms', 'infrastructure & delivery'],
     intro:
       'I design and ship web, mobile and desktop products from first model to production. My work sits between product thinking, backend architecture and interfaces that make complicated systems feel straightforward.',
@@ -320,8 +341,8 @@ const projects: PortfolioProject[] = [
     year: '2023–2026',
     short: { fr: 'repérage de commandes pour artistes', en: 'commission discovery for artists' },
     description: {
-      fr: 'Un produit en ligne qui transforme les annonces de recrutement d’illustrateurs en tableau consultable et envoie aux artistes des alertes Discord personnalisées.',
-      en: 'A live product that turns illustration hiring posts into a searchable board and sends personalized Discord alerts to artists.',
+      fr: 'Un produit en ligne qui transforme des annonces de recrutement dispersées sur plus de 20 forums en un tableau consultable, avec alertes Discord personnalisées.',
+      en: 'An online product that turns recruiting posts scattered across more than 20 forums into one searchable board with personalized Discord alerts.',
     },
     detail: {
       fr: 'J’en ai conçu le pipeline de collecte, la recherche, les filtres et la diffusion des opportunités pour réduire le temps passé à surveiller plusieurs plateformes.',
@@ -330,7 +351,8 @@ const projects: PortfolioProject[] = [
     tags: ['Vue 3', 'NestJS', 'Discord', 'PostgreSQL'],
     href: 'https://thequestboard.co',
     image: '/work/thequestboard-live.png',
-    alt: { fr: 'Interface de TheQuestBoard', en: 'TheQuestBoard interface' },
+    media: 'dot-solid',
+    alt: { fr: 'Logo sphérique animé de TheQuestBoard', en: 'Animated spherical TheQuestBoard logo' },
     domain: 'thequestboard.co',
   },
   {
@@ -339,8 +361,8 @@ const projects: PortfolioProject[] = [
     year: '2026',
     short: { fr: 'lookbook social de collections', en: 'a social lookbook for collections' },
     description: {
-      fr: 'Un outil de création et de comparaison de collections coordonnées en duo ou en équipe, avec profils publics, connexion Discord et commande slash.',
-      en: 'A collection builder and comparison tool for coordinated duo and full-team looks, with public profiles, Discord sign-in and a slash command.',
+      fr: 'Un outil qui permet aux joueurs de League of Legends de coordonner leurs skins, avec profils publics, connexion Discord et importation automatique.',
+      en: 'A tool that lets League of Legends players coordinate their skins, with public profiles, Discord sign-in and automatic imports.',
     },
     detail: {
       fr: 'Le produit réunit composition visuelle, partage public et usages communautaires dans un parcours léger, pensé autour des joueurs de League of Legends.',
@@ -382,8 +404,8 @@ const clientProjects: PortfolioProject[] = [
     year: '2025–2026',
     short: { fr: 'parcours bilingue & opérations', en: 'bilingual journey & operations' },
     description: {
-      fr: 'Conception d’un parcours d’onboarding bilingue sur invitation, avec machine à états déterministe, planification des sessions, analytics et emails transactionnels.',
-      en: 'Built a bilingual, invitation-only onboarding journey with a deterministic state machine, session planning, analytics and transactional email.',
+      fr: 'Une plateforme de bout en bout pour le programme d’initiation à l’IA de MINAPRO : invitations individuelles ou groupées, qualification des dirigeants, planification des sessions et pilotage via un back-office avec analytics.',
+      en: 'An end-to-end platform for MINAPRO’s executive AI programme, covering individual and group invitations, participant qualification, session planning and operational oversight through an analytics-enabled back office.',
     },
     detail: {
       fr: 'Le back-office rend chaque étape traçable et donne à l’équipe une vue claire des candidatures, cohortes, présences et communications.',
@@ -402,8 +424,8 @@ const clientProjects: PortfolioProject[] = [
     year: '2026',
     short: { fr: 'travail & entrepreneuriat au Sénégal', en: 'work & entrepreneurship in Senegal' },
     description: {
-      fr: 'Refonte d’un portail sénégalais de découverte professionnelle et création de son application mobile, avec sessions sécurisées, cache hors ligne, cartes et livraisons EAS.',
-      en: 'Rebuilt a Senegal-focused professional discovery portal and delivered its mobile app, including secure sessions, offline caching, maps and EAS releases.',
+      fr: 'Le portail professionnel de Bount-bi qui rend visibles les métiers, savoir-faire et opportunités au Sénégal, avec annuaire, profils, recherche, favoris, contenus, appels d’offres et financements sur le web et mobile.',
+      en: 'Bount-bi’s professional portal for making skills, services and opportunities more visible in Senegal, combining a directory, profiles, search, saved professionals, editorial content, tenders and funding across web and mobile.',
     },
     detail: {
       fr: 'Le même écosystème relie recherche d’opportunités, profils, favoris et contenus éditoriaux sur le web comme sur iOS et Android.',
