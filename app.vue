@@ -57,13 +57,13 @@
                     <div class="project-meta-row" :aria-label="isFrench ? 'Informations du projet' : 'Project information'">
                       <span class="project-meta-item">{{ projectKindLabel(selectedProject) }}</span>
                       <span class="project-meta-item">{{ projectYearLabel(selectedProject) }}</span>
-                      <a v-if="selectedProject.href" class="project-meta-item project-meta-link" :href="selectedProject.href" target="_blank" rel="noopener">{{ projectLinkLabel(selectedProject.href) }} <span aria-hidden="true">↗</span></a>
                     </div>
                     <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">{{ selectedProject.name }}</h2>
                     <p class="project-subtitle">{{ localize(selectedProject.short) }}</p>
                   </header>
                   <div class="inline-project-copy">
                     <p>{{ localize(selectedProject.description) }}</p>
+                    <a v-if="selectedProject.href" class="inline-project-cta" :href="selectedProject.href" target="_blank" rel="noopener">{{ projectCtaLabel(selectedProject) }} <span aria-hidden="true">↗</span></a>
                     <dl>
                       <div><dt>{{ copy.roleLabel }}</dt><dd>{{ localize(selectedProject.role) }}</dd></div>
                       <div v-if="selectedProject.tags?.length"><dt>{{ copy.technologies }}</dt><dd>{{ selectedProject.tags.join(' · ') }}</dd></div>
@@ -81,7 +81,6 @@
                       <figcaption>{{ localize(shot.caption) }}</figcaption>
                     </figure>
                   </section>
-                  <a v-if="selectedProject.href" class="inline-project-cta" :href="selectedProject.href" target="_blank" rel="noopener">{{ isFrench ? 'Voir' : 'Visit' }} {{ selectedProject.name }} <span aria-hidden="true">↗</span></a>
                 </template>
                 <template v-else>
                   <header class="inline-project-heading utility-heading">
@@ -168,16 +167,16 @@ const projectKindLabel = (project: PortfolioProject) => {
   if (project.kind === 'client') return isFrench.value ? 'Projet client' : 'Client work';
   return isFrench.value ? 'Projet personnel' : 'Personal project';
 };
-const projectLinkLabel = (href: string) => {
+const projectCtaLabel = (project: PortfolioProject) => {
   let isGithub = false;
   try {
-    const host = new URL(href).hostname;
+    const host = new URL(project.href!).hostname;
     isGithub = host === 'github.com' || host.endsWith('.github.com');
   } catch {
     isGithub = false;
   }
   if (isGithub) return isFrench.value ? 'Voir sur GitHub' : 'View on GitHub';
-  return isFrench.value ? 'Voir le site' : 'Visit site';
+  return isFrench.value ? `Voir ${project.name}` : `Visit ${project.name}`;
 };
 
 const copy = computed(() => translations[locale.value]);
@@ -906,15 +905,6 @@ useHead(() => {
   line-height:1;
 }
 
-.project-meta-link {
-  gap:5px;
-  transition:background-color .18s ease;
-}
-
-.project-meta-link:hover {
-  background:color-mix(in srgb,var(--soft) 90%,var(--ink));
-}
-
 .inline-project-heading h2 {
   margin:0;
   font-size:clamp(2.15rem,3.2vw,3.55rem);
@@ -1062,7 +1052,9 @@ useHead(() => {
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin-top:24px;
+  width:100%;
+  box-sizing:border-box;
+  margin-top:20px;
   padding:14px 16px;
   border-radius:8px;
   background:var(--ink);
@@ -1072,10 +1064,6 @@ useHead(() => {
   letter-spacing:-.015em;
   text-decoration:none;
   transition:opacity .18s ease;
-}
-
-.inline-project-gallery + .inline-project-cta {
-  margin-top:0;
 }
 
 .inline-project-cta:hover {

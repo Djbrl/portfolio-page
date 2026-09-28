@@ -392,8 +392,8 @@ const projects: PortfolioProject[] = [
       en: 'Brainstorm runs next to Claude Code and shows what the agents did, where and why: a live timeline of each session, a map of the code that lights up where they’re working, and a “why?” you can ask about any step or file. Built in one afternoon at a hackathon.',
     },
     role: {
-      fr: 'Idée, conception produit et direction de plusieurs agents IA travaillant en parallèle, de l’interface au modèle Nemotron hébergé sur GPU NVIDIA.',
-      en: 'Idea, product design and direction of several AI agents working in parallel, from the interface to a Nemotron model hosted on an NVIDIA GPU.',
+      fr: 'Concept, conception produit et développement full-stack, de l’interface au modèle Nemotron hébergé sur GPU NVIDIA.',
+      en: 'Concept, product design and full-stack development, from the interface to a Nemotron model hosted on an NVIDIA GPU.',
     },
     tags: ['React', 'NestJS', 'Claude API', 'Nemotron'],
     href: 'https://brainstorm-landing.vercel.app',

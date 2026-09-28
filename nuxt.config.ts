@@ -23,6 +23,10 @@ export default defineNuxtConfig({
   css: ['~/css/main.css'],
   app: {
     head: {
+      // Fetch the font alongside the CSS instead of after it, so text renders in Inter from the first paint.
+      link: [
+        { rel: 'preload', href: '/fonts/Inter-Variable.woff2', as: 'font', type: 'font/woff2', crossorigin: 'anonymous', tagPriority: 'critical' },
+      ],
       script: [
         {
           innerHTML: themeInitScript,
