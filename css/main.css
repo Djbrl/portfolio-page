@@ -13,10 +13,37 @@
 @font-face {
   font-family:'Inter Fallback';
   src:local('Arial'),local('ArialMT'),local('Helvetica');
+  font-weight:100 549;
   ascent-override:90.2%;
   descent-override:22.48%;
   line-gap-override:0%;
   size-adjust:107.4%;
+}
+
+@font-face {
+  font-family:'Inter Fallback';
+  src:local('Arial Bold'),local('Arial-BoldMT'),local('Helvetica Bold');
+  font-weight:550 900;
+  ascent-override:90.2%;
+  descent-override:22.48%;
+  line-gap-override:0%;
+  /* Tuned to the hero headline (Inter 650 at display size, -.06em tracking), where a reflow is most visible. */
+  size-adjust:95.5%;
+}
+
+/* Set by the font gate script in nuxt.config.ts until Inter has loaded. */
+html.fonts-pending body {
+  opacity:0;
+}
+
+body {
+  transition:opacity .16s ease;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body {
+    transition:none;
+  }
 }
 
 :root {
