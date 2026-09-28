@@ -1,6 +1,6 @@
 # Djibril Sy — Portfolio
 
-Editorial portfolio for Djibril Sy, a product engineer based in Dakar, Sénégal.
+Editorial portfolio for Djibril Sy, a product engineer.
 
 ## Development
 

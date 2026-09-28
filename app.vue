@@ -3,7 +3,7 @@
     <a class="skip-link" href="#main">{{ copy.skip }}</a>
     <header class="portfolio-header">
       <div class="brand-line">
-        <button class="identity-home" type="button" @click="navigateToPage(0)"><strong>Djibril Sy</strong><span aria-hidden="true">·</span><Transition name="header-context" mode="out-in"><span :key="activePage" class="identity-role">{{ headerSectionLabel }}</span></Transition></button>
+        <button class="identity-home" type="button" @click="navigateToPage(0, { focus: true })"><strong>Djibril Sy</strong><span aria-hidden="true">·</span><Transition name="header-context" mode="out-in"><span :key="activePage" class="identity-role">{{ headerSectionLabel }}</span></Transition></button>
       </div>
       <div class="header-controls">
         <button class="language-toggle" type="button" :aria-label="copy.switchLanguage" @click="switchLanguage">{{ isFrench ? 'EN' : 'FR' }}</button>
@@ -12,55 +12,61 @@
     </header>
 
     <nav class="page-dots" :class="[{ 'is-hinting': pillHinting }, pillMotion ? `moving-${pillMotion}` : '']" :aria-label="copy.pageNavigation">
-      <button v-for="(label, index) in copy.pageLabels" :key="label" type="button" :class="{ active: activePage === index }" :aria-label="label" :aria-current="activePage === index ? 'page' : undefined" @click="navigateToPage(index)"><span aria-hidden="true"></span></button>
+      <button v-for="(label, index) in copy.pageLabels" :key="label" type="button" :class="{ active: activePage === index }" :aria-label="label" :aria-current="activePage === index ? 'page' : undefined" @click="navigateToPage(index, { focus: true })"><span aria-hidden="true"></span></button>
     </nav>
 
     <main id="main" class="portfolio-pages">
       <section class="page-section hero-page" :class="{ active: activePage === 0 }" :style="pageStyle(0)" :aria-hidden="activePage !== 0" :inert="activePage !== 0" aria-labelledby="hero-title">
         <div class="hero-content">
-          <h1 id="hero-title" class="portfolio-tagline">
-            <template v-if="isFrench">Je conçois et livre des <strong>solutions logicielles</strong> pour résoudre des <strong>problèmes concrets</strong>.</template>
-            <template v-else>I design and ship <strong>software solutions</strong> to solve <strong>real world problems</strong>.</template>
+          <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1">
+            <template v-if="isFrench">Je conçois et livre des <strong>produits logiciels</strong> qui résolvent des <strong>problèmes concrets</strong>.</template>
+            <template v-else>I design and ship <strong>software products</strong> that solve <strong>real-world problems</strong>.</template>
           </h1>
           <nav class="hero-section-links" :aria-label="copy.primaryNavigation">
-            <button type="button" @click="navigateToPage(2)">{{ copy.navBackground }}</button>
-            <button type="button" @click="navigateToPage(1)">{{ isFrench ? 'Projets' : 'Projects' }}</button>
+            <button type="button" @click="navigateToPage(2, { focus: true })">{{ copy.navBackground }}</button>
+            <button type="button" @click="navigateToPage(1, { focus: true })">{{ projectsTitle }}</button>
             <button type="button" @click="inspectUtility('contact')">{{ copy.navContact }}</button>
           </nav>
         </div>
       </section>
 
-      <section class="page-section projects-page" :class="{ active: activePage === 1, revealing: projectsRevealing, leaving: projectsLeaving, inspecting: inspectionOpen }" :style="pageStyle(1)" :aria-hidden="activePage !== 1" :inert="activePage !== 1" :aria-label="copy.workTitle">
+      <section class="page-section projects-page" :class="{ active: activePage === 1, revealing: projectsRevealing, leaving: projectsLeaving, inspecting: inspectionOpen }" :style="pageStyle(1)" :aria-hidden="activePage !== 1" :inert="activePage !== 1" aria-labelledby="projects-title">
+        <h2 id="projects-title" class="sr-only page-heading" tabindex="-1">{{ projectsTitle }}</h2>
+        <!-- Server-rendered project summaries: crawlers and no-JS readers get the content; screen readers hear each one once, as its tile's description. -->
+        <ul class="sr-only" aria-hidden="true">
+          <li v-for="project in gridProjects" :key="project.name"><strong>{{ project.name }}</strong> — <span :id="`project-summary-${projectSlug(project)}`">{{ localize(project.short) }}</span></li>
+        </ul>
         <div class="projects-canvas">
           <div class="work-grid-stage">
             <div class="work-grid">
-              <button v-for="(project, index) in gridProjects" :key="project.name" class="project-tile" :class="[`tile-${index}`, { selected: isSelectedProject(project) }]" type="button" :aria-label="`${project.name} — ${isFrench ? 'voir les détails' : 'view details'}`" :aria-pressed="isSelectedProject(project)" @click="inspectProject(project)">
+              <button v-for="(project, index) in gridProjects" :key="project.name" class="project-tile" :class="[`tile-${index}`, `tile-project-${projectSlug(project)}`, { selected: isSelectedProject(project) }]" type="button" :aria-label="`${project.name} — ${isFrench ? 'voir les détails' : 'view details'}`" :aria-describedby="`project-summary-${projectSlug(project)}`" :aria-pressed="isSelectedProject(project)" @click="inspectProject(project)">
                 <img :src="project.tileImage || project.image" :alt="project.tileImage ? project.name : localize(project.alt)" :class="{ contain: project.imageFit === 'contain' }" :loading="index < 3 ? 'eager' : 'lazy'" decoding="async" width="1200" height="800">
                 <span class="tile-label">{{ project.name }}</span>
               </button>
-              <button class="about-tile" :class="{ selected: selectedUtility === 'more' }" type="button" :aria-pressed="selectedUtility === 'more'" @click="inspectUtility('more')"><span>{{ isFrench ? 'Plus de projets' : 'More projects' }}</span><span aria-hidden="true">↗</span></button>
+              <a class="about-tile" href="https://github.com/Djbrl" target="_blank" rel="noopener"><span>{{ isFrench ? 'Plus sur GitHub' : 'More on GitHub' }}</span><span aria-hidden="true">↗</span></a>
               <button class="contact-tile" :class="{ selected: selectedUtility === 'contact' }" type="button" :aria-pressed="selectedUtility === 'contact'" @click="inspectUtility('contact')"><span>Contact</span><span aria-hidden="true">↗</span></button>
             </div>
           </div>
 
           <Transition name="inline-panel">
             <article v-if="inspectionOpen" ref="inlineProjectCard" class="inline-project-card" :aria-labelledby="`inline-panel-${inspectionKey}`">
+              <button class="inline-project-close" type="button" :aria-label="isFrench ? 'Fermer le panneau' : 'Close panel'" :title="isFrench ? 'Fermer (Échap)' : 'Close (Esc)'" @click="closeInlineProject({ restoreFocus: true })"><span aria-hidden="true">×</span></button>
               <div :key="inspectionKey" class="inline-project-article">
                 <template v-if="selectedProject">
                   <header class="inline-project-heading">
                     <div class="project-meta-row" :aria-label="isFrench ? 'Informations du projet' : 'Project information'">
                       <span class="project-meta-item">{{ projectKindLabel(selectedProject) }}</span>
-                      <span class="project-meta-item">{{ selectedProject.year }}</span>
-                      <a class="project-meta-item project-meta-link" :href="selectedProject.href" target="_blank" rel="noreferrer">{{ isFrench ? 'Ouvrir le lien' : 'Open link' }} <span aria-hidden="true">↗</span></a>
+                      <span class="project-meta-item">{{ projectYearLabel(selectedProject) }}</span>
+                      <a v-if="selectedProject.href" class="project-meta-item project-meta-link" :href="selectedProject.href" target="_blank" rel="noopener">{{ projectLinkLabel(selectedProject.href) }} <span aria-hidden="true">↗</span></a>
                     </div>
-                    <h2 :id="`inline-panel-${inspectionKey}`">{{ selectedProject.name }}</h2>
+                    <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">{{ selectedProject.name }}</h2>
                     <p class="project-subtitle">{{ localize(selectedProject.short) }}</p>
                   </header>
                   <div class="inline-project-copy">
                     <p>{{ localize(selectedProject.description) }}</p>
                     <dl>
                       <div><dt>{{ copy.roleLabel }}</dt><dd>{{ localize(selectedProject.role) }}</dd></div>
-                      <div><dt>{{ copy.outcomeLabel }}</dt><dd>{{ localize(selectedProject.outcome) }}</dd></div>
+                      <div v-if="selectedProject.tags?.length"><dt>{{ copy.technologies }}</dt><dd>{{ selectedProject.tags.join(' · ') }}</dd></div>
                     </dl>
                   </div>
                   <section v-if="selectedProject.gallery?.length" class="inline-project-gallery" :aria-label="isFrench ? 'Aperçu du produit' : 'Product walkthrough'">
@@ -75,30 +81,18 @@
                       <figcaption>{{ localize(shot.caption) }}</figcaption>
                     </figure>
                   </section>
-                </template>
-                <template v-else-if="selectedUtility === 'more'">
-                  <header class="inline-project-heading utility-heading">
-                    <p>{{ isFrench ? 'Archive GitHub' : 'GitHub archive' }}</p>
-                    <h2 :id="`inline-panel-${inspectionKey}`">{{ isFrench ? 'Plus de projets' : 'More projects' }}</h2>
-                    <p>{{ isFrench ? 'Expériences, outils et projets open source.' : 'Experiments, tools and open-source projects.' }}</p>
-                  </header>
-                  <div class="inline-project-copy utility-copy">
-                    <p>{{ isFrench ? 'Une sélection plus large de travaux publiés sur GitHub apparaîtra bientôt ici.' : 'A broader selection of work published on GitHub will appear here soon.' }}</p>
-                  </div>
-                  <footer class="inline-project-footer utility-footer">
-                    <a href="https://github.com/djbrl" target="_blank" rel="noreferrer">{{ isFrench ? 'Voir GitHub' : 'Visit GitHub' }} <span aria-hidden="true">↗</span></a>
-                  </footer>
+                  <a v-if="selectedProject.href" class="inline-project-cta" :href="selectedProject.href" target="_blank" rel="noopener">{{ isFrench ? 'Voir' : 'Visit' }} {{ selectedProject.name }} <span aria-hidden="true">↗</span></a>
                 </template>
                 <template v-else>
                   <header class="inline-project-heading utility-heading">
-                    <p>{{ isFrench ? 'Travaillons ensemble' : 'Work together' }}</p>
-                    <h2 :id="`inline-panel-${inspectionKey}`">Contact</h2>
+                    <p>{{ isFrench ? 'Travaillons ensemble' : 'Let’s work together' }}</p>
+                    <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">Contact</h2>
                     <p>{{ copy.contactIntro }}</p>
                   </header>
                   <div class="inline-contact-links">
                     <a href="mailto:sydjbrl@gmail.com">sydjbrl@gmail.com <span aria-hidden="true">↗</span></a>
-                    <a href="https://github.com/djbrl" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
-                    <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+                    <a href="https://github.com/Djbrl" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+                    <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>
                   </div>
                 </template>
               </div>
@@ -109,39 +103,40 @@
 
       <section class="page-section bio-page" :class="{ active: activePage === 2 }" :style="pageStyle(2)" :aria-hidden="activePage !== 2" :inert="activePage !== 2" aria-labelledby="bio-title">
         <div class="bio-layout">
-          <h2 id="bio-title">{{ copy.backgroundTitle }}</h2>
+          <h2 id="bio-title" class="page-heading" tabindex="-1">{{ copy.backgroundTitle }}</h2>
           <div class="bio-copy">
             <p v-if="isFrench">
               Formé à
-              <a class="bio-entity" href="https://42.fr/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/42.png" alt=""></span><span>42 Paris</span></a>
-              et en génie électrique et informatique industrielle à
-              <a class="bio-entity" href="https://www.uvsq.fr/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img class="logo-uvsq" src="/about/logos/uvsq.png" alt=""></span><span>l’UVSQ</span></a>,
-              j’aborde les produits comme des systèmes : comprendre les pièces en mouvement, leurs interactions et ce qui rend le résultat utile aux personnes qui s’en servent.
+              <a class="bio-entity" href="https://42.fr/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/42.png" alt=""></span><span>42 Paris</span></a>
+              et diplômé en génie électrique et informatique industrielle de
+              <a class="bio-entity" href="https://www.uvsq.fr/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img class="logo-uvsq" src="/about/logos/uvsq.png" alt=""></span><span>l’UVSQ</span></a>,
+              j’aborde les produits comme des systèmes : comprendre chaque rouage, la façon dont ils s’articulent et ce qui rend le résultat utile aux personnes qui s’en servent.
             </p>
             <p v-else>
               I trained at
-              <a class="bio-entity" href="https://42.fr/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/42.png" alt=""></span><span>42 Paris</span></a>
+              <a class="bio-entity" href="https://42.fr/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/42.png" alt=""></span><span>42 Paris</span></a>
               and studied electrical engineering and industrial computing at
-              <a class="bio-entity" href="https://www.uvsq.fr/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img class="logo-uvsq" src="/about/logos/uvsq.png" alt=""></span><span>UVSQ</span></a>.
+              <a class="bio-entity" href="https://www.uvsq.fr/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img class="logo-uvsq" src="/about/logos/uvsq.png" alt=""></span><span>UVSQ</span></a>.
               I approach products as systems: understanding the moving parts, how they work together, and what makes the result useful to the people who rely on it.
             </p>
             <p v-if="isFrench">
               Je travaille aussi en développement visuel dans le milieu du jeu vidéo et de l’édition. Parmi mes clients :
               <span class="bio-entity-list">
-                <a class="bio-entity" href="https://quasirealhouse.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/quasireal.png" alt=""></span><span>QuasiReal Publishing</span></a>
-                <a class="bio-entity" href="https://www.wolfpackgames.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/wolfpack.png" alt=""></span><span>Wolfpack Games Studio</span></a>
-                <a class="bio-entity" href="https://www.riotgames.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/riot.png" alt=""></span><span>Riot Games</span></a>
+                <a class="bio-entity" href="https://quasirealhouse.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/quasireal.png" alt=""></span><span>QuasiReal Publishing</span></a>
+                <a class="bio-entity" href="https://www.wolfpackgames.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/wolfpack.png" alt=""></span><span>Wolfpack Games Studio</span></a>
+                <a class="bio-entity" href="https://www.riotgames.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/riot.png" alt=""></span><span>Riot Games</span></a>
               </span>
             </p>
             <p v-else>
-              I also work in visual development for video games and publishing. Past clients include:
+              I also work in visual development for video games and publishing. Clients include:
               <span class="bio-entity-list">
-                <a class="bio-entity" href="https://quasirealhouse.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/quasireal.png" alt=""></span><span>QuasiReal Publishing</span></a>
-                <a class="bio-entity" href="https://www.wolfpackgames.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/wolfpack.png" alt=""></span><span>Wolfpack Games Studio</span></a>
-                <a class="bio-entity" href="https://www.riotgames.com/" target="_blank" rel="noreferrer"><span class="bio-entity-logo"><img src="/about/logos/riot.png" alt=""></span><span>Riot Games</span></a>
+                <a class="bio-entity" href="https://quasirealhouse.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/quasireal.png" alt=""></span><span>QuasiReal Publishing</span></a>
+                <a class="bio-entity" href="https://www.wolfpackgames.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/wolfpack.png" alt=""></span><span>Wolfpack Games Studio</span></a>
+                <a class="bio-entity" href="https://www.riotgames.com/" target="_blank" rel="noopener"><span class="bio-entity-logo"><img src="/about/logos/riot.png" alt=""></span><span>Riot Games</span></a>
               </span>
             </p>
-            <a href="/documents/djibril-sy-cv.pdf" target="_blank">CV / résumé ↗</a>
+            <p>{{ isFrench ? 'Disponible pour des missions freelance et des postes à temps plein.' : 'Open to freelance projects and full-time roles.' }}</p>
+            <a :href="isFrench ? '/documents/djibril-sy-cv.pdf' : '/documents/djibril-sy-cv-en.pdf'" target="_blank" rel="noopener">{{ isFrench ? 'CV (PDF)' : 'Résumé (PDF)' }} <span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </section>
@@ -150,8 +145,8 @@
     <footer class="portfolio-contact">
       <a href="mailto:sydjbrl@gmail.com">sydjbrl@gmail.com</a>
       <nav :aria-label="copy.contactNavigation">
-        <a href="https://github.com/djbrl" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="https://github.com/Djbrl" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noopener">LinkedIn</a>
       </nav>
     </footer>
 
@@ -161,20 +156,36 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
+const SITE_URL = 'https://djbrl.vercel.app/';
+const OG_IMAGE = `${SITE_URL}og-2026.png`;
+const THEME_STORAGE_KEY = 'portfolio-color-theme';
+
 const route = useRoute();
 const locale = ref<'fr' | 'en'>(route.query.lang === 'fr' ? 'fr' : 'en');
 const isFrench = computed(() => locale.value === 'fr');
 const localize = (value: LocalizedText) => value[locale.value];
 const projectKindLabel = (project: PortfolioProject) => {
-  if (project.kind === 'client') return isFrench.value ? 'Travail client' : 'Client work';
+  if (project.kind === 'client') return isFrench.value ? 'Projet client' : 'Client work';
   return isFrench.value ? 'Projet personnel' : 'Personal project';
+};
+const projectLinkLabel = (href: string) => {
+  let isGithub = false;
+  try {
+    const host = new URL(href).hostname;
+    isGithub = host === 'github.com' || host.endsWith('.github.com');
+  } catch {
+    isGithub = false;
+  }
+  if (isGithub) return isFrench.value ? 'Voir sur GitHub' : 'View on GitHub';
+  return isFrench.value ? 'Voir le site' : 'Visit site';
 };
 
 const copy = computed(() => translations[locale.value]);
+const projectsTitle = computed(() => isFrench.value ? 'Projets' : 'Projects');
 
 const activePage = ref(0);
 const headerSectionLabel = computed(() => {
-  if (activePage.value === 1) return isFrench.value ? 'Projets' : 'Projects';
+  if (activePage.value === 1) return projectsTitle.value;
   if (activePage.value === 2) return copy.value.navBackground;
   return copy.value.role;
 });
@@ -185,9 +196,11 @@ const projectsLeaving = ref(false);
 const isPageTransitioning = ref(false);
 // Project content is static; only the selection needs to be reactive.
 const selectedProject = shallowRef<PortfolioProject | null>(null);
-const selectedUtility = ref<'contact' | 'more' | null>(null);
+const selectedUtility = ref<'contact' | null>(null);
 const inspectionOpen = ref(false);
 const isDark = ref(false);
+// True once the visitor has a stored or toggled theme; until then theme-color follows the system scheme.
+const hasExplicitTheme = ref(false);
 const inlineProjectCard = ref<HTMLElement | null>(null);
 let inspectionCloseTimer: ReturnType<typeof setTimeout> | undefined;
 let pillTimer: ReturnType<typeof setTimeout> | undefined;
@@ -200,11 +213,18 @@ let wheelDirection = 0;
 let wheelStartedAt = 0;
 let wheelLockedUntil = 0;
 
+const pageHeadingIds = ['hero-title', 'projects-title', 'bio-title'];
+
+const projectYearLabel = (project: PortfolioProject) => {
+  const ongoing = project.year.match(/^(\d{4})–$/);
+  if (!ongoing) return project.year;
+  return isFrench.value ? `Depuis ${ongoing[1]}` : `Since ${ongoing[1]}`;
+};
 const projectSlug = (project: PortfolioProject) => project.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const isSelectedProject = (project: PortfolioProject) => selectedProject.value === project;
 const inspectionKey = computed(() => selectedProject.value ? `project-${projectSlug(selectedProject.value)}` : `utility-${selectedUtility.value}`);
 
-const updateInspectionUrl = (project: PortfolioProject | null, utility: 'contact' | 'more' | null = null) => {
+const updateInspectionUrl = (project: PortfolioProject | null, utility: 'contact' | null = null) => {
   if (!import.meta.client) return;
   const url = new URL(window.location.href);
   if (project) url.searchParams.set('project', projectSlug(project));
@@ -216,7 +236,11 @@ const updateInspectionUrl = (project: PortfolioProject | null, utility: 'contact
 
 const pageStyle = (index: number) => ({ '--page-offset': String(index - activePage.value) });
 
-const navigateToPage = async (index: number) => {
+const focusElement = (element: HTMLElement | null | undefined) => {
+  element?.focus({ preventScroll: true });
+};
+
+const navigateToPage = async (index: number, options: { focus?: boolean } = {}) => {
   if (isPageTransitioning.value || index === activePage.value || index < 0 || index > 2) return;
   isPageTransitioning.value = true;
   const direction = index > activePage.value ? 'down' : 'up';
@@ -224,6 +248,8 @@ const navigateToPage = async (index: number) => {
   pillHinting.value = false;
   pillMotion.value = null;
   if (activePage.value === 1) {
+    // The project panel belongs to the projects page; never leave it open behind another page.
+    if (inspectionOpen.value) closeInlineProject();
     projectsRevealing.value = false;
     projectsLeaving.value = true;
     clearTimeout(projectLeaveTimer);
@@ -232,6 +258,11 @@ const navigateToPage = async (index: number) => {
   await nextTick();
   pillMotion.value = direction;
   activePage.value = index;
+  if (options.focus) {
+    // Wait for the new page to drop `inert` before moving focus into it.
+    await nextTick();
+    focusElement(document.getElementById(pageHeadingIds[index]!));
+  }
   if (index === 1) {
     await nextTick();
     projectsRevealing.value = false;
@@ -247,6 +278,19 @@ const navigateToPage = async (index: number) => {
   }, reducedMotion ? 0 : 760);
 };
 
+// The element that would scroll for an interaction starting at `target`: the project panel first, then the active page.
+const scrollContainerFor = (target: EventTarget | null) => {
+  const element = target instanceof Element ? target : null;
+  return element?.closest<HTMLElement>('.inline-project-card') ?? element?.closest<HTMLElement>('.page-section.active') ?? null;
+};
+
+const canScrollInDirection = (element: HTMLElement | null | undefined, direction: number) => {
+  if (!element || !direction || element.scrollHeight <= element.clientHeight + 1) return false;
+  if (!/(auto|scroll)/.test(getComputedStyle(element).overflowY)) return false;
+  if (direction > 0) return element.scrollTop < element.scrollHeight - element.clientHeight - 1;
+  return element.scrollTop > 1;
+};
+
 const resetWheelGesture = () => {
   wheelTotal = 0;
   wheelDirection = 0;
@@ -257,21 +301,13 @@ const onWheel = (event: WheelEvent) => {
   if (!event.deltaY) return;
 
   const direction = Math.sign(event.deltaY);
-  const target = event.target instanceof HTMLElement ? event.target : null;
-  const inlineCard = target?.closest<HTMLElement>('.inline-project-card');
-  if (inlineCard) {
-    const canScrollCardDown = direction > 0 && inlineCard.scrollTop < inlineCard.scrollHeight - inlineCard.clientHeight - 1;
-    const canScrollCardUp = direction < 0 && inlineCard.scrollTop > 1;
-    if (canScrollCardDown || canScrollCardUp) return;
+  const scroller = scrollContainerFor(event.target);
+  if (canScrollInDirection(scroller, direction)) return;
+  if (scroller?.classList.contains('inline-project-card')) {
+    // Scrolling past the panel's edge never changes page.
     event.preventDefault();
     resetWheelGesture();
     return;
-  }
-  const activeSection = target?.closest<HTMLElement>('.page-section.active');
-  if (activeSection && activeSection.scrollHeight > activeSection.clientHeight + 1) {
-    const canContinueDown = direction > 0 && activeSection.scrollTop < activeSection.scrollHeight - activeSection.clientHeight - 1;
-    const canContinueUp = direction < 0 && activeSection.scrollTop > 1;
-    if (canContinueDown || canContinueUp) return;
   }
 
   event.preventDefault();
@@ -299,12 +335,17 @@ const onWheel = (event: WheelEvent) => {
 let touchStartY = 0;
 let touchStartedAt = 0;
 let touchStartedInInlineCard = false;
+let touchScroller: HTMLElement | null = null;
+let touchCouldScrollDown = false;
+let touchCouldScrollUp = false;
 
 const onTouchStart = (event: TouchEvent) => {
   touchStartY = event.touches[0]?.clientY ?? 0;
   touchStartedAt = performance.now();
-  const target = event.target instanceof HTMLElement ? event.target : null;
-  touchStartedInInlineCard = Boolean(target?.closest('.inline-project-card'));
+  touchScroller = scrollContainerFor(event.target);
+  touchStartedInInlineCard = Boolean(touchScroller?.classList.contains('inline-project-card'));
+  touchCouldScrollDown = canScrollInDirection(touchScroller, 1);
+  touchCouldScrollUp = canScrollInDirection(touchScroller, -1);
 };
 
 const onTouchEnd = (event: TouchEvent) => {
@@ -312,16 +353,48 @@ const onTouchEnd = (event: TouchEvent) => {
   const endY = event.changedTouches[0]?.clientY ?? touchStartY;
   const distance = touchStartY - endY;
   const duration = performance.now() - touchStartedAt;
+  const direction = Math.sign(distance);
+  const scroller = touchScroller;
+  const couldScroll = direction > 0 ? touchCouldScrollDown : touchCouldScrollUp;
   touchStartY = 0;
+  touchScroller = null;
   if (touchStartedInInlineCard) {
     touchStartedInInlineCard = false;
     return;
   }
   if (Math.abs(distance) < 80 || duration < 120 || duration > 900) return;
-  void navigateToPage(activePage.value + Math.sign(distance));
+  // A swipe that scrolled (or could still scroll) the active page is a scroll, not a page change.
+  if (couldScroll || canScrollInDirection(scroller, direction)) return;
+  void navigateToPage(activePage.value + direction);
 };
 
-const openInspection = async (project: PortfolioProject | null, utility: 'contact' | 'more' | null = null) => {
+const nextPageKeys = new Set(['PageDown', 'ArrowDown', 'ArrowRight']);
+const previousPageKeys = new Set(['PageUp', 'ArrowUp', 'ArrowLeft']);
+
+const onKeydown = (event: KeyboardEvent) => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+  const target = event.target instanceof HTMLElement ? event.target : null;
+  if (target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
+
+  if (event.key === 'Escape') {
+    if (!inspectionOpen.value) return;
+    event.preventDefault();
+    closeInlineProject({ restoreFocus: true });
+    return;
+  }
+
+  const direction = nextPageKeys.has(event.key) ? 1 : previousPageKeys.has(event.key) ? -1 : 0;
+  if (!direction || event.shiftKey) return;
+  const scroller = scrollContainerFor(target);
+  // Let the panel or a tall page scroll natively; like the wheel, the panel's edge never changes page.
+  if (canScrollInDirection(scroller, direction) || scroller?.classList.contains('inline-project-card')) return;
+  const nextPage = activePage.value + direction;
+  if (nextPage < 0 || nextPage > 2) return;
+  event.preventDefault();
+  void navigateToPage(nextPage, { focus: true });
+};
+
+const openInspection = async (project: PortfolioProject | null, utility: 'contact' | null = null, options: { focus?: boolean } = {}) => {
   clearTimeout(inspectionCloseTimer);
   selectedProject.value = project;
   selectedUtility.value = utility;
@@ -329,6 +402,7 @@ const openInspection = async (project: PortfolioProject | null, utility: 'contac
   updateInspectionUrl(project, utility);
   await nextTick();
   inlineProjectCard.value?.scrollTo({ top: 0, behavior: 'auto' });
+  if (options.focus) focusElement(inlineProjectCard.value?.querySelector<HTMLElement>('h2'));
 };
 
 const inspectProject = (project: PortfolioProject) => {
@@ -339,7 +413,12 @@ const inspectProject = (project: PortfolioProject) => {
   return openInspection(project);
 };
 
-const closeInlineProject = () => {
+const closeInlineProject = (options: { restoreFocus?: boolean } = {}) => {
+  if (options.restoreFocus && activePage.value === 1) {
+    // The panel is about to unmount: hand focus back to the tile that opened it.
+    const tile = document.querySelector<HTMLElement>('.work-grid .selected');
+    focusElement(tile ?? document.getElementById('projects-title'));
+  }
   inspectionOpen.value = false;
   updateInspectionUrl(null);
   clearTimeout(inspectionCloseTimer);
@@ -350,33 +429,60 @@ const closeInlineProject = () => {
   }, 360);
 };
 
-const inspectUtility = async (utility: 'contact' | 'more') => {
+const inspectUtility = async (utility: 'contact') => {
   if (selectedUtility.value === utility && !selectedProject.value) {
     closeInlineProject();
     return;
   }
-  if (activePage.value !== 1) await navigateToPage(1);
-  return openInspection(null, utility);
+  const fromOtherPage = activePage.value !== 1;
+  if (fromOtherPage) {
+    await navigateToPage(1);
+    if (activePage.value !== 1) return;
+  }
+  return openInspection(null, utility, { focus: fromOtherPage });
 };
 
-const applyTheme = () => {
+const readStoredTheme = () => {
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    return stored === 'dark' || stored === 'light' ? stored : null;
+  } catch {
+    return null;
+  }
+};
+
+const applyTheme = (persist = true) => {
   if (!import.meta.client) return;
   document.documentElement.dataset.theme = isDark.value ? 'dark' : 'light';
-  localStorage.setItem('portfolio-color-theme', isDark.value ? 'dark' : 'light');
+  if (!persist) return;
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, isDark.value ? 'dark' : 'light');
+  } catch {
+    // Storage can be unavailable (private mode, blocked site data); the theme still applies for this visit.
+  }
 };
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;
+  hasExplicitTheme.value = true;
   applyTheme();
 };
 
 onMounted(() => {
-  isDark.value = localStorage.getItem('portfolio-color-theme') === 'dark';
-  applyTheme();
+  // An early head script may already have set data-theme; otherwise use the stored choice, then the system preference.
+  const presetTheme = document.documentElement.dataset.theme;
+  const initialTheme = presetTheme === 'dark' || presetTheme === 'light'
+    ? presetTheme
+    : readStoredTheme() ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  isDark.value = initialTheme === 'dark';
+  hasExplicitTheme.value = readStoredTheme() !== null;
+  // Only an explicit toggle is persisted, so visitors without a stored choice keep following their system theme.
+  applyTheme(false);
   hintTimer = setTimeout(() => { pillHinting.value = false; }, 4200);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('touchstart', onTouchStart, { passive: true });
   window.addEventListener('touchend', onTouchEnd, { passive: true });
+  window.addEventListener('keydown', onKeydown);
 
   const searchParams = new URL(window.location.href).searchParams;
   const requestedSlug = searchParams.get('project');
@@ -386,10 +492,17 @@ onMounted(() => {
     activePage.value = 1;
     selectedProject.value = requestedProject;
     inspectionOpen.value = true;
-  } else if (requestedPanel === 'contact' || requestedPanel === 'more') {
+  } else if (requestedPanel === 'contact') {
     activePage.value = 1;
     selectedUtility.value = requestedPanel;
     inspectionOpen.value = true;
+  } else if (requestedSlug || requestedPanel) {
+    // Stale deep links (e.g. the retired ?panel=more) are simply dropped.
+    updateInspectionUrl(null);
+  }
+  if (inspectionOpen.value) {
+    // Deep links land keyboard and screen-reader users in the panel, once the page has dropped `inert`.
+    void nextTick(() => focusElement(inlineProjectCard.value?.querySelector<HTMLElement>('h2')));
   }
 });
 
@@ -404,6 +517,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('wheel', onWheel);
     window.removeEventListener('touchstart', onTouchStart);
     window.removeEventListener('touchend', onTouchEnd);
+    window.removeEventListener('keydown', onKeydown);
   }
 });
 
@@ -417,36 +531,49 @@ const switchLanguage = () => {
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 };
 
-useHead(() => ({
-  title: isFrench.value
-    ? 'Djibril Sy | Ingénieur produit'
-    : 'Djibril Sy | Product Engineer',
-  link: [{ rel: 'canonical', href: 'https://djbrl.vercel.app/' }],
-  meta: [
-    { name: 'description', content: copy.value.description },
-    { name: 'theme-color', content: isDark.value ? '#111111' : '#ffffff' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://djbrl.vercel.app/' },
-    {
-      property: 'og:title',
-      content: isFrench.value
-        ? 'Djibril Sy | Ingénieur produit'
-        : 'Djibril Sy | Product Engineer',
-    },
-    { property: 'og:description', content: copy.value.socialDescription },
-    { property: 'og:image', content: 'https://djbrl.vercel.app/og.png' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    {
-      name: 'twitter:title',
-      content: isFrench.value
-        ? 'Djibril Sy | Ingénieur produit'
-        : 'Djibril Sy | Product Engineer',
-    },
-    { name: 'twitter:description', content: copy.value.socialDescription },
-    { name: 'twitter:image', content: 'https://djbrl.vercel.app/og.png' },
-  ],
-  htmlAttrs: { lang: locale.value },
-}));
+const localeUrls = { en: SITE_URL, fr: `${SITE_URL}?lang=fr` } as const;
+const themeColors = { light: '#ffffff', dark: '#111111' } as const;
+const themeColorFor = (scheme: 'light' | 'dark') => themeColors[hasExplicitTheme.value ? (isDark.value ? 'dark' : 'light') : scheme];
+
+useHead(() => {
+  const title = isFrench.value ? 'Djibril Sy | Ingénieur produit' : 'Djibril Sy | Product Engineer';
+  const imageAlt = isFrench.value ? 'Djibril Sy — Ingénieur produit' : 'Djibril Sy — Product Engineer';
+  const pageUrl = localeUrls[locale.value];
+  return {
+    title,
+    link: [
+      { key: 'canonical', rel: 'canonical', href: pageUrl },
+      { key: 'alternate-en', rel: 'alternate', hreflang: 'en', href: localeUrls.en },
+      { key: 'alternate-fr', rel: 'alternate', hreflang: 'fr', href: localeUrls.fr },
+      { key: 'alternate-x-default', rel: 'alternate', hreflang: 'x-default', href: localeUrls.en },
+      { key: 'favicon', rel: 'icon', href: '/favicon.ico' },
+    ],
+    meta: [
+      { name: 'description', content: copy.value.description },
+      // The server can't know a stored choice, so both schemes get a theme-color; an explicit choice sets both to it.
+      // Always the same two unkeyed tags, so the client adopts the server-rendered pair and only patches `content`.
+      { name: 'theme-color', media: '(prefers-color-scheme: light)', content: themeColorFor('light') },
+      { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: themeColorFor('dark') },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'Djibril Sy' },
+      { property: 'og:locale', content: isFrench.value ? 'fr_FR' : 'en_US' },
+      { property: 'og:locale:alternate', content: isFrench.value ? 'en_US' : 'fr_FR' },
+      { property: 'og:url', content: pageUrl },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: copy.value.socialDescription },
+      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:alt', content: imageAlt },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: copy.value.socialDescription },
+      { name: 'twitter:image', content: OG_IMAGE },
+      { name: 'twitter:image:alt', content: imageAlt },
+    ],
+    htmlAttrs: { lang: locale.value },
+  };
+});
 </script>
 
 <style>
@@ -560,42 +687,59 @@ useHead(() => ({
 
 .projects-page .about-tile,
 .projects-page .contact-tile {
-  background:#f0f0ed;
+  background:var(--soft);
   box-shadow:none;
-  color:#202020;
+  color:var(--ink);
 }
 
 .projects-page .about-tile:hover,
 .projects-page .contact-tile:hover {
-  background:#e6e6e2;
+  background:color-mix(in srgb,var(--soft) 92%,var(--ink));
 }
 
-.projects-page .tile-0 {
-  background:#ec0048;
+.projects-page .tile-project-cyberlab {
+  background:#e40046;
   box-shadow:none;
 }
 
-.projects-page .tile-3 {
+.projects-page .tile-project-minapro-ai-executive-catalyst {
   background:#050505;
 }
 
-.projects-page .tile-0 img {
+/* The CyberLab and MINAPRO logos are cropped with clip-paths tuned on a square box. Keep
+   the image square and centred (the tile is a size container) so each crop lands in the
+   same place at every tile aspect ratio, e.g. the wide tiles of the open-project strip.
+   cyberlab.png is a small app icon on a white 1600px canvas: its clip keeps only the icon's
+   flat pink centre, which matches the tile colour. */
+.projects-page .tile-project-cyberlab img,
+.projects-page .tile-project-minapro-ai-executive-catalyst img {
+  position:absolute;
+  inset:0;
+  width:min(100cqw,100cqh);
+  height:min(100cqw,100cqh);
+  margin:auto;
+  object-fit:contain;
+  object-position:center;
+}
+
+.projects-page .tile-project-cyberlab img {
+  clip-path:inset(38%);
   mix-blend-mode:normal;
   transform:scale(3.82);
 }
 
-.projects-page .tile-0:hover img {
+.projects-page .tile-project-cyberlab:hover img {
   transform:scale(3.88);
 }
 
-.projects-page .tile-3 img {
+.projects-page .tile-project-minapro-ai-executive-catalyst img {
   clip-path:inset(24% 35.8% 26% 35.8%);
   filter:none;
   mix-blend-mode:normal;
   transform:scale(1.68);
 }
 
-.projects-page .tile-3:hover img {
+.projects-page .tile-project-minapro-ai-executive-catalyst:hover img {
   transform:scale(1.73);
 }
 
@@ -606,12 +750,13 @@ useHead(() => ({
 
 .projects-canvas {
   --project-panel-width:clamp(390px,34vw,520px);
-  --project-grid-size:min(620px,calc(100svh - 180px),calc(100vw - var(--project-panel-width)));
+  /* 24px gutters either side so the grid and panel never touch the window edges (821–960px). */
+  --project-grid-size:min(620px,calc(100svh - 180px),calc(100vw - var(--project-panel-width) - 48px));
   --toolbox-motion-duration:.34s;
   --toolbox-motion-ease:cubic-bezier(.22,.8,.24,1);
   position:relative;
   width:calc(var(--project-grid-size) + var(--project-panel-width));
-  max-width:100vw;
+  max-width:calc(100vw - 48px);
   height:var(--project-grid-size);
 }
 
@@ -636,8 +781,15 @@ useHead(() => ({
   left:0;
 }
 
-.projects-page .project-tile.selected {
-  box-shadow:inset 0 0 0 2px var(--ink);
+/* The tile image covers inset shadows, so the selected ring is drawn on an overlay above it. */
+.projects-page .project-tile.selected::after {
+  position:absolute;
+  inset:0;
+  z-index:2;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 4px var(--page);
+  content:'';
+  pointer-events:none;
 }
 
 .projects-page .project-tile.selected .tile-label {
@@ -645,7 +797,6 @@ useHead(() => ({
   transform:translateY(0);
 }
 
-.projects-page .about-tile.selected,
 .projects-page .contact-tile.selected {
   box-shadow:inset 0 0 0 2px var(--ink);
 }
@@ -657,17 +808,13 @@ useHead(() => ({
   left:var(--project-grid-size);
   width:var(--project-panel-width);
   z-index:3;
-  --ink:#202020;
-  --quiet:#6f6f6a;
-  --line:#deded8;
-  --page:#fff;
   padding:clamp(24px,2.4vw,34px);
   overflow-x:hidden;
   overflow-y:auto;
-  border:1px solid #e8e8e3;
+  border:1px solid var(--line);
   border-left:0;
   border-radius:0 10px 10px 0;
-  background:#fff;
+  background:var(--page);
   color:var(--ink);
   overscroll-behavior-y:contain;
   touch-action:pan-y;
@@ -679,6 +826,50 @@ useHead(() => ({
 .inline-project-article {
   min-height:100%;
   transition:none;
+}
+
+.inline-project-close {
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:grid;
+  float:right;
+  width:34px;
+  height:34px;
+  margin:-6px -6px 8px 12px;
+  padding:0;
+  place-items:center;
+  border-radius:50%;
+  background:var(--soft);
+  color:var(--ink);
+  font-size:1.35rem;
+  line-height:1;
+  transition:background-color .18s ease;
+}
+
+.inline-project-close:hover {
+  background:color-mix(in srgb,var(--soft) 88%,var(--ink));
+}
+
+.inline-project-close:focus-visible {
+  outline-offset:2px;
+}
+
+.inline-project-heading h2:focus,
+.page-heading:focus {
+  outline:none;
+}
+
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  margin:-1px;
+  padding:0;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
 }
 
 .inline-project-heading {
@@ -707,7 +898,7 @@ useHead(() => ({
   min-height:27px;
   padding:5px 9px;
   border-radius:6px;
-  background:#f0f0ed;
+  background:var(--soft);
   color:var(--ink);
   font-size:.72rem;
   font-weight:600;
@@ -721,7 +912,7 @@ useHead(() => ({
 }
 
 .project-meta-link:hover {
-  background:#e4e4df;
+  background:color-mix(in srgb,var(--soft) 90%,var(--ink));
 }
 
 .inline-project-heading h2 {
@@ -735,31 +926,10 @@ useHead(() => ({
 .inline-project-heading>p:last-child,
 .inline-project-heading .project-subtitle {
   margin:7px 0 0;
-  color:#8a8a84;
+  color:var(--quiet);
   font-size:clamp(.95rem,1.2vw,1.15rem);
   font-weight:400;
   line-height:1.4;
-}
-
-.inline-project-figure {
-  width:100%;
-  aspect-ratio:16/9;
-  margin:clamp(22px,3.2vh,32px) 0 0;
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:5px;
-  background:#f7f7f4;
-}
-
-.inline-project-figure img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.inline-project-figure img.contain {
-  padding:clamp(26px,4vw,60px);
-  object-fit:contain;
 }
 
 .inline-project-copy {
@@ -773,7 +943,7 @@ useHead(() => ({
 .inline-project-copy>p {
   max-width:62ch;
   margin:0;
-  color:#7f7f79;
+  color:var(--quiet);
   font-size:.94rem;
   font-weight:400;
   line-height:1.62;
@@ -799,7 +969,7 @@ useHead(() => ({
   margin-bottom:8px;
   padding:4px 7px;
   border-radius:5px;
-  background:#f0f0ed;
+  background:var(--soft);
   color:var(--ink);
   font-size:.72rem;
   font-weight:600;
@@ -828,7 +998,7 @@ useHead(() => ({
   margin:0 0 9px;
   padding:4px 7px;
   border-radius:5px;
-  background:#f0f0ed;
+  background:var(--soft);
   color:var(--ink);
   font-size:.72rem;
   font-weight:600;
@@ -852,7 +1022,7 @@ useHead(() => ({
   overflow:hidden;
   border:1px solid var(--line);
   border-radius:8px;
-  background:#f4f4f1;
+  background:var(--soft);
 }
 
 .project-gallery-media img {
@@ -869,17 +1039,12 @@ useHead(() => ({
   aspect-ratio:16/9;
 }
 
-.project-gallery-media.crop-browser {
-  aspect-ratio:16/10;
-}
-
 .project-gallery-media.crop-tight {
   aspect-ratio:4/3;
 }
 
 .project-gallery-media.crop-landscape img,
 .project-gallery-media.crop-wide img,
-.project-gallery-media.crop-browser img,
 .project-gallery-media.crop-tight img {
   height:100%;
   object-fit:cover;
@@ -892,30 +1057,34 @@ useHead(() => ({
   line-height:1.42;
 }
 
-.inline-project-footer {
+.inline-project-cta {
   display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:18px;
-  padding-top:18px;
-  border-top:1px solid var(--line);
-}
-
-.inline-project-footer p {
-  margin:0;
-  color:var(--quiet);
-  font-size:.7rem;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:24px;
+  padding:14px 16px;
+  border-radius:8px;
+  background:var(--ink);
+  color:var(--page);
+  font-size:.9rem;
   font-weight:600;
-  letter-spacing:.04em;
-  text-transform:uppercase;
+  letter-spacing:-.015em;
+  text-decoration:none;
+  transition:opacity .18s ease;
 }
 
-.inline-project-footer a {
-  flex:none;
-  padding-bottom:2px;
-  border-bottom:1px solid currentColor;
-  font-size:.86rem;
-  font-weight:650;
+.inline-project-gallery + .inline-project-cta {
+  margin-top:0;
+}
+
+.inline-project-cta:hover {
+  opacity:.86;
+}
+
+.inline-project-cta:focus-visible {
+  outline:2px solid var(--ink);
+  outline-offset:3px;
 }
 
 .inline-panel-enter-active,
@@ -930,15 +1099,6 @@ useHead(() => ({
 
 .utility-heading h2 {
   max-width:8ch;
-}
-
-.utility-copy {
-  margin-top:clamp(34px,7vh,70px);
-  border-top:1px solid var(--line);
-}
-
-.utility-footer {
-  margin-top:clamp(80px,18vh,180px);
 }
 
 .inline-contact-links {
@@ -967,8 +1127,10 @@ useHead(() => ({
   }
 
   .projects-canvas {
-    --project-grid-size:calc(100vw - 72px);
+    /* Width-driven on phones, but capped by the small viewport height so landscape phones still fit. */
+    --project-grid-size:min(calc(100vw - 72px),calc(100svh - 150px));
     width:100%;
+    max-width:none;
     height:100%;
     margin:0 auto;
   }
@@ -992,7 +1154,7 @@ useHead(() => ({
     max-height:none;
     margin-top:12px;
     padding:24px 20px 30px;
-    border-left:1px solid #e8e8e3;
+    border-left:1px solid var(--line);
     border-radius:10px;
   }
 
@@ -1016,17 +1178,23 @@ useHead(() => ({
     display:grid;
     width:100%;
     height:132px;
-    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-columns:repeat(5,minmax(0,1fr));
     grid-template-rows:repeat(2,minmax(0,1fr));
     gap:6px;
   }
 
-  .projects-page.inspecting .work-grid>button {
+  .projects-page.inspecting .work-grid>* {
     grid-column:auto;
     grid-row:auto;
     min-width:0;
     min-height:0;
     border-radius:8px;
+  }
+
+  /* Seven projects and two utility tiles: the contact tile fills the strip's last two cells. */
+  .projects-page.inspecting .contact-tile {
+    grid-column:span 2;
+    align-items:normal;
   }
 
   .projects-page.inspecting .about-tile,
@@ -1041,17 +1209,9 @@ useHead(() => ({
     font-size:1rem;
   }
 
+  /* Strip tiles are too small for a label; the selected ring and the panel heading name the project. */
   .projects-page.inspecting .project-tile .tile-label {
-    right:5px;
-    bottom:5px;
-    left:5px;
-    width:max-content;
-    max-width:calc(100% - 10px);
-    padding:4px 6px;
-    overflow:hidden;
-    font-size:.62rem;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    display:none;
   }
 
   .projects-page.inspecting .inline-project-card {
@@ -1083,352 +1243,41 @@ useHead(() => ({
 
 }
 
-.projects-page.revealing .work-grid>button {
+.projects-page.revealing .work-grid>* {
   --grid-entry-y:18px;
   animation:grid-block-slide .72s cubic-bezier(.16,1,.3,1) both;
   animation-delay:.1s;
 }
 
-.projects-page.revealing .work-grid>button:nth-child(even) { --grid-entry-y:-12px; }
-.projects-page.revealing .work-grid>button:nth-child(2) { animation-delay:.17s; }
-.projects-page.revealing .work-grid>button:nth-child(3) { animation-delay:.24s; }
-.projects-page.revealing .work-grid>button:nth-child(4) { animation-delay:.31s; }
-.projects-page.revealing .work-grid>button:nth-child(5) { animation-delay:.38s; }
-.projects-page.revealing .work-grid>button:nth-child(6) { animation-delay:.45s; }
-.projects-page.revealing .work-grid>button:nth-child(7) { animation-delay:.52s; }
-.projects-page.revealing .work-grid>button:nth-child(8) { animation-delay:.59s; }
+.projects-page.revealing .work-grid>*:nth-child(even) { --grid-entry-y:-12px; }
+.projects-page.revealing .work-grid>*:nth-child(2) { animation-delay:.17s; }
+.projects-page.revealing .work-grid>*:nth-child(3) { animation-delay:.24s; }
+.projects-page.revealing .work-grid>*:nth-child(4) { animation-delay:.31s; }
+.projects-page.revealing .work-grid>*:nth-child(5) { animation-delay:.38s; }
+.projects-page.revealing .work-grid>*:nth-child(6) { animation-delay:.45s; }
+.projects-page.revealing .work-grid>*:nth-child(7) { animation-delay:.52s; }
+.projects-page.revealing .work-grid>*:nth-child(8) { animation-delay:.59s; }
+.projects-page.revealing .work-grid>*:nth-child(9) { animation-delay:.66s; }
 
 .projects-page.leaving .work-grid {
   pointer-events:none;
 }
 
-.projects-page.leaving .work-grid>button {
+.projects-page.leaving .work-grid>* {
   --grid-entry-y:18px;
   animation:grid-block-slide-out .42s cubic-bezier(.7,0,.84,0) both;
   animation-delay:.35s;
 }
 
-.projects-page.leaving .work-grid>button:nth-child(even) { --grid-entry-y:-12px; }
-.projects-page.leaving .work-grid>button:nth-child(2) { animation-delay:.3s; }
-.projects-page.leaving .work-grid>button:nth-child(3) { animation-delay:.25s; }
-.projects-page.leaving .work-grid>button:nth-child(4) { animation-delay:.2s; }
-.projects-page.leaving .work-grid>button:nth-child(5) { animation-delay:.15s; }
-.projects-page.leaving .work-grid>button:nth-child(6) { animation-delay:.1s; }
-.projects-page.leaving .work-grid>button:nth-child(7) { animation-delay:.05s; }
-.projects-page.leaving .work-grid>button:nth-child(8) { animation-delay:0s; }
-
-.detail-dialog.project-mode {
-  inset:0;
-  width:100vw;
-  height:100dvh;
-  max-width:none;
-  border:0;
-  background:var(--page);
-  color:var(--ink);
-  overflow:hidden;
-}
-
-.detail-dialog.project-mode[open] {
-  animation:project-reader-in .46s cubic-bezier(.16,1,.3,1);
-}
-
-.detail-dialog.project-mode.closing {
-  animation:project-reader-out .24s ease-in forwards;
-}
-
-.detail-dialog.project-mode::backdrop {
-  background:var(--page);
-}
-
-.project-mode .panel-content {
-  display:block;
-  height:100dvh;
-  min-height:0;
-  padding:0;
-  background:var(--page);
-}
-
-.project-reader {
-  display:grid;
-  grid-template-columns:minmax(340px,36vw) minmax(0,1fr);
-  height:100dvh;
-  min-height:0;
-}
-
-.project-reader-sidebar {
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  gap:clamp(13px,2.2vh,22px);
-  height:100dvh;
-  min-height:0;
-  padding:clamp(22px,3.5vh,36px) clamp(30px,3.8vw,62px) clamp(22px,3.5vh,36px);
-  border-right:1px solid var(--line);
-  background:var(--page);
-  overflow:hidden;
-}
-
-.project-reader-back {
-  display:flex;
-  align-items:center;
-  gap:9px;
-  width:max-content;
-  padding:0;
-  border:0;
-  background:transparent;
-  color:var(--quiet);
-  font-size:.76rem;
-  font-weight:550;
-}
-
-.project-reader-back span {
-  color:var(--ink);
-  font-size:1rem;
-  transition:transform .2s ease;
-}
-
-.project-reader-back:hover span { transform:translateX(-3px); }
-
-.project-reader-sidebar .panel-heading>p:first-child {
-  margin-top:0;
-}
-
-.project-reader-sidebar .panel-heading h2 {
-  max-width:none;
-  font-size:clamp(2.5rem,4vw,4rem);
-  line-height:.92;
-  letter-spacing:-.07em;
-  overflow-wrap:normal;
-  word-break:normal;
-}
-
-.project-reader-sidebar .panel-heading .project-summary {
-  max-width:28ch;
-  margin-top:clamp(10px,1.8vh,18px);
-  font-size:clamp(.98rem,1.25vw,1.2rem);
-  line-height:1.45;
-}
-
-.project-sidebar-summary {
-  display:-webkit-box;
-  max-width:36ch;
-  margin:0;
-  overflow:hidden;
-  color:var(--quiet);
-  font-size:.9rem;
-  line-height:1.58;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:5;
-}
-
-.project-reader-sidebar .project-visit {
-  width:max-content;
-  padding-bottom:2px;
-  border-bottom:1px solid currentColor;
-  font-weight:650;
-  text-decoration:none;
-}
-
-.project-reader-pagination {
-  display:flex;
-  gap:10px;
-  margin-top:auto;
-  padding-top:4px;
-}
-
-.project-reader-pagination button {
-  position:relative;
-  width:clamp(58px,5.4vw,76px);
-  aspect-ratio:1;
-  padding:0;
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:7px;
-  background:#f3f3f0;
-}
-
-.project-reader-pagination button img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  transition:transform .25s ease;
-}
-
-.project-reader-pagination button:hover img { transform:scale(1.06); }
-
-.project-reader-pagination img.thumb-touslespros,
-.project-reader-pagination img.thumb-thequestboard {
-  object-fit:contain;
-}
-
-.project-reader-pagination button span {
-  position:absolute;
-  bottom:5px;
-  left:5px;
-  display:grid;
-  width:22px;
-  height:22px;
-  place-items:center;
-  border-radius:50%;
-  background:#fff;
-  color:#202020;
-  font-size:.82rem;
-  box-shadow:0 2px 10px #0002;
-}
-
-.project-reader-pagination button:last-child span { right:5px; left:auto; }
-
-.project-reader-canvas {
-  min-width:0;
-  height:100dvh;
-  min-height:0;
-  padding:clamp(70px,8vh,98px) clamp(30px,5vw,84px) clamp(54px,7vh,82px);
-  background:#f3f3f0;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-}
-
-.project-reader-figure {
-  margin:0;
-}
-
-.project-reader-figure .panel-image {
-  width:100%;
-  max-height:none;
-  border:1px solid #e5e5e1;
-  border-radius:10px;
-  background:#fff;
-  box-shadow:0 18px 55px #1d1d1d12;
-  object-fit:contain;
-}
-
-.project-reader-figure .panel-image.contain {
-  height:clamp(420px,66vh,760px);
-  padding:clamp(40px,8vw,110px);
-}
-
-.project-reader-figure figcaption {
-  margin-top:12px;
-  color:var(--quiet);
-  font-size:.72rem;
-  letter-spacing:.02em;
-}
-
-.project-reader-details {
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(240px,.75fr);
-  gap:clamp(38px,6vw,90px);
-  margin-top:clamp(54px,8vh,88px);
-  padding-top:clamp(24px,3.5vh,38px);
-  border-top:1px solid var(--line);
-}
-
-.project-reader-overview {
-  max-width:44rem;
-}
-
-.project-reader-kicker {
-  margin:0 0 18px;
-  color:var(--quiet);
-  font-size:.68rem;
-  font-weight:650;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.project-reader-overview p:not(.project-reader-kicker) {
-  margin:0 0 18px;
-  font-size:clamp(1rem,1.25vw,1.16rem);
-  line-height:1.68;
-}
-
-.project-reader-details .project-facts {
-  max-width:none;
-  margin:0;
-}
-
-.project-reader-details .project-facts div {
-  grid-template-columns:76px 1fr;
-  gap:16px;
-  padding:0 0 20px;
-  border-top:0;
-}
-
-.project-reader-details .project-facts dd {
-  font-size:.9rem;
-  line-height:1.55;
-}
-
-:root[data-theme='dark'] .project-mode .panel-content,
-:root[data-theme='dark'] .project-reader-sidebar {
-  background:var(--page);
-  color:var(--ink);
-}
-
-:root[data-theme='dark'] .project-reader-canvas {
-  background:#1a1a19;
-}
-
-:root[data-theme='dark'] .project-reader-figure .panel-image {
-  border-color:var(--line);
-  background:#242422;
-  box-shadow:0 18px 55px #00000040;
-}
-
-:root[data-theme='dark'] .project-reader-pagination button { background:#242422; }
-
-@keyframes project-reader-in {
-  from { opacity:0; transform:scale(.985); }
-  to { opacity:1; transform:scale(1); }
-}
-
-@keyframes project-reader-out {
-  from { opacity:1; transform:scale(1); }
-  to { opacity:0; transform:scale(.992); }
-}
-
-@media (max-width:820px) {
-  .detail-dialog.project-mode { overflow-y:auto; }
-
-  .project-mode .panel-content { height:auto; }
-
-  .project-reader {
-    grid-template-columns:1fr;
-    height:auto;
-  }
-
-  .project-reader-sidebar {
-    position:relative;
-    height:auto;
-    min-height:100svh;
-    padding:22px 22px 26px;
-    border-right:0;
-    border-bottom:1px solid var(--line);
-    overflow:visible;
-  }
-
-  .project-reader-sidebar .panel-heading h2 {
-    font-size:clamp(2.75rem,12vw,4rem);
-  }
-
-  .project-reader-pagination {
-    margin-top:24px;
-  }
-
-  .project-reader-canvas {
-    height:auto;
-    min-height:auto;
-    padding:46px 16px 28px;
-    overflow:visible;
-  }
-
-  .project-reader-figure .panel-image.contain {
-    height:58vh;
-    padding:36px;
-  }
-
-  .project-reader-details { grid-template-columns:1fr; }
-}
+.projects-page.leaving .work-grid>*:nth-child(even) { --grid-entry-y:-12px; }
+.projects-page.leaving .work-grid>*:nth-child(2) { animation-delay:.31s; }
+.projects-page.leaving .work-grid>*:nth-child(3) { animation-delay:.26s; }
+.projects-page.leaving .work-grid>*:nth-child(4) { animation-delay:.22s; }
+.projects-page.leaving .work-grid>*:nth-child(5) { animation-delay:.18s; }
+.projects-page.leaving .work-grid>*:nth-child(6) { animation-delay:.13s; }
+.projects-page.leaving .work-grid>*:nth-child(7) { animation-delay:.09s; }
+.projects-page.leaving .work-grid>*:nth-child(8) { animation-delay:.04s; }
+.projects-page.leaving .work-grid>*:nth-child(9) { animation-delay:0s; }
 
 @keyframes grid-block-slide {
   from {
@@ -1459,8 +1308,8 @@ useHead(() => ({
     transition:none;
   }
 
-  .projects-page.revealing .work-grid>button,
-  .projects-page.leaving .work-grid>button {
+  .projects-page.revealing .work-grid>*,
+  .projects-page.leaving .work-grid>* {
     animation:none;
   }
 }
