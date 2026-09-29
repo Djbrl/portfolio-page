@@ -372,6 +372,7 @@ const projects: PortfolioProject[] = [
       en: 'Product design and development of the desktop app, from detecting services to managing processes, ports and logs.',
     },
     tags: ['Electron', 'TypeScript', 'Vue 3'],
+    href: 'https://multiprise.vercel.app',
     image: '/work/multiprise.svg',
     alt: { fr: 'Symbole de l’application Multiprise', en: 'Multiprise application mark' },
     imageFit: 'contain',
