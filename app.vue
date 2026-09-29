@@ -44,7 +44,7 @@
                 <span class="tile-label">{{ project.name }}</span>
               </button>
               <a class="about-tile" href="https://github.com/Djbrl" target="_blank" rel="noopener"><span>{{ isFrench ? 'Plus sur GitHub' : 'More on GitHub' }}</span><span aria-hidden="true">↗</span></a>
-              <button class="contact-tile" :class="{ selected: selectedUtility === 'contact' }" type="button" :aria-pressed="selectedUtility === 'contact'" @click="inspectUtility('contact')"><span>Contact</span><span aria-hidden="true">↗</span></button>
+              <div class="grid-spacer" aria-hidden="true"></div>
             </div>
           </div>
 
@@ -684,15 +684,13 @@ useHead(() => {
   font-weight:inherit;
 }
 
-.projects-page .about-tile,
-.projects-page .contact-tile {
+.projects-page .about-tile {
   background:var(--soft);
   box-shadow:none;
   color:var(--ink);
 }
 
-.projects-page .about-tile:hover,
-.projects-page .contact-tile:hover {
+.projects-page .about-tile:hover {
   background:color-mix(in srgb,var(--soft) 92%,var(--ink));
 }
 
@@ -794,10 +792,6 @@ useHead(() => {
 .projects-page .project-tile.selected .tile-label {
   opacity:1;
   transform:translateY(0);
-}
-
-.projects-page .contact-tile.selected {
-  box-shadow:inset 0 0 0 2px var(--ink);
 }
 
 .inline-project-card {
@@ -1179,21 +1173,18 @@ useHead(() => {
     border-radius:8px;
   }
 
-  /* Seven projects and two utility tiles: the contact tile fills the strip's last two cells. */
-  .projects-page.inspecting .contact-tile {
+  /* Seven projects and one link tile: the empty spacer fills the strip's last two cells. */
+  .projects-page.inspecting .grid-spacer {
     grid-column:span 2;
-    align-items:normal;
   }
 
-  .projects-page.inspecting .about-tile,
-  .projects-page.inspecting .contact-tile {
+  .projects-page.inspecting .about-tile {
     padding:8px;
     font-size:.68rem;
     letter-spacing:-.025em;
   }
 
-  .projects-page.inspecting .about-tile span:last-child,
-  .projects-page.inspecting .contact-tile span:last-child {
+  .projects-page.inspecting .about-tile span:last-child {
     font-size:1rem;
   }
 

@@ -985,7 +985,8 @@ body,
 .projects-page .tile-5 { grid-column:1; grid-row:4; }
 .projects-page .tile-6 { grid-column:2; grid-row:4; }
 .projects-page .about-tile { grid-column:3; grid-row:4; }
-.projects-page .contact-tile { grid-column:4; grid-row:4; }
+/* An empty, transparent cell keeps the grid's arrangement where the Contact tile used to be. */
+.projects-page .grid-spacer { grid-column:4; grid-row:4; background:none; box-shadow:none; pointer-events:none; }
 
 /* Tiles fill their grid areas; the older phone rules give them aspect-ratio:1. */
 .projects-page .work-grid>* {
@@ -995,21 +996,18 @@ body,
 }
 
 /* Keep the utility tiles' label and arrow inside short tiles. */
-.projects-page .about-tile,
-.projects-page .contact-tile {
+.projects-page .about-tile {
   overflow:hidden;
   padding:clamp(10px,1.2vw,18px);
   line-height:1.12;
 }
 
-.projects-page .about-tile span:last-child,
-.projects-page .contact-tile span:last-child {
+.projects-page .about-tile span:last-child {
   font-size:1.35em;
   line-height:.8;
 }
 
-.projects-page .about-tile,
-.projects-page .contact-tile {
+.projects-page .about-tile {
   background:var(--soft);
   color:var(--ink);
 }
@@ -1429,8 +1427,7 @@ body {
 
 /* Stacked layouts: scale the utility tiles' type with the grid, not the viewport width. */
 @media (max-width:820px) {
-  .projects-page .about-tile,
-  .projects-page .contact-tile {
+  .projects-page .about-tile {
     padding:clamp(8px,calc(var(--project-grid-size,90vw) * .03),18px);
     font-size:clamp(.68rem,calc(var(--project-grid-size,90vw) * .032),1.2rem);
   }
@@ -1471,8 +1468,8 @@ body {
     grid-template-rows:minmax(0,1fr);
   }
 
-  /* One cell per tile: the portrait strip's two-cell Contact tile would add a second row. */
-  .page-section.projects-page.inspecting .contact-tile {
+  /* One cell per tile: the portrait strip's two-cell spacer would add a second row. */
+  .page-section.projects-page.inspecting .grid-spacer {
     grid-column:auto;
   }
 }
