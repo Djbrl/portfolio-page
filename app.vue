@@ -740,6 +740,41 @@ useHead(() => {
   transform:scale(1.73);
 }
 
+/* Tile looks belong to the project, not to its slot, so the grid can be reordered freely. */
+.projects-page .tile-project-multiprise {
+  background:#f4ede1;
+}
+
+.projects-page .tile-project-touslespros {
+  background:#ffed00;
+}
+
+.projects-page .tile-project-thequestboard {
+  background:#e9e6dd;
+}
+
+.projects-page .tile-project-skindiff {
+  background:#fff;
+}
+
+.projects-page .tile-project-multiprise img,
+.projects-page .tile-project-touslespros img {
+  object-fit:contain;
+  object-position:center;
+  padding:12%;
+}
+
+.projects-page .tile-project-skindiff img,
+.projects-page .tile-project-brainstorm img {
+  object-position:center;
+}
+
+/* The 16:9 wordmark would be cropped in a square tile; show all of it on the matching beige. */
+.projects-page .tile-project-thequestboard img {
+  object-fit:contain;
+  object-position:center;
+}
+
 .projects-page {
   padding-right:0;
   padding-left:0;

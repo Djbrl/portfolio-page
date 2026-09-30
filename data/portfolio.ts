@@ -483,4 +483,4 @@ const clientProjects: PortfolioProject[] = [
   },
 ];
 
-export const gridProjects = [clientProjects[2], projects[0], projects[1], projects[3], projects[2], clientProjects[1], clientProjects[0]];
+export const gridProjects = [projects[2], projects[3], projects[1], clientProjects[2], clientProjects[1], clientProjects[0], projects[0]];
