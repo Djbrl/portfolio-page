@@ -66,6 +66,7 @@
                     <a v-if="selectedProject.href" class="inline-project-cta" :href="selectedProject.href" target="_blank" rel="noopener">{{ projectCtaLabel(selectedProject) }} <span aria-hidden="true">↗</span></a>
                     <dl>
                       <div><dt>{{ copy.roleLabel }}</dt><dd>{{ localize(selectedProject.role) }}</dd></div>
+                      <div v-if="selectedProject.highlights?.length"><dt>{{ copy.highlightsLabel }}</dt><dd><ul class="project-highlights"><li v-for="(item, index) in selectedProject.highlights" :key="index">{{ localize(item) }}</li></ul></dd></div>
                       <div v-if="selectedProject.tags?.length"><dt>{{ copy.technologies }}</dt><dd>{{ selectedProject.tags.join(' · ') }}</dd></div>
                     </dl>
                   </div>
@@ -695,29 +696,23 @@ useHead(() => {
   font-weight:inherit;
 }
 
-/* First-load intro: the words rise into focus one after another, the strong phrases then
-   darken from grey to ink, and the section links follow. It waits for the font gate. */
+/* First-load intro: a quick, quiet fade-up of the headline, word by word, then the section
+   links. It waits for the font gate. */
 .tagline-word {
   display:inline-block;
 }
 
 .hero-intro .tagline-word {
-  animation:tagline-word-in .9s cubic-bezier(.16,1,.3,1) both;
-  animation-delay:calc(.12s + var(--word-index) * 60ms);
-}
-
-.hero-intro .tagline-word strong {
-  animation:tagline-strong-ink .7s ease both;
-  animation-delay:calc(.12s + var(--word-index) * 60ms + .75s);
+  animation:tagline-word-in .5s cubic-bezier(.2,.7,.3,1) both;
+  animation-delay:calc(.05s + var(--word-index) * 25ms);
 }
 
 .hero-intro .hero-section-links {
-  animation:hero-links-in .6s cubic-bezier(.16,1,.3,1) both;
-  animation-delay:calc(.12s + var(--word-count) * 60ms + .9s);
+  animation:hero-links-in .4s ease-out both;
+  animation-delay:calc(.05s + var(--word-count) * 25ms + .15s);
 }
 
 html.fonts-pending .hero-intro .tagline-word,
-html.fonts-pending .hero-intro .tagline-word strong,
 html.fonts-pending .hero-intro .hero-section-links {
   animation-play-state:paused;
 }
@@ -725,32 +720,18 @@ html.fonts-pending .hero-intro .hero-section-links {
 @keyframes tagline-word-in {
   from {
     opacity:0;
-    filter:blur(10px);
-    transform:translateY(.32em);
+    transform:translateY(.12em);
   }
 
   to {
     opacity:1;
-    filter:blur(0);
     transform:none;
   }
-}
-
-@keyframes tagline-strong-ink {
-  from { color:var(--quiet); }
-  to { color:var(--ink); }
 }
 
 @keyframes hero-links-in {
-  from {
-    opacity:0;
-    transform:translateY(8px);
-  }
-
-  to {
-    opacity:1;
-    transform:none;
-  }
+  from { opacity:0; }
+  to { opacity:1; }
 }
 
 .projects-page .about-tile {
@@ -819,7 +800,7 @@ html.fonts-pending .hero-intro .hero-section-links {
 }
 
 .projects-page .tile-project-thequestboard {
-  background:#e9e6dd;
+  background:#f2efe5;
 }
 
 .projects-page .tile-project-skindiff {
@@ -838,7 +819,7 @@ html.fonts-pending .hero-intro .hero-section-links {
   object-position:center;
 }
 
-/* The 16:9 wordmark would be cropped in a square tile; show all of it on the matching beige. */
+/* A square logo: show all of it, on the logo's own cream, in wide strip tiles too. */
 .projects-page .tile-project-thequestboard img {
   object-fit:contain;
   object-position:center;
@@ -1006,8 +987,8 @@ html.fonts-pending .hero-intro .hero-section-links {
 .inline-project-heading h2 {
   margin:0;
   font-size:clamp(2.15rem,3.2vw,3.55rem);
-  font-weight:600;
-  letter-spacing:-.045em;
+  font-weight:650;
+  letter-spacing:-.06em;
   line-height:.94;
 }
 
@@ -1068,6 +1049,30 @@ html.fonts-pending .hero-intro .hero-section-links {
   margin:0;
   font-size:.84rem;
   line-height:1.5;
+}
+
+.project-highlights {
+  display:grid;
+  gap:8px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.project-highlights li {
+  position:relative;
+  padding-left:14px;
+}
+
+.project-highlights li::before {
+  position:absolute;
+  top:.68em;
+  left:0;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--quiet);
+  content:'';
 }
 
 .inline-project-gallery {
@@ -1394,7 +1399,6 @@ html.fonts-pending .hero-intro .hero-section-links {
   .projects-page.revealing .work-grid>*,
   .projects-page.leaving .work-grid>*,
   .hero-intro .tagline-word,
-  .hero-intro .tagline-word strong,
   .hero-intro .hero-section-links {
     animation:none;
   }

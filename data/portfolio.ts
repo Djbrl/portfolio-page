@@ -15,6 +15,7 @@ export type PortfolioProject = {
   short: LocalizedText;
   description: LocalizedText;
   role: LocalizedText;
+  highlights?: LocalizedText[];
   tags: string[];
   href?: string;
   image: string;
@@ -265,7 +266,7 @@ export const translations = {
     switchLanguage: 'Afficher le site en anglais',
     lightMode: 'Passer au thème clair',
     darkMode: 'Passer au thème sombre',
-    role: 'Ingénieur produit',
+    role: 'Développeur logiciel',
     tagline: 'Je conçois et livre des produits logiciels qui résolvent des problèmes concrets.',
     pageNavigation: 'Navigation entre les pages',
     pageLabels: ['Introduction', 'Projets', 'À propos'],
@@ -279,6 +280,7 @@ export const translations = {
       'Je suis disponible pour des créations produit, des modernisations et des intégrations, surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
     contactNavigation: 'Liens de contact et profils',
     roleLabel: 'Mon rôle',
+    highlightsLabel: 'Ce que j’ai construit',
     technologies: 'Technologies',
     description: 'Portfolio de Djibril Sy, ingénieur produit spécialisé dans les produits web, mobiles et desktop.',
     socialDescription:
@@ -289,7 +291,7 @@ export const translations = {
     switchLanguage: 'Display the site in French',
     lightMode: 'Switch to light theme',
     darkMode: 'Switch to dark theme',
-    role: 'Product engineer',
+    role: 'Software developer',
     tagline: 'I design and ship software products that solve real-world problems.',
     pageNavigation: 'Page navigation',
     pageLabels: ['Introduction', 'Projects', 'About me'],
@@ -303,6 +305,7 @@ export const translations = {
       'I’m available for product builds, modernization work and integrations, especially when the brief is still messy and someone needs to turn it into a working system.',
     contactNavigation: 'Contact and profile links',
     roleLabel: 'My role',
+    highlightsLabel: 'What I built',
     technologies: 'Technologies',
     description: 'Portfolio of Djibril Sy, a product engineer building web, mobile and desktop products.',
     socialDescription:
@@ -314,7 +317,7 @@ const projects: PortfolioProject[] = [
   {
     name: 'TheQuestBoard',
     kind: 'personal',
-    tileImage: '/work/logos/thequestboard.jpeg',
+    tileImage: '/work/logos/thequestboard.webp',
     year: '2023–2026',
     short: { fr: 'Repérage de commandes pour artistes', en: 'Commission discovery for artists' },
     description: {
@@ -364,14 +367,36 @@ const projects: PortfolioProject[] = [
     year: '2026',
     short: { fr: 'Centre de contrôle pour projets en local', en: 'A control center for local development projects' },
     description: {
-      fr: 'Une application macOS qui repère les services d’un projet, attribue à chacun un port libre, les démarre et les arrête, et affiche leurs logs et un aperçu en direct dans une seule fenêtre.',
-      en: 'A macOS app that finds the services in a project, gives each one a free port, starts and stops them, and shows their logs and a live preview in one window.',
+      fr: 'Travailler sur plusieurs projets à la fois finit en jonglage de terminaux : quelle commande lance quoi, quel port est libre, quel terminal tient le processus qui refuse de s’arrêter. Multiprise est une application macOS qui lit les fichiers que chaque projet possède déjà, démarre ses services sur des ports qui n’entrent jamais en conflit, et réunit leurs logs, leurs adresses et un aperçu en direct dans une seule fenêtre. Les agents de code s’en servent aussi, via une CLI et un serveur MCP, pour réutiliser les services déjà lancés au lieu d’en démarrer des doublons.',
+      en: 'Working on several projects at once turns into terminal juggling: which command starts what, which port is free, which terminal owns the process that won’t stop. Multiprise is a macOS app that reads the files each project already has, starts its services on ports that never collide, and keeps their logs, addresses and a live preview in one window. Coding agents use it too, through a CLI and an MCP server, so they reuse the services already running instead of starting duplicates.',
     },
     role: {
-      fr: 'Conception et développement de l’application desktop, de la détection des services à la gestion des processus, des ports et des logs.',
-      en: 'Product design and development of the desktop app, from detecting services to managing processes, ports and logs.',
+      fr: 'Conception produit et développement complet, d’un premier prototype web en Vue et Rust jusqu’à l’application Electron publiée.',
+      en: 'Product design and end-to-end development, from a first web prototype in Vue and Rust to the released Electron app.',
     },
-    tags: ['Electron', 'TypeScript', 'Vue 3'],
+    highlights: [
+      {
+        fr: 'Détection des services à partir des fichiers du projet (package.json, Cargo.toml, Docker Compose), sans fichier de configuration à maintenir.',
+        en: 'Service discovery from the files a project already has (package.json, Cargo.toml, Docker Compose), with no config file to keep in sync.',
+      },
+      {
+        fr: 'Attribution des ports sans conflit : un service garde son port d’une fois sur l’autre, pour que ses adresses, favoris et callbacks OAuth survivent à un redémarrage.',
+        en: 'Collision-free ports: a service keeps its port from one launch to the next, so its URLs, bookmarks and OAuth callbacks survive a restart.',
+      },
+      {
+        fr: 'Adresses stables comme web.shop.localhost, grâce à un reverse proxy intégré qui transmet aussi les WebSockets pour garder le rechargement à chaud.',
+        en: 'Stable addresses like web.shop.localhost, through a built-in reverse proxy that also passes WebSockets so hot reload keeps working.',
+      },
+      {
+        fr: 'Des logs lisibles : une vue fusionnée et consultable par projet, des liens fichier:ligne qui s’ouvrent dans l’éditeur, et un bouton pour corriger chaque échec de démarrage.',
+        en: 'Readable logs: one merged, searchable view per project, file:line links that open in the editor, and a one-click fix when a service fails to start.',
+      },
+      {
+        fr: 'Une CLI et un serveur MCP pour que Claude Code et d’autres agents listent, démarrent et suivent les mêmes services.',
+        en: 'A CLI and an MCP server so Claude Code and other agents can list, start and follow the same services.',
+      },
+    ],
+    tags: ['Electron', 'TypeScript', 'Vue 3', 'MCP'],
     href: 'https://multiprise.vercel.app',
     image: '/work/multiprise.svg',
     alt: { fr: 'Symbole de l’application Multiprise', en: 'Multiprise application mark' },
@@ -387,15 +412,37 @@ const projects: PortfolioProject[] = [
     kind: 'personal',
     tileImage: '/work/logos/brainstorm.svg',
     year: '2026',
-    short: { fr: 'Une carte en direct du code et des agents IA qui l’écrivent', en: 'A live map of your code and the AI agents writing it' },
+    short: { fr: 'Une carte en direct des agents IA qui travaillent dans votre code', en: 'A live map of the AI agents working in your code' },
     description: {
-      fr: 'Brainstorm tourne à côté de Claude Code et montre ce que les agents ont fait, où et pourquoi : une chronologie en direct de chaque session, une carte du code qui s’allume là où ils travaillent, et une question « pourquoi ? » sur n’importe quelle étape ou fichier. Conçu en un après-midi lors d’un hackathon.',
-      en: 'Brainstorm runs next to Claude Code and shows what the agents did, where and why: a live timeline of each session, a map of the code that lights up where they’re working, and a “why?” you can ask about any step or file. Built in one afternoon at a hackathon.',
+      fr: 'Avec les agents de code, on perd vite le fil de son propre projet. Brainstorm tourne à côté de Claude Code et rend chaque session lisible : une chronologie en direct de chaque étape, une carte du code où chaque agent se déplace de fichier en fichier, et une question « pourquoi ? » sur n’importe quelle étape ou fichier. Construit en un après-midi, il a remporté la 3e place du hackathon GOMYCODE × NVIDIA « Come Build with AI » 2026, et s’installe désormais comme plugin Claude Code.',
+      en: 'AI coding agents make it easy to lose track of your own project. Brainstorm runs next to Claude Code and makes every session readable: a live timeline of each step, a map of the codebase where each agent moves from file to file, and a “why?” you can ask about any step or file. Built in one afternoon, it took 3rd place at GOMYCODE × NVIDIA’s “Come Build with AI” 2026 hackathon, and now installs as a Claude Code plugin.',
     },
     role: {
-      fr: 'Concept, conception produit et développement full-stack, de l’interface au modèle Nemotron hébergé sur GPU NVIDIA.',
-      en: 'Concept, product design and full-stack development, from the interface to a Nemotron model hosted on an NVIDIA GPU.',
+      fr: 'Idée, conception produit et architecture. J’ai dirigé un agent Claude Code principal et quatre sous-agents qui construisaient en parallèle, puis fait passer le prototype du hackathon au plugin installable.',
+      en: 'Idea, product design and architecture. I directed a lead Claude Code agent and four subagents building in parallel, then took the hackathon prototype to an installable plugin.',
     },
+    highlights: [
+      {
+        fr: 'Un lecteur qui suit les logs de Claude Code au fil de l’écriture, sous-agents compris, et les transforme en étapes annotées avec leurs diffs.',
+        en: 'A reader that follows Claude Code’s logs as they’re written, subagents included, and turns them into labeled steps with their diffs.',
+      },
+      {
+        fr: 'Une carte du code construite à partir des imports et de l’historique git, où chaque agent est un repère qui se déplace sur les fichiers qu’il touche.',
+        en: 'A codebase map built from imports and git history, with each agent drawn as a marker moving across the files it touches.',
+      },
+      {
+        fr: 'Deux modèles, chacun à sa place : Nemotron 3 Nano sur GPU NVIDIA lit tout le code (81 000 lignes en 73 secondes pour 0,02 $), Claude répond aux questions pour environ 0,03 $ chacune.',
+        en: 'Two models, each where it fits: Nemotron 3 Nano on an NVIDIA GPU reads the whole codebase (81k lines in 73 seconds for $0.02), and Claude answers questions for about $0.03 each.',
+      },
+      {
+        fr: 'Local d’abord : les logs restent sur la machine, et les clés, jetons et e-mails sont masqués avant tout stockage, envoi ou partage.',
+        en: 'Local-first: logs stay on the machine, and keys, tokens and emails are masked before anything is stored, sent or shared.',
+      },
+      {
+        fr: 'Des replays partageables : une session s’exporte en un seul fichier HTML, ou en rapport Markdown pour une pull request.',
+        en: 'Shareable replays: any session exports as a single HTML file, or as a Markdown report for a pull request.',
+      },
+    ],
     tags: ['React', 'NestJS', 'Claude API', 'Nemotron'],
     href: 'https://brainstorm-landing.vercel.app',
     image: '/work/case-studies/brainstorm/landing.webp',

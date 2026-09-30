@@ -1,39 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* General Sans, from Fontshare, self-hosted. */
 @font-face {
-  font-family:'General Sans';
-  src:url('/fonts/GeneralSans-Variable.woff2') format('woff2');
+  font-family:Inter;
+  src:url('/fonts/Inter-Variable.woff2') format('woff2'),url('/fonts/Inter-Variable.ttf') format('truetype');
   font-style:normal;
-  font-weight:200 700;
+  font-weight:100 900;
   font-display:swap;
 }
 
-/* Arial scaled to General Sans's metrics (measured in the browser), so text laid out before the
-   webfont arrives doesn't reflow when it swaps in. */
+/* Arial scaled to Inter's metrics, so text laid out before Inter loads doesn't reflow when it swaps in. */
 @font-face {
-  font-family:'General Sans Fallback';
+  font-family:'Inter Fallback';
   src:local('Arial'),local('ArialMT'),local('Helvetica');
   font-weight:100 549;
-  ascent-override:100.25%;
-  descent-override:23.82%;
+  ascent-override:90.2%;
+  descent-override:22.48%;
   line-gap-override:0%;
-  size-adjust:100.75%;
+  size-adjust:107.4%;
 }
 
 @font-face {
-  font-family:'General Sans Fallback';
+  font-family:'Inter Fallback';
   src:local('Arial Bold'),local('Arial-BoldMT'),local('Helvetica Bold');
   font-weight:550 900;
-  ascent-override:101.66%;
-  descent-override:24.16%;
+  ascent-override:90.2%;
+  descent-override:22.48%;
   line-gap-override:0%;
-  /* Tuned to the hero headline (600 at display size), where a reflow is most visible. */
-  size-adjust:99.35%;
+  /* Tuned to the hero headline (Inter 650 at display size, -.06em tracking), where a reflow is most visible. */
+  size-adjust:95.5%;
 }
 
-/* Set by the font gate script in nuxt.config.ts until the fonts have loaded. */
+/* Set by the font gate script in nuxt.config.ts until Inter has loaded. */
 html.fonts-pending body {
   opacity:0;
 }
@@ -50,7 +48,7 @@ body {
 
 :root {
   color-scheme:light;
-  font-family:'General Sans','General Sans Fallback',Arial,sans-serif;
+  font-family:Inter,'Inter Fallback',Arial,sans-serif;
   color:#202020;
   background:#fff;
   font-synthesis:none;
@@ -808,8 +806,8 @@ body,
   transform:translate(-50%,-50%);
   color:var(--ink);
   font-size:clamp(3.1rem,5.4vw,5rem);
-  font-weight:600;
-  letter-spacing:-.045em;
+  font-weight:650;
+  letter-spacing:-.06em;
   line-height:1.03;
   white-space:pre-line;
   text-wrap:balance;
@@ -953,8 +951,8 @@ body,
 .bio-layout h2 {
   margin:0;
   font-size:clamp(3.8rem,7vw,7rem);
-  font-weight:600;
-  letter-spacing:-.05em;
+  font-weight:700;
+  letter-spacing:-.065em;
   line-height:.9;
 }
 
@@ -1064,20 +1062,26 @@ body,
 
 .identity-home {
   gap:7px;
+  /* Apple's system font (San Francisco) where it exists; Inter everywhere else. */
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,'Inter Fallback',Arial,sans-serif;
   font-weight:400;
-  letter-spacing:-.02em;
+  letter-spacing:-.01em;
   text-transform:none;
 }
 
 .identity-home strong {
   color:var(--ink);
-  font-weight:700;
+  font-weight:600;
 }
 
 .identity-home .identity-role,
 .identity-home>span[aria-hidden='true'] {
   color:var(--quiet);
   font-weight:400;
+}
+
+.identity-home .identity-role {
+  font-weight:500;
 }
 
 .page-dots {
@@ -1194,7 +1198,7 @@ body {
   background:transparent;
   color:var(--quiet);
   font-size:.92rem;
-  font-weight:400;
+  font-weight:500;
   letter-spacing:-.015em;
   transition:color .18s ease;
 }
