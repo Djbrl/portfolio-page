@@ -17,12 +17,12 @@
 
     <main id="main" class="portfolio-pages">
       <section class="page-section hero-page" :class="{ active: activePage === 0 }" :style="pageStyle(0)" :aria-hidden="activePage !== 0" :inert="activePage !== 0" aria-labelledby="hero-title">
-        <div class="hero-content">
+        <div class="hero-content" :class="{ 'hero-intro': heroIntro }">
+          <!-- One span per word so the first-load intro can stagger them; the words still read as one sentence. -->
           <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1">
-            <template v-if="isFrench">Je conçois et livre des <strong>produits logiciels</strong> qui résolvent des <strong>problèmes concrets</strong>.</template>
-            <template v-else>I design and ship <strong>software products</strong> that solve <strong>real-world problems</strong>.</template>
+            <template v-for="(item, index) in taglineWords" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }"><strong v-if="item.strong">{{ item.word }}</strong><template v-else>{{ item.word }}</template><template v-if="index === taglineWords.length - 1">.</template></span>{{ index < taglineWords.length - 1 ? ' ' : '' }}</template>
           </h1>
-          <nav class="hero-section-links" :aria-label="copy.primaryNavigation">
+          <nav class="hero-section-links" :aria-label="copy.primaryNavigation" :style="{ '--word-count': taglineWords.length }" @animationend.self="heroIntro = false">
             <button type="button" @click="navigateToPage(2, { focus: true })">{{ copy.navBackground }}</button>
             <button type="button" @click="navigateToPage(1, { focus: true })">{{ projectsTitle }}</button>
             <button type="button" @click="inspectUtility('contact')">{{ copy.navContact }}</button>
@@ -180,6 +180,17 @@ const projectCtaLabel = (project: PortfolioProject) => {
 };
 
 const copy = computed(() => translations[locale.value]);
+
+// The hero headline as words; strong phrases are the ones set in full ink.
+const taglineWords = computed(() => {
+  const phrases: [string, boolean][] = isFrench.value
+    ? [['Je conçois et livre des', false], ['produits logiciels', true], ['qui résolvent des', false], ['problèmes concrets', true]]
+    : [['I design and ship', false], ['software products', true], ['that solve', false], ['real-world problems', true]];
+  return phrases.flatMap(([text, strong]) => text.split(' ').map(word => ({ word, strong })));
+});
+// True until the first-load headline intro has finished; dropping it leaves the text in its resting state.
+const heroIntro = ref(true);
+
 const projectsTitle = computed(() => isFrench.value ? 'Projets' : 'Projects');
 
 const activePage = ref(0);
@@ -684,6 +695,64 @@ useHead(() => {
   font-weight:inherit;
 }
 
+/* First-load intro: the words rise into focus one after another, the strong phrases then
+   darken from grey to ink, and the section links follow. It waits for the font gate. */
+.tagline-word {
+  display:inline-block;
+}
+
+.hero-intro .tagline-word {
+  animation:tagline-word-in .9s cubic-bezier(.16,1,.3,1) both;
+  animation-delay:calc(.12s + var(--word-index) * 60ms);
+}
+
+.hero-intro .tagline-word strong {
+  animation:tagline-strong-ink .7s ease both;
+  animation-delay:calc(.12s + var(--word-index) * 60ms + .75s);
+}
+
+.hero-intro .hero-section-links {
+  animation:hero-links-in .6s cubic-bezier(.16,1,.3,1) both;
+  animation-delay:calc(.12s + var(--word-count) * 60ms + .9s);
+}
+
+html.fonts-pending .hero-intro .tagline-word,
+html.fonts-pending .hero-intro .tagline-word strong,
+html.fonts-pending .hero-intro .hero-section-links {
+  animation-play-state:paused;
+}
+
+@keyframes tagline-word-in {
+  from {
+    opacity:0;
+    filter:blur(10px);
+    transform:translateY(.32em);
+  }
+
+  to {
+    opacity:1;
+    filter:blur(0);
+    transform:none;
+  }
+}
+
+@keyframes tagline-strong-ink {
+  from { color:var(--quiet); }
+  to { color:var(--ink); }
+}
+
+@keyframes hero-links-in {
+  from {
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  to {
+    opacity:1;
+    transform:none;
+  }
+}
+
 .projects-page .about-tile {
   background:var(--soft);
   box-shadow:none;
@@ -937,8 +1006,8 @@ useHead(() => {
 .inline-project-heading h2 {
   margin:0;
   font-size:clamp(2.15rem,3.2vw,3.55rem);
-  font-weight:650;
-  letter-spacing:-.06em;
+  font-weight:600;
+  letter-spacing:-.045em;
   line-height:.94;
 }
 
@@ -1323,7 +1392,10 @@ useHead(() => {
   }
 
   .projects-page.revealing .work-grid>*,
-  .projects-page.leaving .work-grid>* {
+  .projects-page.leaving .work-grid>*,
+  .hero-intro .tagline-word,
+  .hero-intro .tagline-word strong,
+  .hero-intro .hero-section-links {
     animation:none;
   }
 }

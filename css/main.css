@@ -1,37 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* General Sans, from Fontshare, self-hosted. */
 @font-face {
-  font-family:Inter;
-  src:url('/fonts/Inter-Variable.woff2') format('woff2'),url('/fonts/Inter-Variable.ttf') format('truetype');
+  font-family:'General Sans';
+  src:url('/fonts/GeneralSans-Variable.woff2') format('woff2');
   font-style:normal;
-  font-weight:100 900;
+  font-weight:200 700;
   font-display:swap;
 }
 
-/* Arial scaled to Inter's metrics, so text laid out before Inter loads doesn't reflow when it swaps in. */
+/* Arial scaled to General Sans's metrics (measured in the browser), so text laid out before the
+   webfont arrives doesn't reflow when it swaps in. */
 @font-face {
-  font-family:'Inter Fallback';
+  font-family:'General Sans Fallback';
   src:local('Arial'),local('ArialMT'),local('Helvetica');
   font-weight:100 549;
-  ascent-override:90.2%;
-  descent-override:22.48%;
+  ascent-override:100.25%;
+  descent-override:23.82%;
   line-gap-override:0%;
-  size-adjust:107.4%;
+  size-adjust:100.75%;
 }
 
 @font-face {
-  font-family:'Inter Fallback';
+  font-family:'General Sans Fallback';
   src:local('Arial Bold'),local('Arial-BoldMT'),local('Helvetica Bold');
   font-weight:550 900;
-  ascent-override:90.2%;
-  descent-override:22.48%;
+  ascent-override:101.66%;
+  descent-override:24.16%;
   line-gap-override:0%;
-  /* Tuned to the hero headline (Inter 650 at display size, -.06em tracking), where a reflow is most visible. */
-  size-adjust:95.5%;
+  /* Tuned to the hero headline (600 at display size), where a reflow is most visible. */
+  size-adjust:99.35%;
 }
 
-/* Set by the font gate script in nuxt.config.ts until Inter has loaded. */
+/* Set by the font gate script in nuxt.config.ts until the fonts have loaded. */
 html.fonts-pending body {
   opacity:0;
 }
@@ -48,7 +50,7 @@ body {
 
 :root {
   color-scheme:light;
-  font-family:Inter,'Inter Fallback',Arial,sans-serif;
+  font-family:'General Sans','General Sans Fallback',Arial,sans-serif;
   color:#202020;
   background:#fff;
   font-synthesis:none;
@@ -806,8 +808,8 @@ body,
   transform:translate(-50%,-50%);
   color:var(--ink);
   font-size:clamp(3.1rem,5.4vw,5rem);
-  font-weight:650;
-  letter-spacing:-.06em;
+  font-weight:600;
+  letter-spacing:-.045em;
   line-height:1.03;
   white-space:pre-line;
   text-wrap:balance;
@@ -951,8 +953,8 @@ body,
 .bio-layout h2 {
   margin:0;
   font-size:clamp(3.8rem,7vw,7rem);
-  font-weight:700;
-  letter-spacing:-.065em;
+  font-weight:600;
+  letter-spacing:-.05em;
   line-height:.9;
 }
 
