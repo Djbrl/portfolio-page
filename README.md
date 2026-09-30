@@ -1,6 +1,6 @@
 # Djibril Sy — Portfolio
 
-Editorial portfolio for Djibril Sy, a product engineer.
+Editorial portfolio for Djibril Sy, a software developer.
 
 ## Development
 

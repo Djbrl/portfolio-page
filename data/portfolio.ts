@@ -282,9 +282,9 @@ export const translations = {
     roleLabel: 'Mon rôle',
     highlightsLabel: 'Ce que j’ai construit',
     technologies: 'Technologies',
-    description: 'Portfolio de Djibril Sy, ingénieur produit spécialisé dans les produits web, mobiles et desktop.',
+    description: 'Portfolio de Djibril Sy, développeur logiciel spécialisé dans les produits web, mobiles et desktop.',
     socialDescription:
-      'Djibril Sy, ingénieur produit. Je conçois et livre des produits web et mobiles, du premier prototype à la mise en production, pour des clients comme Reporters sans frontières et MINAPRO.',
+      'Djibril Sy, développeur logiciel. Je conçois et livre des produits web et mobiles, du premier prototype à la mise en production, pour des clients comme Reporters sans frontières et MINAPRO.',
   },
   en: {
     skip: 'Skip to content',
@@ -307,9 +307,9 @@ export const translations = {
     roleLabel: 'My role',
     highlightsLabel: 'What I built',
     technologies: 'Technologies',
-    description: 'Portfolio of Djibril Sy, a product engineer building web, mobile and desktop products.',
+    description: 'Portfolio of Djibril Sy, a software developer building web, mobile and desktop products.',
     socialDescription:
-      'Djibril Sy, product engineer. I design and ship web and mobile products, from first prototype to production, for clients like Reporters Without Borders and MINAPRO.',
+      'Djibril Sy, software developer. I design and ship web and mobile products, from first prototype to production, for clients like Reporters Without Borders and MINAPRO.',
   },
 };
 

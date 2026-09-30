@@ -157,7 +157,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 
 import { gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
 const SITE_URL = 'https://djbrl.vercel.app/';
-const OG_IMAGE = `${SITE_URL}og-2026.png`;
+const OG_IMAGE = `${SITE_URL}og-software-developer.png`;
 const THEME_STORAGE_KEY = 'portfolio-color-theme';
 
 const route = useRoute();
@@ -547,8 +547,8 @@ const themeColors = { light: '#ffffff', dark: '#111111' } as const;
 const themeColorFor = (scheme: 'light' | 'dark') => themeColors[hasExplicitTheme.value ? (isDark.value ? 'dark' : 'light') : scheme];
 
 useHead(() => {
-  const title = isFrench.value ? 'Djibril Sy | Ingénieur produit' : 'Djibril Sy | Product Engineer';
-  const imageAlt = isFrench.value ? 'Djibril Sy — Ingénieur produit' : 'Djibril Sy — Product Engineer';
+  const title = isFrench.value ? 'Djibril Sy | Développeur logiciel' : 'Djibril Sy | Software Developer';
+  const imageAlt = isFrench.value ? 'Djibril Sy — Développeur logiciel' : 'Djibril Sy — Software Developer';
   const pageUrl = localeUrls[locale.value];
   return {
     title,
