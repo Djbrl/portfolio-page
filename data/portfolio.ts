@@ -8,6 +8,8 @@ type ProjectGalleryItem = {
   position?: string;
 };
 
+type ProjectFeature = { title: LocalizedText; text: LocalizedText };
+
 export type PortfolioProject = {
   name: string;
   kind: 'personal' | 'client';
@@ -15,14 +17,13 @@ export type PortfolioProject = {
   short: LocalizedText;
   description: LocalizedText;
   role: LocalizedText;
-  highlights?: LocalizedText[];
+  features?: ProjectFeature[];
   tags: string[];
   href?: string;
   image: string;
   tileImage?: string;
   alt: LocalizedText;
   imageFit?: 'cover' | 'contain';
-  galleryIntro?: LocalizedText;
   gallery?: ProjectGalleryItem[];
 };
 
@@ -280,7 +281,8 @@ export const translations = {
       'Je suis disponible pour des créations produit, des modernisations et des intégrations, surtout quand le besoin est encore flou et qu’il faut le transformer en système concret.',
     contactNavigation: 'Liens de contact et profils',
     roleLabel: 'Mon rôle',
-    highlightsLabel: 'Ce que j’ai construit',
+    featuresLabel: 'Fonctionnalités clés',
+    screenshotsLabel: 'Captures d’écran',
     technologies: 'Technologies',
     description: 'Portfolio de Djibril Sy, développeur logiciel spécialisé dans les produits web, mobiles et desktop.',
     socialDescription:
@@ -305,7 +307,8 @@ export const translations = {
       'I’m available for product builds, modernization work and integrations, especially when the brief is still messy and someone needs to turn it into a working system.',
     contactNavigation: 'Contact and profile links',
     roleLabel: 'My role',
-    highlightsLabel: 'What I built',
+    featuresLabel: 'Key features',
+    screenshotsLabel: 'Screenshots',
     technologies: 'Technologies',
     description: 'Portfolio of Djibril Sy, a software developer building web, mobile and desktop products.',
     socialDescription:
@@ -328,14 +331,33 @@ const projects: PortfolioProject[] = [
       fr: 'Conception produit et développement full-stack, de la collecte des annonces sur les forums jusqu’à la recherche et aux alertes Discord.',
       en: 'Product design and full-stack development, from gathering posts across forums to search and Discord alerts.',
     },
+    features: [
+      {
+        title: { fr: 'Plus de 20 forums, un seul tableau', en: 'More than 20 forums, one board' },
+        text: {
+          fr: 'Les demandes de commandes de plus de 20 forums, réunies dans un seul tableau consultable.',
+          en: 'Commission requests from more than 20 forums, gathered in one searchable board.',
+        },
+      },
+      {
+        title: { fr: 'Des filtres utiles', en: 'Filters that matter' },
+        text: {
+          fr: 'Filtrez par discipline, source et budget, avec les nouvelles annonces signalées dès leur arrivée.',
+          en: 'Filter by craft, source and budget, with new posts flagged as they arrive.',
+        },
+      },
+      {
+        title: { fr: 'Des alertes sur Discord', en: 'Alerts in Discord' },
+        text: {
+          fr: 'Des alertes personnalisées avec le budget, la source et l’heure de publication, envoyées directement sur Discord.',
+          en: 'Personalized alerts with the budget, source and posting time, sent straight to Discord.',
+        },
+      },
+    ],
     tags: ['Vue 3', 'NestJS', 'Discord', 'PostgreSQL'],
     href: 'https://thequestboard.co',
     image: '/work/thequestboard-live.webp',
     alt: { fr: 'Interface de TheQuestBoard', en: 'TheQuestBoard interface' },
-    galleryIntro: {
-      fr: 'Les artistes parcourent et filtrent les nouvelles demandes au même endroit, et reçoivent directement sur Discord celles qui leur correspondent.',
-      en: 'Artists browse and filter new commission requests in one place, and get the relevant ones sent straight to Discord.',
-    },
     gallery: projectGalleries.thequestboard,
   },
   {
@@ -351,14 +373,47 @@ const projects: PortfolioProject[] = [
       fr: 'Conception produit et développement full-stack, dont les profils, la connexion Discord et l’intégration des données du jeu.',
       en: 'Product design and full-stack development, including profiles, Discord sign-in and game-data integrations.',
     },
+    features: [
+      {
+        title: { fr: 'Importez votre collection', en: 'Import your collection' },
+        text: {
+          fr: 'Créez ou importez votre collection de skins, avec le total dépensé calculé en direct.',
+          en: 'Build or import your skin collection, with a running total of what it cost.',
+        },
+      },
+      {
+        title: { fr: 'Trouvez des skins assortis', en: 'Find matching skins' },
+        text: {
+          fr: 'Comparez vos collections avec vos amis pour trouver des skins assortis, en duo ou à cinq.',
+          en: 'Compare collections with friends to find skins that match for duos and five-player teams.',
+        },
+      },
+      {
+        title: { fr: 'Parcourez les gammes', en: 'Browse skin lines' },
+        text: {
+          fr: 'Affichez tous les skins d’une même gamme, et les gammes que votre équipe a en commun.',
+          en: 'See every skin in a themed line, and the lines your team has in common.',
+        },
+      },
+      {
+        title: { fr: 'Aperçu en jeu', en: 'Preview in game' },
+        text: {
+          fr: 'Voyez les skins assortis en jeu, avec leurs variantes de couleur (chromas).',
+          en: 'See matching skins in game, along with their color variants (chromas).',
+        },
+      },
+      {
+        title: { fr: 'Profils et connexion Discord', en: 'Profiles and Discord sign-in' },
+        text: {
+          fr: 'Des profils publics pour montrer sa collection, avec connexion via Discord.',
+          en: 'Public profiles to show off a collection, with sign-in through Discord.',
+        },
+      },
+    ],
     tags: ['Nuxt', 'Vue 3', 'Discord', 'Supabase'],
     href: 'https://skindiff.lol',
     image: '/work/skindiff.webp',
     alt: { fr: 'Visuel du lookbook social SkinDiff', en: 'SkinDiff social lookbook artwork' },
-    galleryIntro: {
-      fr: 'Importez votre collection, ajoutez vos coéquipiers, puis parcourez les gammes de skins que vous possédez en commun et comparez les looks côte à côte.',
-      en: 'Players import their collection, add teammates, then browse the skin lines they share and compare matching looks side by side.',
-    },
     gallery: projectGalleries.skindiff,
   },
   {
@@ -374,26 +429,41 @@ const projects: PortfolioProject[] = [
       fr: 'Conception produit et développement complet, d’un premier prototype web en Vue et Rust jusqu’à l’application Electron publiée.',
       en: 'Product design and end-to-end development, from a first web prototype in Vue and Rust to the released Electron app.',
     },
-    highlights: [
+    features: [
       {
-        fr: 'Détection des services à partir des fichiers du projet (package.json, Cargo.toml, Docker Compose), sans fichier de configuration à maintenir.',
-        en: 'Service discovery from the files a project already has (package.json, Cargo.toml, Docker Compose), with no config file to keep in sync.',
+        title: { fr: 'Trouve vos services', en: 'Finds your services' },
+        text: {
+          fr: 'Lit package.json, Cargo.toml et Docker Compose : aucun fichier de configuration à écrire ni à maintenir.',
+          en: 'Reads package.json, Cargo.toml and Docker Compose, so there is no config file to write or keep in sync.',
+        },
       },
       {
-        fr: 'Attribution des ports sans conflit : un service garde son port d’une fois sur l’autre, pour que ses adresses, favoris et callbacks OAuth survivent à un redémarrage.',
-        en: 'Collision-free ports: a service keeps its port from one launch to the next, so its URLs, bookmarks and OAuth callbacks survive a restart.',
+        title: { fr: 'Des ports sans conflit', en: 'Ports that never collide' },
+        text: {
+          fr: 'Chaque service reçoit un port libre et le garde d’un lancement à l’autre : adresses et callbacks OAuth continuent de fonctionner.',
+          en: 'Each service gets a free port and keeps it between launches, so URLs and OAuth callbacks keep working.',
+        },
       },
       {
-        fr: 'Adresses stables comme web.shop.localhost, grâce à un reverse proxy intégré qui transmet aussi les WebSockets pour garder le rechargement à chaud.',
-        en: 'Stable addresses like web.shop.localhost, through a built-in reverse proxy that also passes WebSockets so hot reload keeps working.',
+        title: { fr: 'Des adresses locales stables', en: 'Stable local addresses' },
+        text: {
+          fr: 'web.shop.localhost mène toujours au bon service, WebSockets compris pour le rechargement à chaud.',
+          en: 'web.shop.localhost always reaches the right service, with WebSockets passed through for hot reload.',
+        },
       },
       {
-        fr: 'Des logs lisibles : une vue fusionnée et consultable par projet, des liens fichier:ligne qui s’ouvrent dans l’éditeur, et un bouton pour corriger chaque échec de démarrage.',
-        en: 'Readable logs: one merged, searchable view per project, file:line links that open in the editor, and a one-click fix when a service fails to start.',
+        title: { fr: 'Des logs lisibles', en: 'Logs you can read' },
+        text: {
+          fr: 'Une vue consultable par projet, des liens fichier:ligne qui s’ouvrent dans l’éditeur, et un bouton de correction quand un démarrage échoue.',
+          en: 'One searchable view per project, file:line links that open in your editor, and a fix button when a start fails.',
+        },
       },
       {
-        fr: 'Une CLI et un serveur MCP pour que Claude Code et d’autres agents listent, démarrent et suivent les mêmes services.',
-        en: 'A CLI and an MCP server so Claude Code and other agents can list, start and follow the same services.',
+        title: { fr: 'Pensé pour les agents', en: 'Built for coding agents' },
+        text: {
+          fr: 'Une CLI et un serveur MCP permettent à Claude Code de réutiliser les services lancés au lieu d’en démarrer des doublons.',
+          en: 'A CLI and an MCP server let Claude Code reuse running services instead of starting duplicates.',
+        },
       },
     ],
     tags: ['Electron', 'TypeScript', 'Vue 3', 'MCP'],
@@ -401,10 +471,6 @@ const projects: PortfolioProject[] = [
     image: '/work/multiprise.svg',
     alt: { fr: 'Symbole de l’application Multiprise', en: 'Multiprise application mark' },
     imageFit: 'contain',
-    galleryIntro: {
-      fr: 'Au lieu de jongler entre plusieurs terminaux, on retrouve au même endroit les services, les ports, les logs et l’aperçu d’un projet.',
-      en: 'Instead of juggling terminal tabs, developers see every service, port, log and preview of a project in one place.',
-    },
     gallery: projectGalleries.multiprise,
   },
   {
@@ -421,36 +487,47 @@ const projects: PortfolioProject[] = [
       fr: 'Idée, conception produit et architecture. J’ai dirigé un agent Claude Code principal et quatre sous-agents qui construisaient en parallèle, puis fait passer le prototype du hackathon au plugin installable.',
       en: 'Idea, product design and architecture. I directed a lead Claude Code agent and four subagents building in parallel, then took the hackathon prototype to an installable plugin.',
     },
-    highlights: [
+    features: [
       {
-        fr: 'Un lecteur qui suit les logs de Claude Code au fil de l’écriture, sous-agents compris, et les transforme en étapes annotées avec leurs diffs.',
-        en: 'A reader that follows Claude Code’s logs as they’re written, subagents included, and turns them into labeled steps with their diffs.',
+        title: { fr: 'Une chronologie en direct', en: 'A live session timeline' },
+        text: {
+          fr: 'Chaque prompt, commande et modification de Claude Code, résumé en quelques mots au moment où il arrive, sous-agents compris.',
+          en: 'Every prompt, command and edit from Claude Code, labeled in a few words as it happens, subagents included.',
+        },
       },
       {
-        fr: 'Une carte du code construite à partir des imports et de l’historique git, où chaque agent est un repère qui se déplace sur les fichiers qu’il touche.',
-        en: 'A codebase map built from imports and git history, with each agent drawn as a marker moving across the files it touches.',
+        title: { fr: 'Une carte de votre code', en: 'A map of your codebase' },
+        text: {
+          fr: 'Les fichiers et leurs imports sous forme de graphe, où chaque agent se déplace sur les fichiers qu’il lit et modifie.',
+          en: 'Files and imports as a graph, with each agent moving across the files it reads and writes.',
+        },
       },
       {
-        fr: 'Deux modèles, chacun à sa place : Nemotron 3 Nano sur GPU NVIDIA lit tout le code (81 000 lignes en 73 secondes pour 0,02 $), Claude répond aux questions pour environ 0,03 $ chacune.',
-        en: 'Two models, each where it fits: Nemotron 3 Nano on an NVIDIA GPU reads the whole codebase (81k lines in 73 seconds for $0.02), and Claude answers questions for about $0.03 each.',
+        title: { fr: 'Demander « pourquoi ? » partout', en: 'Ask “why?” anywhere' },
+        text: {
+          fr: 'Les questions sur une étape ou un fichier partent à Claude avec juste le contexte utile, pour environ 0,03 $ chacune.',
+          en: 'Questions about any step or file go to Claude with just the context it needs, for about $0.03 each.',
+        },
       },
       {
-        fr: 'Local d’abord : les logs restent sur la machine, et les clés, jetons et e-mails sont masqués avant tout stockage, envoi ou partage.',
-        en: 'Local-first: logs stay on the machine, and keys, tokens and emails are masked before anything is stored, sent or shared.',
+        title: { fr: 'Tout le code, résumé', en: 'The whole codebase, summarized' },
+        text: {
+          fr: 'Nemotron 3 Nano sur GPU NVIDIA résume chaque fichier : 81 000 lignes en 73 secondes pour 0,02 $.',
+          en: 'Nemotron 3 Nano on an NVIDIA GPU summarizes every file: 81k lines in 73 seconds for $0.02.',
+        },
       },
       {
-        fr: 'Des replays partageables : une session s’exporte en un seul fichier HTML, ou en rapport Markdown pour une pull request.',
-        en: 'Shareable replays: any session exports as a single HTML file, or as a Markdown report for a pull request.',
+        title: { fr: 'Privé et partageable', en: 'Private and shareable' },
+        text: {
+          fr: 'Tout reste sur la machine, les secrets sont masqués, et une session s’exporte en un seul fichier HTML.',
+          en: 'Everything stays on your machine, secrets are masked, and any session exports as one HTML file.',
+        },
       },
     ],
     tags: ['React', 'NestJS', 'Claude API', 'Nemotron'],
     href: 'https://brainstorm-landing.vercel.app',
     image: '/work/case-studies/brainstorm/landing.webp',
     alt: { fr: 'Page d’accueil de Brainstorm', en: 'Brainstorm home page' },
-    galleryIntro: {
-      fr: 'Les développeurs suivent le travail des agents étape par étape, voient où il se situe dans le code et repèrent les erreurs qui reviennent.',
-      en: 'Developers follow the agents’ work step by step, see where it lands in the codebase and spot the failures that keep coming back.',
-    },
     gallery: projectGalleries.brainstorm,
   },
 ];
@@ -470,14 +547,40 @@ const clientProjects: PortfolioProject[] = [
       fr: 'Conception et architecture du parcours participant bilingue, ainsi que du back-office utilisé par l’équipe pour piloter le programme.',
       en: 'Design and architecture of the bilingual participant experience, plus the back office the team uses to run the program.',
     },
+    features: [
+      {
+        title: { fr: 'Des invitations en nombre', en: 'Invitations at scale' },
+        text: {
+          fr: 'Invitez les dirigeants un par un ou en groupe, directement depuis le back-office.',
+          en: 'Invite executives one by one or in groups, straight from the back office.',
+        },
+      },
+      {
+        title: { fr: 'Un questionnaire qui s’adapte', en: 'A questionnaire that adapts' },
+        text: {
+          fr: 'Un questionnaire d’accueil de trois minutes qui s’adapte aux réponses de chaque participant.',
+          en: 'A three-minute onboarding questionnaire that adapts to each participant’s answers.',
+        },
+      },
+      {
+        title: { fr: 'Une synthèse du profil en direct', en: 'A profile summary, live' },
+        text: {
+          fr: 'Les réponses deviennent une synthèse qui prépare la session d’accompagnement de chaque dirigeant.',
+          en: 'Answers turn into a summary that prepares each executive’s advisory session.',
+        },
+      },
+      {
+        title: { fr: 'Un back-office avec statistiques', en: 'A back office with analytics' },
+        text: {
+          fr: 'Planification des sessions et statistiques pour l’équipe qui anime le programme, en français et en anglais.',
+          en: 'Session scheduling and analytics for the team running the program, in French and English.',
+        },
+      },
+    ],
     tags: ['TypeScript', 'Supabase', 'Analytics'],
     href: 'https://minaproai.nelamservices.com',
     image: '/work/maeic.webp',
     alt: { fr: 'Page d’accueil du programme MINAPRO AI Executive Catalyst', en: 'MINAPRO AI Executive Catalyst program home page' },
-    galleryIntro: {
-      fr: 'Les dirigeants répondent à un court questionnaire qui s’adapte à leurs réponses ; la plateforme en tire une synthèse pour préparer leur session d’accompagnement.',
-      en: 'Executives answer a short questionnaire that adapts as they go; the platform turns their answers into a summary that prepares their advisory session.',
-    },
     gallery: projectGalleries.minapro,
   },
   {
@@ -494,14 +597,40 @@ const clientProjects: PortfolioProject[] = [
       fr: 'Refonte produit et technique, puis livraison de la plateforme web et des applications mobiles.',
       en: 'Product and technical redesign, and delivery of the web platform and mobile apps.',
     },
+    features: [
+      {
+        title: { fr: 'Trouver un professionnel', en: 'Find a professional' },
+        text: {
+          fr: 'Recherchez par métier ou par secteur et voyez les résultats sur une carte, avec le statut de vérification de chaque profil.',
+          en: 'Search by trade or industry and see results on a map, with each profile’s verification status.',
+        },
+      },
+      {
+        title: { fr: 'Actualités, appels d’offres et financements', en: 'News, tenders and funding' },
+        text: {
+          fr: 'Un fil d’actualités économiques, avec les appels d’offres et les financements disponibles.',
+          en: 'A business news feed alongside open tenders and funding opportunities.',
+        },
+      },
+      {
+        title: { fr: 'Web et applications mobiles', en: 'Web and mobile apps' },
+        text: {
+          fr: 'Le même annuaire sur le web et dans les applications iOS et Android, avec profils et favoris.',
+          en: 'The same directory on the web and in iOS and Android apps, with profiles and favorites.',
+        },
+      },
+      {
+        title: { fr: 'Une refonte complète', en: 'A complete rebuild' },
+        text: {
+          fr: 'La nouvelle version de Bount-bi, le portail du travail et de l’entrepreneuriat au Sénégal, reconstruite de zéro.',
+          en: 'The new version of Bount-bi, Senegal’s work and entrepreneurship portal, rebuilt from the ground up.',
+        },
+      },
+    ],
     tags: ['Nuxt', 'Vue 3', 'Expo', 'PostgreSQL'],
     href: 'https://touslespros.sn',
     image: '/work/touslespros-live.webp',
     alt: { fr: 'Page d’accueil de TousLesPros', en: 'TousLesPros home page' },
-    galleryIntro: {
-      fr: 'Les visiteurs lisent l’actualité du travail et de l’entrepreneuriat, cherchent un professionnel par métier ou par secteur et retrouvent les résultats sur une carte, sur le web comme sur mobile.',
-      en: 'Visitors read work and business news, search for a professional by trade or industry, and see results on a map, on the web or on their phone.',
-    },
     gallery: projectGalleries.touslespros,
   },
   {
@@ -518,14 +647,40 @@ const clientProjects: PortfolioProject[] = [
       fr: 'Architecture produit et développement full-stack : campagnes, parcours de formation, rôles utilisateurs et tableaux de bord.',
       en: 'Product architecture and full-stack development: campaigns, training paths, user roles and dashboards.',
     },
+    features: [
+      {
+        title: { fr: 'Des campagnes de phishing réalistes', en: 'Realistic phishing campaigns' },
+        text: {
+          fr: 'Les administrateurs lancent des simulations par e-mail et SMS, préparent les destinataires et suivent chaque campagne.',
+          en: 'Admins launch simulated phishing by email and SMS, prepare recipients and track each campaign.',
+        },
+      },
+      {
+        title: { fr: 'Une formation juste après', en: 'Training right after' },
+        text: {
+          fr: 'De courtes formations suivent chaque simulation, des mots de passe robustes à la protection des sources.',
+          en: 'Short lessons follow each simulation, from strong passwords to protecting sources.',
+        },
+      },
+      {
+        title: { fr: 'Espaces administrateur et apprenant', en: 'Admin and learner spaces' },
+        text: {
+          fr: 'Des accès distincts pour l’équipe qui pilote les campagnes et pour les personnes formées.',
+          en: 'Separate access for the team running campaigns and for the people being trained.',
+        },
+      },
+      {
+        title: { fr: 'Une connexion sécurisée', en: 'Secure sign-in' },
+        text: {
+          fr: 'Connexion multifacteur par application d’authentification ou code de récupération.',
+          en: 'Multi-factor sign-in with an authenticator app or a recovery code.',
+        },
+      },
+    ],
     tags: ['NestJS', 'Vue 3', 'Supabase'],
     href: 'https://cyberlab.sine.sn',
     image: '/work/cyberlab-live.webp',
     alt: { fr: 'Page d’accueil de CyberLab', en: 'CyberLab home page' },
-    galleryIntro: {
-      fr: 'Les administrateurs lancent des campagnes de phishing simulé par e-mail ou SMS et en suivent les résultats ; les apprenants reçoivent ensuite de courtes formations sur les risques rencontrés.',
-      en: 'Administrators launch simulated phishing campaigns by email or SMS and follow the results; learners then get short lessons on the risks they just faced.',
-    },
     gallery: projectGalleries.cyberlab,
   },
 ];

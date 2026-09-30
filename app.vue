@@ -61,27 +61,29 @@
                     <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">{{ selectedProject.name }}</h2>
                     <p class="project-subtitle">{{ localize(selectedProject.short) }}</p>
                   </header>
+                  <!-- A focusable region so keyboard users can scroll the row with the arrow keys. -->
+                  <div v-if="selectedProject.gallery?.length" class="project-shots" role="region" tabindex="0" :aria-label="copy.screenshotsLabel">
+                    <figure v-for="shot in selectedProject.gallery" :key="shot.src" class="project-shot">
+                      <img :src="shot.src" :alt="localize(shot.alt)" :style="shot.position ? { objectPosition: shot.position } : undefined" loading="lazy" decoding="async">
+                      <figcaption>{{ localize(shot.caption) }}</figcaption>
+                    </figure>
+                  </div>
+                  <section v-if="selectedProject.features?.length" class="project-features" :aria-labelledby="`features-${inspectionKey}`">
+                    <h3 :id="`features-${inspectionKey}`" class="project-section-label">{{ copy.featuresLabel }}</h3>
+                    <ul>
+                      <li v-for="(feature, index) in selectedProject.features" :key="index" class="project-feature">
+                        <h4>{{ localize(feature.title) }}</h4>
+                        <p>{{ localize(feature.text) }}</p>
+                      </li>
+                    </ul>
+                  </section>
                   <div class="inline-project-copy">
-                    <p>{{ localize(selectedProject.description) }}</p>
                     <a v-if="selectedProject.href" class="inline-project-cta" :href="selectedProject.href" target="_blank" rel="noopener">{{ projectCtaLabel(selectedProject) }} <span aria-hidden="true">↗</span></a>
                     <dl>
                       <div><dt>{{ copy.roleLabel }}</dt><dd>{{ localize(selectedProject.role) }}</dd></div>
-                      <div v-if="selectedProject.highlights?.length"><dt>{{ copy.highlightsLabel }}</dt><dd><ul class="project-highlights"><li v-for="(item, index) in selectedProject.highlights" :key="index">{{ localize(item) }}</li></ul></dd></div>
                       <div v-if="selectedProject.tags?.length"><dt>{{ copy.technologies }}</dt><dd>{{ selectedProject.tags.join(' · ') }}</dd></div>
                     </dl>
                   </div>
-                  <section v-if="selectedProject.gallery?.length" class="inline-project-gallery" :aria-label="isFrench ? 'Aperçu du produit' : 'Product walkthrough'">
-                    <header class="project-gallery-heading">
-                      <p>{{ isFrench ? 'Dans le produit' : 'Inside the product' }}</p>
-                      <h3>{{ localize(selectedProject.galleryIntro!) }}</h3>
-                    </header>
-                    <figure v-for="shot in selectedProject.gallery" :key="shot.src" class="project-gallery-item">
-                      <div class="project-gallery-media" :class="`crop-${shot.crop || 'natural'}`">
-                        <img :src="shot.src" :alt="localize(shot.alt)" :style="shot.position ? { objectPosition: shot.position } : undefined" loading="lazy" decoding="async">
-                      </div>
-                      <figcaption>{{ localize(shot.caption) }}</figcaption>
-                    </figure>
-                  </section>
                 </template>
                 <template v-else>
                   <header class="inline-project-heading utility-heading">
@@ -309,7 +311,8 @@ const resetWheelGesture = () => {
 };
 
 const onWheel = (event: WheelEvent) => {
-  if (!event.deltaY) return;
+  // Mostly sideways gestures belong to horizontal scrollers (the screenshot row), never to paging.
+  if (!event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
   const direction = Math.sign(event.deltaY);
   const scroller = scrollContainerFor(event.target);
@@ -880,13 +883,14 @@ html.fonts-pending .hero-intro .hero-section-links {
 }
 
 .inline-project-card {
+  --panel-pad:clamp(24px,2.4vw,34px);
   position:absolute;
   top:0;
   bottom:0;
   left:var(--project-grid-size);
   width:var(--project-panel-width);
   z-index:3;
-  padding:clamp(24px,2.4vw,34px);
+  padding:var(--panel-pad);
   overflow-x:hidden;
   overflow-y:auto;
   border:1px solid var(--line);
@@ -1001,21 +1005,107 @@ html.fonts-pending .hero-intro .hero-section-links {
   line-height:1.4;
 }
 
-.inline-project-copy {
-  padding:clamp(22px,3vh,32px) 0;
+/* Screenshots: one row that scrolls sideways, bleeding to the panel's edges so the next
+   shot peeks in. Heights match; widths follow each image, capped so the row still peeks. */
+.project-shots {
+  display:flex;
+  gap:12px;
+  margin:22px calc(-1 * var(--panel-pad)) 0;
+  padding:0 var(--panel-pad) 8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  scroll-padding-inline:var(--panel-pad);
+  scroll-snap-type:x mandatory;
+  scrollbar-color:var(--line) transparent;
+  scrollbar-width:thin;
+  touch-action:pan-x pan-y;
 }
 
-.inline-project-heading + .inline-project-copy {
-  padding-top:16px;
+.project-shots:focus-visible {
+  outline:2px solid var(--ink);
+  outline-offset:-2px;
 }
 
-.inline-project-copy>p {
-  max-width:62ch;
+.project-shot {
+  flex:0 0 auto;
+  /* Holds the row's shape (and the captions' width) while images are still loading. */
+  min-width:220px;
   margin:0;
+  scroll-snap-align:start;
+}
+
+.project-shot img {
+  display:block;
+  width:auto;
+  min-width:100%;
+  max-width:min(440px,calc(var(--project-panel-width,100vw) - 2 * var(--panel-pad) - 36px));
+  height:clamp(170px,24vh,232px);
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--soft);
+  object-fit:cover;
+}
+
+/* The caption wraps to the image's width instead of widening the card. */
+.project-shot figcaption {
+  width:0;
+  min-width:100%;
+  margin-top:8px;
   color:var(--quiet);
-  font-size:.94rem;
-  font-weight:400;
-  line-height:1.62;
+  font-size:.72rem;
+  line-height:1.42;
+}
+
+.project-section-label {
+  display:inline-block;
+  margin:0 0 10px;
+  padding:4px 7px;
+  border-radius:5px;
+  background:var(--soft);
+  color:var(--ink);
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+
+/* Key features: large, scannable cards, one per feature. */
+.project-features {
+  margin-top:clamp(24px,3.4vh,32px);
+}
+
+.project-features ul {
+  display:grid;
+  gap:10px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.project-feature {
+  padding:16px 18px 17px;
+  border-radius:12px;
+  background:var(--soft);
+}
+
+.project-feature h4 {
+  margin:0 0 5px;
+  color:var(--ink);
+  font-size:1.04rem;
+  font-weight:650;
+  letter-spacing:-.025em;
+  line-height:1.25;
+}
+
+.project-feature p {
+  margin:0;
+  color:color-mix(in srgb,var(--ink) 72%,var(--soft));
+  font-size:.88rem;
+  line-height:1.48;
+}
+
+.inline-project-copy {
+  padding:0 0 clamp(22px,3vh,32px);
 }
 
 .inline-project-copy dl {
@@ -1049,105 +1139,6 @@ html.fonts-pending .hero-intro .hero-section-links {
   margin:0;
   font-size:.84rem;
   line-height:1.5;
-}
-
-.project-highlights {
-  display:grid;
-  gap:8px;
-  margin:0;
-  padding:0;
-  list-style:none;
-}
-
-.project-highlights li {
-  position:relative;
-  padding-left:14px;
-}
-
-.project-highlights li::before {
-  position:absolute;
-  top:.68em;
-  left:0;
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--quiet);
-  content:'';
-}
-
-.inline-project-gallery {
-  display:grid;
-  gap:24px;
-  padding:0 0 28px;
-}
-
-.project-gallery-heading {
-  padding-top:22px;
-  border-top:1px solid var(--line);
-}
-
-.project-gallery-heading p {
-  display:inline-block;
-  margin:0 0 9px;
-  padding:4px 7px;
-  border-radius:5px;
-  background:var(--soft);
-  color:var(--ink);
-  font-size:.72rem;
-  font-weight:600;
-  letter-spacing:-.01em;
-}
-
-.project-gallery-heading h3 {
-  margin:0;
-  font-size:1rem;
-  font-weight:540;
-  letter-spacing:-.025em;
-  line-height:1.45;
-}
-
-.project-gallery-item {
-  margin:0;
-}
-
-.project-gallery-media {
-  width:100%;
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:var(--soft);
-}
-
-.project-gallery-media img {
-  display:block;
-  width:100%;
-  height:auto;
-}
-
-.project-gallery-media.crop-landscape {
-  aspect-ratio:16/10;
-}
-
-.project-gallery-media.crop-wide {
-  aspect-ratio:16/9;
-}
-
-.project-gallery-media.crop-tight {
-  aspect-ratio:4/3;
-}
-
-.project-gallery-media.crop-landscape img,
-.project-gallery-media.crop-wide img,
-.project-gallery-media.crop-tight img {
-  height:100%;
-  object-fit:cover;
-}
-
-.project-gallery-item figcaption {
-  margin-top:9px;
-  color:var(--quiet);
-  font-size:.72rem;
-  line-height:1.42;
 }
 
 .inline-project-cta {
@@ -1244,9 +1235,15 @@ html.fonts-pending .hero-intro .hero-section-links {
     min-height:0;
     max-height:none;
     margin-top:12px;
-    padding:24px 20px 30px;
+    --panel-pad:20px;
+    padding:24px var(--panel-pad) 30px;
     border-left:1px solid var(--line);
     border-radius:10px;
+  }
+
+  .project-shot img {
+    max-width:min(440px,76vw);
+    height:clamp(150px,30vw,210px);
   }
 
   .projects-page.inspecting .projects-canvas {
