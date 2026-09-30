@@ -82,77 +82,79 @@ const projectGalleries = {
   thequestboard: [
     galleryShot(
       'thequestboard',
-      'landing.webp',
-      { fr: 'Page d’accueil de TheQuestBoard dans un navigateur', en: 'TheQuestBoard home page in a browser' },
-      { fr: 'La page d’accueil publique sur thequestboard.co.', en: 'The public home page at thequestboard.co.' },
-      'wide',
+      'home.webp',
+      { fr: 'Page d’accueil de TheQuestBoard avec le tableau en direct', en: 'TheQuestBoard home page with the live board below' },
+      { fr: 'La page d’accueil, avec le nombre de nouvelles demandes et le tableau juste en dessous.', en: 'The home page, with live counts of new requests and the board right below.' },
     ),
     galleryShot(
       'thequestboard',
-      'lead-board.webp',
-      { fr: 'Tableau des demandes de commande avec budgets et sources', en: 'Board of commission requests with budgets and sources' },
-      { fr: 'Les demandes se filtrent par discipline, source et budget, et les nouvelles annonces sont signalées dès leur arrivée.', en: 'Requests can be filtered by craft, source and budget, with new posts flagged as they arrive.' },
-      'wide',
+      'board-filtered.webp',
+      { fr: 'Tableau filtré sur les demandes 3D, avec budgets et sources', en: 'Board filtered to 3D requests, with budgets and sources' },
+      { fr: 'Le tableau filtré sur la 3D : chaque demande affiche son budget, son ancienneté et sa source.', en: 'The board filtered to 3D work: each request shows its budget, age and source.' },
     ),
     galleryShot(
       'thequestboard',
       'discord-alert.webp',
       { fr: 'Message Discord annonçant une nouvelle demande de commande', en: 'Discord message announcing a new commission request' },
-      { fr: 'Chaque alerte indique le budget, la source et l’heure de publication, directement dans Discord.', en: 'Each alert shows the budget, source and posting time, right in Discord.' },
-      'natural',
+      { fr: 'Une alerte sur Discord, avec le budget, la source et l’heure de publication.', en: 'An alert in Discord, with the budget, source and posting time.' },
+    ),
+    galleryShot(
+      'thequestboard',
+      'about.webp',
+      { fr: 'Page « À propos » de TheQuestBoard', en: 'TheQuestBoard about page' },
+      { fr: 'La page « À propos » : un petit script lancé en 2024, devenu un tableau en direct.', en: 'The about page: it started in 2024 as a small script and grew into a live board.' },
     ),
   ],
   skindiff: [
     galleryShot(
       'skindiff',
-      'five-stack-overview.webp',
-      { fr: 'Cinq cartes de joueurs avec nombre de skins et dépenses', en: 'Five player cards with skin counts and spend' },
-      { fr: 'Une équipe de cinq joueurs, chacun avec la taille de sa collection et ses dépenses.', en: 'A five-player team, each with their collection size and total spend.' },
-      'wide',
+      'home.webp',
+      { fr: 'Page d’accueil de SkinDiff avec les cartes collection et duo', en: 'SkinDiff home page with collection and duo cards' },
+      { fr: 'La page d’accueil : ajoutez vos skins, invitez un ami, et voyez ce que vous pouvez assortir.', en: 'The home page: bring your skins, invite a friend, and see what you can match.' },
     ),
     galleryShot(
       'skindiff',
-      'line-finder-expanded.webp',
-      { fr: 'Gamme de skins Chosen of the Wolf sur cinq champions', en: 'Chosen of the Wolf skin line across five champions' },
-      { fr: 'La recherche par gamme affiche tous les skins d’un même thème, ici Chosen of the Wolf.', en: 'The line finder shows every skin in a themed line, here Chosen of the Wolf.' },
-      'natural',
+      'line-finder.webp',
+      { fr: 'Recherche de gammes affichant Spirit Blossom pour Ahri et Lux', en: 'Line Finder showing the Spirit Blossom line for Ahri and Lux' },
+      { fr: 'La recherche de gammes : choisissez des champions et elle affiche les séries qu’ils partagent, ici Spirit Blossom.', en: 'The line finder: pick champions and it shows the skin series they share, here Spirit Blossom.' },
     ),
     galleryShot(
       'skindiff',
-      'collection-builder.webp',
-      { fr: 'Éditeur de collection avec liste de champions et grille de skins', en: 'Collection editor with a champion list and skin grid' },
-      { fr: 'Les joueurs créent ou importent leur collection, avec le total dépensé calculé en direct.', en: 'Players build or import their collection, with a running total of what it cost.' },
-      'natural',
+      'collection.webp',
+      { fr: 'Éditeur de collection avec des skins d’Ahri sélectionnés et un total de 410 $', en: 'Collection editor with Ahri skins selected and a $410 total' },
+      { fr: 'L’éditeur de collection : cochez les skins que vous possédez, le total se met à jour au fur et à mesure.', en: 'The collection editor: pick the skins you own and the total cost updates as you go.' },
     ),
     galleryShot(
       'skindiff',
-      'duo-compare.webp',
-      { fr: 'Morgana Coven et Nami Coven côte à côte', en: 'Coven Morgana and Coven Nami side by side' },
-      { fr: 'Les skins assortis de deux joueurs, affichés côte à côte.', en: 'Two players’ matching skins shown side by side.' },
-      'natural',
-    ),
-    galleryShot(
-      'skindiff',
-      'variants-pink.webp',
-      { fr: 'Aperçu en jeu de deux skins avec leurs variantes de couleur', en: 'In-game preview of two skins with color options' },
-      { fr: 'Les skins assortis se prévisualisent en jeu, avec leurs variantes de couleur (chromas).', en: 'Matching skins can be previewed in game, along with their color variants (chromas).' },
-      'natural',
+      'skin-preview.webp',
+      { fr: 'Aperçu du skin Arcana Ahri avec ses variantes de couleur', en: 'Arcana Ahri skin preview with its color variants' },
+      { fr: 'Un skin en grand, avec ses versions de couleur (chromas) à ajouter à la collection.', en: 'A skin up close, with its color versions (chromas) to add to your collection.' },
     ),
   ],
   multiprise: [
     galleryShot(
       'multiprise',
-      'control-center.webp',
-      { fr: 'Fenêtre Multiprise avec services, ports et logs en direct', en: 'Multiprise window with services, ports and live logs' },
-      { fr: 'Chaque service d’un projet se démarre et s’arrête ici, avec son port et ses logs dans la même fenêtre.', en: 'Each service in a project can be started and stopped here, with its port and logs in the same window.' },
-      'natural',
+      'site.webp',
+      { fr: 'Page d’accueil du site de Multiprise', en: 'Multiprise website home page' },
+      { fr: 'Le site de Multiprise, avec la version préliminaire pour Mac Apple Silicon.', en: 'The Multiprise website, with the early build for Apple Silicon Macs.' },
     ),
     galleryShot(
       'multiprise',
-      'embedded-browser.webp',
-      { fr: 'Navigateur intégré affichant un site local', en: 'Built-in browser showing a local site' },
-      { fr: 'Un navigateur intégré affiche l’application en cours d’exécution sans quitter Multiprise.', en: 'A built-in browser previews the running app without leaving Multiprise.' },
-      'natural',
+      'launch.webp',
+      { fr: 'Multiprise lançant un projet avec deux services et leurs logs', en: 'Multiprise running a project with two services and their logs' },
+      { fr: 'Un projet lancé : chaque service a son port et son adresse, avec les logs à côté.', en: 'A running project: each service has its own port and address, with the logs beside them.' },
+    ),
+    galleryShot(
+      'multiprise',
+      'add-project.webp',
+      { fr: 'Fenêtre d’ajout de projets listant trois services détectés', en: 'Add Projects dialog listing three detected services' },
+      { fr: 'Ajout d’un projet : Multiprise liste les services trouvés et la commande qui les lancera.', en: 'Adding a project: Multiprise lists the services it found and how it will start them.' },
+    ),
+    galleryShot(
+      'multiprise',
+      'browser.webp',
+      { fr: 'Un site lancé, ouvert dans le navigateur intégré de Multiprise', en: 'A running site open in the Multiprise built-in browser' },
+      { fr: 'Le navigateur intégré affiche le site lancé sans quitter l’application.', en: 'The built-in browser shows the running site without leaving the app.' },
     ),
   ],
   minapro: [
@@ -226,37 +228,32 @@ const projectGalleries = {
     galleryShot(
       'brainstorm',
       'landing.webp',
-      { fr: 'Page d’accueil de Brainstorm : « A live map of your code. »', en: 'Brainstorm home page: “A live map of your code.”' },
-      { fr: 'La page d’accueil présente Brainstorm : une carte en direct du code, et des agents IA qui l’écrivent.', en: 'The home page introduces Brainstorm: a live map of your code, and of the AI agents writing it.' },
-      'landscape',
+      { fr: 'Page d’accueil de Brainstorm : « A live map of your agents. »', en: 'Brainstorm home page: “A live map of your agents.”' },
+      { fr: 'Le site de Brainstorm : une carte en direct de vos agents IA.', en: 'The Brainstorm website: a live map of your AI agents.' },
     ),
     galleryShot(
       'brainstorm',
-      'setup.webp',
-      { fr: 'Écran de démarrage qui lit le code, les imports et se connecte à Claude Code', en: 'Setup screen reading the code, mapping imports and connecting to Claude Code' },
-      { fr: 'Au démarrage, Brainstorm lit le code, cartographie les imports, se connecte à Claude Code et fait résumer chaque fichier par Nemotron.', en: 'On startup, Brainstorm reads the code, maps the imports, connects to Claude Code and has Nemotron summarize every file.' },
-      'landscape',
+      'map.webp',
+      { fr: 'Carte du code avec quatre agents en train de modifier des fichiers', en: 'Code map with four agents editing files' },
+      { fr: 'La carte du code : chaque agent apparaît sur le fichier où il travaille, et les changements récents sont mis en évidence.', en: 'The code map: each agent is shown on the file it’s working on, and recent changes are highlighted.' },
     ),
     galleryShot(
       'brainstorm',
-      'map-agents.webp',
-      { fr: 'Carte du code avec quatre sous-agents en train de modifier des fichiers', en: 'Code map with four subagents editing files' },
-      { fr: 'Sur la carte, chaque agent apparaît sur le fichier qu’il modifie, et les fichiers s’allument selon leur dernière modification.', en: 'On the map, each agent sits on the file it’s editing, and files glow by how recently they changed.' },
-      'natural',
+      'replay.webp',
+      { fr: 'Une session rejouée sur la carte, avec un parcours numéroté entre les fichiers', en: 'A session replayed on the map, with a numbered path across files' },
+      { fr: 'Le replay d’une session : le parcours de l’agent est numéroté étape par étape, avec chaque modification à côté.', en: 'Replaying a session: the agent’s path is numbered step by step, with each change beside it.' },
     ),
     galleryShot(
       'brainstorm',
-      'follow-session.webp',
-      { fr: 'Chronologie d’une session Claude Code avec des étapes annotées', en: 'Timeline of a Claude Code session with labeled steps' },
-      { fr: 'Chaque session se suit en direct : messages, commandes et modifications, chacun résumé en quelques mots, et rejouable sur la carte.', en: 'Each session can be followed live: messages, commands and edits, each summed up in a few words, and replayed on the map.' },
-      'natural',
+      'follow.webp',
+      { fr: 'Chronologie d’une session avec une modification de fichier et des questions', en: 'Session timeline with a file change and questions about it' },
+      { fr: 'La chronologie de la session : ouvrez une étape pour voir ce qui a changé et demander pourquoi.', en: 'The session timeline: open any step to see what changed and ask why.' },
     ),
     galleryShot(
       'brainstorm',
-      'failures.webp',
-      { fr: 'Liste des échecs récurrents regroupés par cause', en: 'List of recurring failures grouped by cause' },
-      { fr: 'Les commandes qui échouent sont regroupées par cause et classées par urgence, avec les preuves à un clic.', en: 'Failing commands are grouped by cause and ranked by urgency, with the evidence one click away.' },
-      'landscape',
+      'places.webp',
+      { fr: 'Vue Places montrant les sites, services et applications utilisés par un agent', en: 'Places view showing websites, services and local apps an agent used' },
+      { fr: 'Places : ce qu’un agent a fait en dehors du code, comme déployer un site ou publier sur GitHub.', en: 'Places: what an agent did outside the code, like deploying a site or pushing to GitHub.' },
     ),
   ],
 };
@@ -333,24 +330,24 @@ const projects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Plus de 20 forums, un seul tableau', en: 'More than 20 forums, one board' },
+        title: { fr: 'Demandes de plus de 20 forums', en: 'Requests from 20+ forums' },
         text: {
-          fr: 'Les demandes de commandes de plus de 20 forums, réunies dans un seul tableau consultable.',
-          en: 'Commission requests from more than 20 forums, gathered in one searchable board.',
+          fr: 'Les demandes de commandes publiées sur plus de 20 forums, rassemblées dans une seule liste consultable.',
+          en: 'Commission requests posted on more than 20 forums, collected in one list you can search.',
         },
       },
       {
-        title: { fr: 'Des filtres utiles', en: 'Filters that matter' },
+        title: { fr: 'Filtres', en: 'Filters' },
         text: {
-          fr: 'Filtrez par discipline, source et budget, avec les nouvelles annonces signalées dès leur arrivée.',
-          en: 'Filter by craft, source and budget, with new posts flagged as they arrive.',
+          fr: 'Filtrez par type d’art, par site d’origine et par budget. Les nouvelles annonces sont signalées.',
+          en: 'Filter by type of art, where it was posted and budget. New posts are marked.',
         },
       },
       {
-        title: { fr: 'Des alertes sur Discord', en: 'Alerts in Discord' },
+        title: { fr: 'Alertes Discord', en: 'Discord alerts' },
         text: {
-          fr: 'Des alertes personnalisées avec le budget, la source et l’heure de publication, envoyées directement sur Discord.',
-          en: 'Personalized alerts with the budget, source and posting time, sent straight to Discord.',
+          fr: 'Les demandes qui vous correspondent arrivent sur Discord, avec leur budget, leur source et leur heure.',
+          en: 'Requests that match you are sent to Discord, with their budget, source and time.',
         },
       },
     ],
@@ -375,38 +372,38 @@ const projects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Importez votre collection', en: 'Import your collection' },
+        title: { fr: 'Collection', en: 'Collection' },
         text: {
-          fr: 'Créez ou importez votre collection de skins, avec le total dépensé calculé en direct.',
-          en: 'Build or import your skin collection, with a running total of what it cost.',
+          fr: 'Ajoutez ou importez les skins que vous possédez. L’application calcule ce qu’ils ont coûté.',
+          en: 'Add or import the skins you own. The app adds up what they cost.',
         },
       },
       {
-        title: { fr: 'Trouvez des skins assortis', en: 'Find matching skins' },
+        title: { fr: 'Skins assortis', en: 'Matching skins' },
         text: {
-          fr: 'Comparez vos collections avec vos amis pour trouver des skins assortis, en duo ou à cinq.',
-          en: 'Compare collections with friends to find skins that match for duos and five-player teams.',
+          fr: 'Comparez vos collections avec vos amis pour trouver des skins qui vont ensemble, à deux ou à cinq.',
+          en: 'Compare collections with friends to find skins that go together, for two or five players.',
         },
       },
       {
-        title: { fr: 'Parcourez les gammes', en: 'Browse skin lines' },
+        title: { fr: 'Gammes de skins', en: 'Skin lines' },
         text: {
-          fr: 'Affichez tous les skins d’une même gamme, et les gammes que votre équipe a en commun.',
-          en: 'See every skin in a themed line, and the lines your team has in common.',
+          fr: 'Voyez tous les skins d’une même série, et les séries que votre groupe a en commun.',
+          en: 'See every skin in a themed series, and which series your group has in common.',
         },
       },
       {
-        title: { fr: 'Aperçu en jeu', en: 'Preview in game' },
+        title: { fr: 'Aperçu en jeu', en: 'In-game preview' },
         text: {
-          fr: 'Voyez les skins assortis en jeu, avec leurs variantes de couleur (chromas).',
-          en: 'See matching skins in game, along with their color variants (chromas).',
+          fr: 'Voyez les skins tels qu’ils apparaissent en jeu, avec leurs versions de couleur.',
+          en: 'See skins as they look in the game, including their color versions.',
         },
       },
       {
-        title: { fr: 'Profils et connexion Discord', en: 'Profiles and Discord sign-in' },
+        title: { fr: 'Profils', en: 'Profiles' },
         text: {
-          fr: 'Des profils publics pour montrer sa collection, avec connexion via Discord.',
-          en: 'Public profiles to show off a collection, with sign-in through Discord.',
+          fr: 'Des pages de profil publiques, avec connexion via Discord.',
+          en: 'Public profile pages, with sign-in through Discord.',
         },
       },
     ],
@@ -431,38 +428,38 @@ const projects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Trouve vos services', en: 'Finds your services' },
+        title: { fr: 'Détection des services', en: 'Service detection' },
         text: {
-          fr: 'Lit package.json, Cargo.toml et Docker Compose : aucun fichier de configuration à écrire ni à maintenir.',
-          en: 'Reads package.json, Cargo.toml and Docker Compose, so there is no config file to write or keep in sync.',
+          fr: 'Trouve ce qu’un projet peut lancer en lisant ses fichiers existants. Aucun fichier de réglages à écrire.',
+          en: 'Finds what a project can run by reading its existing files. No setup file needed.',
         },
       },
       {
-        title: { fr: 'Des ports sans conflit', en: 'Ports that never collide' },
+        title: { fr: 'Attribution des ports', en: 'Port assignment' },
         text: {
-          fr: 'Chaque service reçoit un port libre et le garde d’un lancement à l’autre : adresses et callbacks OAuth continuent de fonctionner.',
-          en: 'Each service gets a free port and keeps it between launches, so URLs and OAuth callbacks keep working.',
+          fr: 'Donne à chaque service un port libre et garde le même la fois suivante, pour que son adresse ne change pas.',
+          en: 'Gives each service a free port and keeps the same one next time, so its address doesn’t change.',
         },
       },
       {
-        title: { fr: 'Des adresses locales stables', en: 'Stable local addresses' },
+        title: { fr: 'Adresses lisibles', en: 'Readable addresses' },
         text: {
-          fr: 'web.shop.localhost mène toujours au bon service, WebSockets compris pour le rechargement à chaud.',
-          en: 'web.shop.localhost always reaches the right service, with WebSockets passed through for hot reload.',
+          fr: 'Chaque service a aussi un nom fixe, comme web.shop.localhost.',
+          en: 'Each service also gets a fixed name, like web.shop.localhost.',
         },
       },
       {
-        title: { fr: 'Des logs lisibles', en: 'Logs you can read' },
+        title: { fr: 'Logs', en: 'Logs' },
         text: {
-          fr: 'Une vue consultable par projet, des liens fichier:ligne qui s’ouvrent dans l’éditeur, et un bouton de correction quand un démarrage échoue.',
-          en: 'One searchable view per project, file:line links that open in your editor, and a fix button when a start fails.',
+          fr: 'Toute la sortie d’un projet dans une seule vue consultable. Les erreurs ont un bouton pour les corriger.',
+          en: 'All of a project’s output in one searchable view. Errors come with a button to fix them.',
         },
       },
       {
-        title: { fr: 'Pensé pour les agents', en: 'Built for coding agents' },
+        title: { fr: 'Accès pour les outils IA', en: 'Access for AI tools' },
         text: {
-          fr: 'Une CLI et un serveur MCP permettent à Claude Code de réutiliser les services lancés au lieu d’en démarrer des doublons.',
-          en: 'A CLI and an MCP server let Claude Code reuse running services instead of starting duplicates.',
+          fr: 'Les assistants de code comme Claude Code peuvent aussi lister, lancer et lire les services, au lieu d’en démarrer des copies.',
+          en: 'Coding assistants like Claude Code can list, start and read services too, instead of starting copies.',
         },
       },
     ],
@@ -489,38 +486,38 @@ const projects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Une chronologie en direct', en: 'A live session timeline' },
+        title: { fr: 'Chronologie des sessions', en: 'Session timeline' },
         text: {
-          fr: 'Chaque prompt, commande et modification de Claude Code, résumé en quelques mots au moment où il arrive, sous-agents compris.',
-          en: 'Every prompt, command and edit from Claude Code, labeled in a few words as it happens, subagents included.',
+          fr: 'Chaque étape de Claude Code, en direct, résumée en quelques mots.',
+          en: 'Every step Claude Code takes, as it happens, each summed up in a few words.',
         },
       },
       {
-        title: { fr: 'Une carte de votre code', en: 'A map of your codebase' },
+        title: { fr: 'Carte du code', en: 'Code map' },
         text: {
-          fr: 'Les fichiers et leurs imports sous forme de graphe, où chaque agent se déplace sur les fichiers qu’il lit et modifie.',
-          en: 'Files and imports as a graph, with each agent moving across the files it reads and writes.',
+          fr: 'Les fichiers du projet et leurs liens, avec chaque agent affiché sur le fichier où il travaille.',
+          en: 'The project’s files and how they connect, with each agent shown on the file it’s working on.',
         },
       },
       {
-        title: { fr: 'Demander « pourquoi ? » partout', en: 'Ask “why?” anywhere' },
+        title: { fr: 'Questions', en: 'Questions' },
         text: {
-          fr: 'Les questions sur une étape ou un fichier partent à Claude avec juste le contexte utile, pour environ 0,03 $ chacune.',
-          en: 'Questions about any step or file go to Claude with just the context it needs, for about $0.03 each.',
+          fr: 'Demandez pourquoi une étape ou un fichier a changé et obtenez une réponse de Claude, pour environ 0,03 $.',
+          en: 'Ask why a step or file changed and get an answer from Claude, for about $0.03.',
         },
       },
       {
-        title: { fr: 'Tout le code, résumé', en: 'The whole codebase, summarized' },
+        title: { fr: 'Résumés des fichiers', en: 'File summaries' },
         text: {
-          fr: 'Nemotron 3 Nano sur GPU NVIDIA résume chaque fichier : 81 000 lignes en 73 secondes pour 0,02 $.',
-          en: 'Nemotron 3 Nano on an NVIDIA GPU summarizes every file: 81k lines in 73 seconds for $0.02.',
+          fr: 'Chaque fichier reçoit un résumé de deux phrases. 81 000 lignes en 73 secondes, pour 0,02 $.',
+          en: 'Every file gets a two-sentence summary. 81,000 lines took 73 seconds and cost $0.02.',
         },
       },
       {
-        title: { fr: 'Privé et partageable', en: 'Private and shareable' },
+        title: { fr: 'Confidentialité et partage', en: 'Privacy and sharing' },
         text: {
-          fr: 'Tout reste sur la machine, les secrets sont masqués, et une session s’exporte en un seul fichier HTML.',
-          en: 'Everything stays on your machine, secrets are masked, and any session exports as one HTML file.',
+          fr: 'Tout reste sur votre ordinateur, les mots de passe et les clés sont masqués, et une session s’enregistre en un seul fichier à partager.',
+          en: 'Everything stays on your computer, passwords and keys are hidden, and a session can be saved as one file to share.',
         },
       },
     ],
@@ -549,31 +546,38 @@ const clientProjects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Des invitations en nombre', en: 'Invitations at scale' },
+        title: { fr: 'Assistant du programme', en: 'Program assistant' },
         text: {
-          fr: 'Invitez les dirigeants un par un ou en groupe, directement depuis le back-office.',
-          en: 'Invite executives one by one or in groups, straight from the back office.',
+          fr: 'Un assistant conversationnel sur la page d’accueil du programme répond aux questions des dirigeants sur les sessions.',
+          en: 'A chat assistant on the program’s home page answers executives’ questions about the sessions.',
         },
       },
       {
-        title: { fr: 'Un questionnaire qui s’adapte', en: 'A questionnaire that adapts' },
+        title: { fr: 'Questionnaire d’accueil', en: 'Onboarding questionnaire' },
         text: {
-          fr: 'Un questionnaire d’accueil de trois minutes qui s’adapte aux réponses de chaque participant.',
-          en: 'A three-minute onboarding questionnaire that adapts to each participant’s answers.',
+          fr: 'Un questionnaire de trois minutes qui adapte ses questions aux réponses de chaque dirigeant, en français ou en anglais.',
+          en: 'A three-minute questionnaire that adapts its questions to each executive’s answers, in French or English.',
         },
       },
       {
-        title: { fr: 'Une synthèse du profil en direct', en: 'A profile summary, live' },
+        title: { fr: 'Synthèse de profil générée', en: 'Generated profile summary' },
         text: {
-          fr: 'Les réponses deviennent une synthèse qui prépare la session d’accompagnement de chaque dirigeant.',
-          en: 'Answers turn into a summary that prepares each executive’s advisory session.',
+          fr: 'Au fil des réponses, la plateforme rédige une synthèse du profil qui sert aux conseillers à préparer chaque session.',
+          en: 'As executives answer, the platform writes a profile summary that advisors use to prepare each session.',
         },
       },
       {
-        title: { fr: 'Un back-office avec statistiques', en: 'A back office with analytics' },
+        title: { fr: 'Invitations et planning', en: 'Invitations and scheduling' },
         text: {
-          fr: 'Planification des sessions et statistiques pour l’équipe qui anime le programme, en français et en anglais.',
-          en: 'Session scheduling and analytics for the team running the program, in French and English.',
+          fr: 'L’équipe invite les dirigeants un par un ou en masse, puis planifie leurs sessions.',
+          en: 'The team invites executives one by one or in bulk, then schedules their sessions.',
+        },
+      },
+      {
+        title: { fr: 'Back-office et statistiques', en: 'Back office and statistics' },
+        text: {
+          fr: 'Un back-office avec les statistiques du programme pour l’équipe qui l’anime.',
+          en: 'A back office with program statistics for the team running it.',
         },
       },
     ],
@@ -599,31 +603,31 @@ const clientProjects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Trouver un professionnel', en: 'Find a professional' },
+        title: { fr: 'Recherche de professionnels', en: 'Professional search' },
         text: {
-          fr: 'Recherchez par métier ou par secteur et voyez les résultats sur une carte, avec le statut de vérification de chaque profil.',
-          en: 'Search by trade or industry and see results on a map, with each profile’s verification status.',
+          fr: 'Cherchez par métier ou par secteur et voyez les résultats sur une carte. Les profils vérifiés sont signalés.',
+          en: 'Search by job or industry and see results on a map. Verified profiles are marked.',
         },
       },
       {
         title: { fr: 'Actualités, appels d’offres et financements', en: 'News, tenders and funding' },
         text: {
-          fr: 'Un fil d’actualités économiques, avec les appels d’offres et les financements disponibles.',
-          en: 'A business news feed alongside open tenders and funding opportunities.',
+          fr: 'L’actualité économique, les appels d’offres et les financements au même endroit.',
+          en: 'Business news, calls for tenders and funding opportunities in one place.',
         },
       },
       {
-        title: { fr: 'Web et applications mobiles', en: 'Web and mobile apps' },
+        title: { fr: 'Site et applications mobiles', en: 'Website and mobile apps' },
         text: {
-          fr: 'Le même annuaire sur le web et dans les applications iOS et Android, avec profils et favoris.',
-          en: 'The same directory on the web and in iOS and Android apps, with profiles and favorites.',
+          fr: 'Le même annuaire sur le web, iPhone et Android, avec profils et favoris.',
+          en: 'The same directory on the web, iPhone and Android, with profiles and saved favorites.',
         },
       },
       {
-        title: { fr: 'Une refonte complète', en: 'A complete rebuild' },
+        title: { fr: 'Refonte de Bount-bi', en: 'Rebuild of Bount-bi' },
         text: {
-          fr: 'La nouvelle version de Bount-bi, le portail du travail et de l’entrepreneuriat au Sénégal, reconstruite de zéro.',
-          en: 'The new version of Bount-bi, Senegal’s work and entrepreneurship portal, rebuilt from the ground up.',
+          fr: 'Une refonte complète de Bount-bi, le portail sénégalais du travail et de l’entrepreneuriat.',
+          en: 'A full rebuild of Bount-bi, Senegal’s portal for work and business.',
         },
       },
     ],
@@ -649,31 +653,31 @@ const clientProjects: PortfolioProject[] = [
     },
     features: [
       {
-        title: { fr: 'Des campagnes de phishing réalistes', en: 'Realistic phishing campaigns' },
+        title: { fr: 'Simulations de phishing', en: 'Phishing simulations' },
         text: {
-          fr: 'Les administrateurs lancent des simulations par e-mail et SMS, préparent les destinataires et suivent chaque campagne.',
-          en: 'Admins launch simulated phishing by email and SMS, prepare recipients and track each campaign.',
+          fr: 'Les administrateurs envoient de faux e-mails et SMS de phishing et suivent les résultats de chaque campagne.',
+          en: 'Admins send fake phishing emails and text messages and follow the results of each campaign.',
         },
       },
       {
-        title: { fr: 'Une formation juste après', en: 'Training right after' },
+        title: { fr: 'Courtes formations', en: 'Short lessons' },
         text: {
-          fr: 'De courtes formations suivent chaque simulation, des mots de passe robustes à la protection des sources.',
-          en: 'Short lessons follow each simulation, from strong passwords to protecting sources.',
+          fr: 'Après une simulation, chacun reçoit de courtes formations, des mots de passe à la protection des sources.',
+          en: 'After a simulation, people get short lessons, from passwords to protecting sources.',
         },
       },
       {
-        title: { fr: 'Espaces administrateur et apprenant', en: 'Admin and learner spaces' },
+        title: { fr: 'Deux types de comptes', en: 'Two kinds of accounts' },
         text: {
-          fr: 'Des accès distincts pour l’équipe qui pilote les campagnes et pour les personnes formées.',
-          en: 'Separate access for the team running campaigns and for the people being trained.',
+          fr: 'Des espaces séparés pour l’équipe qui gère les campagnes et pour les personnes formées.',
+          en: 'Separate spaces for the team running campaigns and for the people being trained.',
         },
       },
       {
-        title: { fr: 'Une connexion sécurisée', en: 'Secure sign-in' },
+        title: { fr: 'Connexion en deux étapes', en: 'Two-step sign-in' },
         text: {
-          fr: 'Connexion multifacteur par application d’authentification ou code de récupération.',
-          en: 'Multi-factor sign-in with an authenticator app or a recovery code.',
+          fr: 'La connexion demande un code d’une application d’authentification, ou un code de secours.',
+          en: 'Signing in takes a code from an authenticator app, or a recovery code.',
         },
       },
     ],
