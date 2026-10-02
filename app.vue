@@ -177,8 +177,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
-const SITE_URL = 'https://djbrl.vercel.app/';
-const OG_IMAGE = `${SITE_URL}og-software-developer.png`;
+const SITE_URL = 'https://djibrilsy.com/';
+const OG_IMAGE = `${SITE_URL}og-djibrilsy.png`;
 const THEME_STORAGE_KEY = 'portfolio-color-theme';
 
 const route = useRoute();
