@@ -3,17 +3,32 @@
     <a class="skip-link" href="#main">{{ copy.skip }}</a>
     <header class="portfolio-header">
       <div class="brand-line">
-        <button class="identity-home" type="button" @click="navigateToPage(0, { focus: true })"><strong>Djibril Sy</strong><span aria-hidden="true">·</span><Transition name="header-context" mode="out-in"><span :key="activePage" class="identity-role">{{ headerSectionLabel }}</span></Transition></button>
+        <div class="identity-home">
+          <button class="identity-name" type="button" @click="navigateToPage(0, { focus: true })"><strong>Djibril Sy</strong></button>
+          <span aria-hidden="true">·</span>
+          <!-- The section label doubles as a menu: an alternative to the page dots for moving between sections. -->
+          <div ref="sectionMenu" class="section-menu" @keydown="onSectionMenuKeydown">
+            <button ref="sectionMenuButton" class="section-menu-toggle" type="button" aria-haspopup="menu" :aria-expanded="sectionMenuOpen" aria-controls="section-menu-list" :aria-label="`${headerSectionLabel} — ${copy.sectionMenu}`" @click="toggleSectionMenu()">
+              <Transition name="header-context" mode="out-in"><span :key="`${activePage}-${locale}`" class="identity-role">{{ headerSectionLabel }}</span></Transition>
+              <svg class="section-menu-chevron" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>
+            </button>
+            <Transition name="section-menu">
+              <ul v-if="sectionMenuOpen" id="section-menu-list" class="section-menu-list" role="menu" :aria-label="copy.sectionMenu">
+                <li v-for="(label, index) in copy.pageLabels" :key="label" role="none">
+                  <button type="button" role="menuitem" :class="{ current: activePage === index }" :aria-current="activePage === index ? 'page' : undefined" @click="chooseSection(index)">
+                    <span>{{ label }}</span>
+                  </button>
+                </li>
+              </ul>
+            </Transition>
+          </div>
+        </div>
       </div>
       <div class="header-controls">
         <button class="language-toggle" type="button" :aria-label="copy.switchLanguage" @click="switchLanguage">{{ isFrench ? 'EN' : 'FR' }}</button>
         <button class="theme-toggle" type="button" :aria-label="isDark ? copy.lightMode : copy.darkMode" :title="isDark ? copy.lightMode : copy.darkMode" @click="toggleTheme"><span aria-hidden="true"></span></button>
       </div>
     </header>
-
-    <nav class="page-dots" :class="[{ 'is-hinting': pillHinting }, pillMotion ? `moving-${pillMotion}` : '']" :aria-label="copy.pageNavigation">
-      <button v-for="(label, index) in copy.pageLabels" :key="label" type="button" :class="{ active: activePage === index }" :aria-label="label" :aria-current="activePage === index ? 'page' : undefined" @click="navigateToPage(index, { focus: true })"><span aria-hidden="true"></span></button>
-    </nav>
 
     <main id="main" class="portfolio-pages">
       <section class="page-section hero-page" :class="{ active: activePage === 0 }" :style="pageStyle(0)" :aria-hidden="activePage !== 0" :inert="activePage !== 0" aria-labelledby="hero-title">
@@ -92,7 +107,10 @@
                     <p>{{ copy.contactIntro }}</p>
                   </header>
                   <div class="inline-contact-links">
-                    <a href="mailto:sydjbrl@gmail.com">sydjbrl@gmail.com <span aria-hidden="true">↗</span></a>
+                    <CopyEmail email="sydjbrl@gmail.com" :copy-label="copy.copyEmail" :copied-label="copy.emailCopied">
+                      <span>sydjbrl@gmail.com</span>
+                      <svg class="copy-email-icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="2" /><path d="M10.5 3.5v-.25A1.75 1.75 0 0 0 8.75 1.5h-5.5A1.75 1.75 0 0 0 1.5 3.25v5.5c0 .97.78 1.75 1.75 1.75h.25" /></svg>
+                    </CopyEmail>
                     <a href="https://github.com/Djbrl" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
                     <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>
                   </div>
@@ -139,13 +157,14 @@
             </p>
             <p>{{ isFrench ? 'Disponible pour des missions freelance et des postes à temps plein.' : 'Open to freelance projects and full-time roles.' }}</p>
             <a :href="isFrench ? '/documents/djibril-sy-cv.pdf' : '/documents/djibril-sy-cv-en.pdf'" target="_blank" rel="noopener">{{ isFrench ? 'CV (PDF)' : 'Résumé (PDF)' }} <span aria-hidden="true">↗</span></a>
+            <img class="bio-portrait" src="/about/djibril-sy.webp" alt="Djibril Sy" width="640" height="640" loading="lazy" decoding="async">
           </div>
         </div>
       </section>
     </main>
 
     <footer class="portfolio-contact">
-      <a href="mailto:sydjbrl@gmail.com">sydjbrl@gmail.com</a>
+      <CopyEmail email="sydjbrl@gmail.com" :copy-label="copy.copyEmail" :copied-label="copy.emailCopied" />
       <nav :aria-label="copy.contactNavigation">
         <a href="https://github.com/Djbrl" target="_blank" rel="noopener">GitHub</a>
         <a href="https://www.linkedin.com/in/djibril-sy" target="_blank" rel="noopener">LinkedIn</a>
@@ -202,8 +221,60 @@ const headerSectionLabel = computed(() => {
   if (activePage.value === 2) return copy.value.navBackground;
   return copy.value.role;
 });
-const pillHinting = ref(true);
-const pillMotion = ref<'up' | 'down' | null>(null);
+const sectionMenuOpen = ref(false);
+const sectionMenu = ref<HTMLElement | null>(null);
+const sectionMenuButton = ref<HTMLElement | null>(null);
+const sectionMenuItems = () => [...(sectionMenu.value?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])];
+
+// Opens or closes the section menu; when opening, focus lands on the current section (or the first/last item).
+const toggleSectionMenu = async (open = !sectionMenuOpen.value, focus: 'current' | 'first' | 'last' = 'current') => {
+  sectionMenuOpen.value = open;
+  if (!open) return;
+  await nextTick();
+  const items = sectionMenuItems();
+  const target = focus === 'first' ? items[0] : focus === 'last' ? items.at(-1) : items[activePage.value];
+  target?.focus();
+};
+
+const closeSectionMenu = (options: { restoreFocus?: boolean } = {}) => {
+  if (!sectionMenuOpen.value) return;
+  sectionMenuOpen.value = false;
+  if (options.restoreFocus) sectionMenuButton.value?.focus();
+};
+
+const chooseSection = (index: number) => {
+  closeSectionMenu({ restoreFocus: index === activePage.value });
+  if (index !== activePage.value) void navigateToPage(index, { focus: true });
+};
+
+// Menu keys are handled here and marked as handled, so the page's own arrow-key paging leaves them alone.
+const onSectionMenuKeydown = (event: KeyboardEvent) => {
+  const items = sectionMenuItems();
+  const index = items.indexOf(document.activeElement as HTMLElement);
+  const move = (next: number) => items[(next + items.length) % items.length]?.focus();
+  if (!sectionMenuOpen.value) {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    event.preventDefault();
+    void toggleSectionMenu(true, event.key === 'ArrowDown' ? 'first' : 'last');
+    return;
+  }
+  if (event.key === 'Escape') closeSectionMenu({ restoreFocus: true });
+  else if (event.key === 'ArrowDown') move(index + 1);
+  else if (event.key === 'ArrowUp') move(index - 1);
+  else if (event.key === 'Home') move(0);
+  else if (event.key === 'End') move(items.length - 1);
+  else if (event.key === 'Tab') { closeSectionMenu(); return; }
+  else return;
+  event.preventDefault();
+};
+
+// Moving to another section by any other route (dots, wheel, keys) closes the menu.
+watch(activePage, () => closeSectionMenu());
+
+const onDocumentPointerDown = (event: PointerEvent) => {
+  if (sectionMenuOpen.value && !sectionMenu.value?.contains(event.target as Node)) closeSectionMenu();
+};
+
 const projectsRevealing = ref(false);
 const projectsLeaving = ref(false);
 const isPageTransitioning = ref(false);
@@ -216,8 +287,7 @@ const isDark = ref(false);
 const hasExplicitTheme = ref(false);
 const inlineProjectCard = ref<HTMLElement | null>(null);
 let inspectionCloseTimer: ReturnType<typeof setTimeout> | undefined;
-let pillTimer: ReturnType<typeof setTimeout> | undefined;
-let hintTimer: ReturnType<typeof setTimeout> | undefined;
+let pageTransitionTimer: ReturnType<typeof setTimeout> | undefined;
 let projectRevealTimer: ReturnType<typeof setTimeout> | undefined;
 let projectLeaveTimer: ReturnType<typeof setTimeout> | undefined;
 let wheelResetTimer: ReturnType<typeof setTimeout> | undefined;
@@ -256,10 +326,7 @@ const focusElement = (element: HTMLElement | null | undefined) => {
 const navigateToPage = async (index: number, options: { focus?: boolean } = {}) => {
   if (isPageTransitioning.value || index === activePage.value || index < 0 || index > 2) return;
   isPageTransitioning.value = true;
-  const direction = index > activePage.value ? 'down' : 'up';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  pillHinting.value = false;
-  pillMotion.value = null;
   if (activePage.value === 1) {
     // The project panel belongs to the projects page; never leave it open behind another page.
     if (inspectionOpen.value) closeInlineProject();
@@ -269,7 +336,6 @@ const navigateToPage = async (index: number, options: { focus?: boolean } = {}) 
     projectLeaveTimer = setTimeout(() => { projectsLeaving.value = false; }, reducedMotion ? 0 : 800);
   }
   await nextTick();
-  pillMotion.value = direction;
   activePage.value = index;
   if (options.focus) {
     // Wait for the new page to drop `inert` before moving focus into it.
@@ -284,11 +350,9 @@ const navigateToPage = async (index: number, options: { focus?: boolean } = {}) 
     clearTimeout(projectRevealTimer);
     projectRevealTimer = setTimeout(() => { projectsRevealing.value = false; }, 1500);
   }
-  clearTimeout(pillTimer);
-  pillTimer = setTimeout(() => {
-    pillMotion.value = null;
-    isPageTransitioning.value = false;
-  }, reducedMotion ? 0 : 760);
+  // Ignore further paging until this page's entrance has played.
+  clearTimeout(pageTransitionTimer);
+  pageTransitionTimer = setTimeout(() => { isPageTransitioning.value = false; }, reducedMotion ? 0 : 760);
 };
 
 // The element that would scroll for an interaction starting at `target`: the project panel first, then the active page.
@@ -476,10 +540,43 @@ const applyTheme = (persist = true) => {
   }
 };
 
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  hasExplicitTheme.value = true;
-  applyTheme();
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => Promise<void> | void) => { ready: Promise<void>; finished: Promise<void> };
+};
+
+// Runs a visual change inside a view transition where the browser supports it (and motion is welcome):
+// the theme reveals as a circle growing from the toggle, the language crossfades. Otherwise it just applies.
+const withViewTransition = (kind: 'theme' | 'language', update: () => void, origin?: { x: number; y: number }) => {
+  const doc = document as ViewTransitionDocument;
+  if (!doc.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    update();
+    return;
+  }
+  const root = document.documentElement;
+  root.dataset.viewTransition = kind;
+  const transition = doc.startViewTransition(async () => {
+    update();
+    await nextTick();
+  });
+  transition.finished.finally(() => { delete root.dataset.viewTransition; });
+  if (kind !== 'theme' || !origin) return;
+  transition.ready.then(() => {
+    const radius = Math.hypot(Math.max(origin.x, window.innerWidth - origin.x), Math.max(origin.y, window.innerHeight - origin.y));
+    root.animate(
+      { clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${radius}px at ${origin.x}px ${origin.y}px)`] },
+      { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', pseudoElement: '::view-transition-new(root)' },
+    );
+  }).catch(() => {});
+};
+
+const toggleTheme = (event?: MouseEvent) => {
+  const button = event?.currentTarget instanceof HTMLElement ? event.currentTarget.getBoundingClientRect() : null;
+  const origin = button ? { x: button.left + button.width / 2, y: button.top + button.height / 2 } : undefined;
+  withViewTransition('theme', () => {
+    isDark.value = !isDark.value;
+    hasExplicitTheme.value = true;
+    applyTheme();
+  }, origin);
 };
 
 onMounted(() => {
@@ -492,11 +589,11 @@ onMounted(() => {
   hasExplicitTheme.value = readStoredTheme() !== null;
   // Only an explicit toggle is persisted, so visitors without a stored choice keep following their system theme.
   applyTheme(false);
-  hintTimer = setTimeout(() => { pillHinting.value = false; }, 4200);
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('touchstart', onTouchStart, { passive: true });
   window.addEventListener('touchend', onTouchEnd, { passive: true });
   window.addEventListener('keydown', onKeydown);
+  document.addEventListener('pointerdown', onDocumentPointerDown);
 
   const searchParams = new URL(window.location.href).searchParams;
   const requestedSlug = searchParams.get('project');
@@ -522,8 +619,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimeout(inspectionCloseTimer);
-  clearTimeout(pillTimer);
-  clearTimeout(hintTimer);
+  clearTimeout(pageTransitionTimer);
   clearTimeout(projectRevealTimer);
   clearTimeout(projectLeaveTimer);
   clearTimeout(wheelResetTimer);
@@ -532,15 +628,17 @@ onBeforeUnmount(() => {
     window.removeEventListener('touchstart', onTouchStart);
     window.removeEventListener('touchend', onTouchEnd);
     window.removeEventListener('keydown', onKeydown);
+    document.removeEventListener('pointerdown', onDocumentPointerDown);
   }
 });
 
 const switchLanguage = () => {
   if (!import.meta.client) return;
-  locale.value = locale.value === 'fr' ? 'en' : 'fr';
+  const nextLocale = locale.value === 'fr' ? 'en' : 'fr';
+  withViewTransition('language', () => { locale.value = nextLocale; });
 
   const url = new URL(window.location.href);
-  if (locale.value === 'fr') url.searchParams.set('lang', 'fr');
+  if (nextLocale === 'fr') url.searchParams.set('lang', 'fr');
   else url.searchParams.delete('lang');
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 };
@@ -595,6 +693,152 @@ useHead(() => {
   display:inline-block;
 }
 
+.identity-name,
+.section-menu-toggle {
+  padding:0;
+  border:0;
+  background:none;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  cursor:pointer;
+}
+
+/* Section menu: the header's section label opens a small list of the three sections. */
+.section-menu {
+  position:relative;
+}
+
+.section-menu-toggle {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin:-4px -8px;
+  padding:4px 8px;
+  border-radius:8px;
+  transition:background .16s ease;
+}
+
+.section-menu-toggle:hover,
+.section-menu-toggle[aria-expanded='true'] {
+  background:var(--soft);
+}
+
+.section-menu-chevron {
+  width:9px;
+  height:6px;
+  fill:none;
+  stroke:var(--quiet);
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-width:1.6;
+  transition:transform .2s ease;
+}
+
+.section-menu-toggle[aria-expanded='true'] .section-menu-chevron {
+  transform:rotate(180deg);
+}
+
+.section-menu-list {
+  position:absolute;
+  top:calc(100% + 12px);
+  left:-8px;
+  min-width:210px;
+  margin:0;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:color-mix(in srgb,var(--page) 86%,transparent);
+  box-shadow:0 18px 40px -18px rgb(0 0 0 / .28),0 2px 8px rgb(0 0 0 / .05);
+  list-style:none;
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  backdrop-filter:blur(16px) saturate(1.4);
+  transform-origin:top left;
+}
+
+.section-menu-list button {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:9px 10px;
+  border:0;
+  border-radius:8px;
+  background:none;
+  color:var(--quiet);
+  font:inherit;
+  font-size:.88rem;
+  font-weight:500;
+  text-align:left;
+  cursor:pointer;
+  transition:background .14s ease,color .14s ease;
+}
+
+.section-menu-list button:hover,
+.section-menu-list button:focus-visible {
+  background:var(--soft);
+  color:var(--ink);
+  outline:none;
+}
+
+.section-menu-list button.current {
+  color:var(--ink);
+}
+
+.section-menu-list button.current::after {
+  width:6px;
+  height:6px;
+  margin-left:auto;
+  border-radius:50%;
+  background:var(--ink);
+  content:'';
+}
+
+
+.section-menu-enter-active,
+.section-menu-leave-active {
+  transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1);
+}
+
+.section-menu-enter-from,
+.section-menu-leave-to {
+  opacity:0;
+  transform:translateY(-4px) scale(.97);
+}
+
+/* Theme and language switches run inside a view transition (see withViewTransition): the theme
+   reveals as a circle growing from the toggle, the language crossfades. */
+:root[data-view-transition='theme']::view-transition-old(root),
+:root[data-view-transition='theme']::view-transition-new(root) {
+  animation:none;
+  mix-blend-mode:normal;
+}
+
+:root[data-view-transition='language']::view-transition-old(root),
+:root[data-view-transition='language']::view-transition-new(root) {
+  animation-duration:.34s;
+  animation-timing-function:ease;
+}
+
+.bio-portrait {
+  display:block;
+  width:clamp(120px,11vw,164px);
+  height:auto;
+  aspect-ratio:1;
+  margin-top:34px;
+  border-radius:50%;
+  background:var(--soft);
+  object-fit:cover;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .section-menu-enter-active,
+  .section-menu-leave-active,
+  .section-menu-chevron {
+    transition:none;
+  }
+}
+
 .header-context-enter-active,
 .header-context-leave-active {
   transition:opacity .18s ease,transform .18s ease;
@@ -611,6 +855,7 @@ useHead(() => {
 }
 
 .portfolio-contact>a,
+.portfolio-contact>.copy-email,
 .portfolio-contact nav {
   font-size:clamp(.9rem,1.15vw,1.08rem);
 }
@@ -1191,13 +1436,43 @@ html.fonts-pending .hero-intro .hero-section-links {
   border-top:1px solid var(--line);
 }
 
-.inline-contact-links a {
+.inline-contact-links a,
+.inline-contact-links .copy-email {
   display:flex;
   justify-content:space-between;
   gap:18px;
   padding:15px 0;
   border-bottom:1px solid var(--line);
   font-size:.92rem;
+}
+
+.copy-email-icon {
+  width:15px;
+  height:15px;
+  fill:none;
+  stroke:currentColor;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-width:1.4;
+}
+
+/* In the full-width contact row, the tooltip sits over the copy icon rather than the row's centre. */
+.inline-contact-links .copy-email .copy-email-tip {
+  left:auto;
+  right:-6px;
+  transform:translateY(4px);
+}
+
+.inline-contact-links .copy-email:hover .copy-email-tip,
+.inline-contact-links .copy-email:focus-visible .copy-email-tip,
+.inline-contact-links .copy-email.copied .copy-email-tip {
+  transform:none;
+}
+
+.inline-contact-links .copy-email-tip::after {
+  left:auto;
+  right:10px;
+  transform:none;
 }
 
 @media (max-width:820px) {
@@ -1305,8 +1580,7 @@ html.fonts-pending .hero-intro .hero-section-links {
     margin-top:10px;
   }
 
-  .project-inspection-open .portfolio-contact,
-  .project-inspection-open .page-dots {
+  .project-inspection-open .portfolio-contact {
     visibility:hidden;
     pointer-events:none;
   }

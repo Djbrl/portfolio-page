@@ -183,16 +183,6 @@ img {
   box-shadow:0 1px 8px #00000008;
 }
 
-
-
-
-
-
-
-
-
-
-
 .contact-tile {
   grid-column:10/13;
   grid-row:3/5;
@@ -303,19 +293,6 @@ footer button {
 .contact-tile {
   border-radius:14px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .about-tile,
 .contact-tile {
@@ -474,6 +451,7 @@ footer button {
 }
 
 .portfolio-contact>a,
+.portfolio-contact>.copy-email,
 .portfolio-contact nav {
   font-size:clamp(1.05rem,1.8vw,1.65rem);
 }
@@ -501,28 +479,6 @@ footer button {
     position:static;
     margin-top:32px;
   }
-}
-
-/* Page-dot keyframes (navigation rules live in the authoritative block below) */
-@keyframes pill-dot-settle {
-  0% { transform:scale(.72); }
-  55% { transform:scale(1.38); }
-  100% { transform:scale(1.12); }
-}
-
-@keyframes pill-invite {
-  0%,100% { transform:translateY(-50%); box-shadow:0 0 0 0 transparent; }
-  50% { transform:translateY(calc(-50% + 4px)); box-shadow:0 5px 16px #0000000d; }
-}
-
-@keyframes pill-nudge-down {
-  0%,100% { transform:translateY(-50%); }
-  45% { transform:translateY(calc(-50% + 7px)); }
-}
-
-@keyframes pill-nudge-up {
-  0%,100% { transform:translateY(-50%); }
-  45% { transform:translateY(calc(-50% - 7px)); }
 }
 
 /* Single-screen index */
@@ -653,6 +609,7 @@ body,
 }
 
 .portfolio-contact>a,
+.portfolio-contact>.copy-email,
 .portfolio-contact nav {
   font-size:clamp(.82rem,1.05vw,1rem);
 }
@@ -885,6 +842,7 @@ body,
 }
 
 .portfolio-contact>a,
+.portfolio-contact>.copy-email,
 .portfolio-contact nav {
   font-size:clamp(.78rem,.95vw,.94rem);
 }
@@ -893,39 +851,6 @@ body,
   display:flex;
   gap:18px;
   margin-top:3px;
-}
-
-.page-dots {
-  position:fixed;
-  top:50%;
-  left:17px;
-  z-index:60;
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-  transform:translateY(-50%);
-}
-
-.page-dots button {
-  display:grid;
-  place-items:center;
-  width:24px;
-  height:24px;
-  padding:0;
-  background:transparent;
-}
-
-.page-dots span {
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--dot-idle);
-  transition:background .2s ease,transform .2s ease;
-}
-
-.page-dots button.active span {
-  background:var(--ink);
-  transform:scale(1.12);
 }
 
 .bio-page {
@@ -1030,12 +955,9 @@ body,
   }
 
   .portfolio-contact>a,
+  .portfolio-contact>.copy-email,
   .portfolio-contact nav {
     font-size:.7rem;
-  }
-
-  .page-dots {
-    left:4px;
   }
 
   .bio-layout {
@@ -1053,7 +975,6 @@ body,
     height:auto;
   }
 }
-
 
 /* Current three-screen refinements */
 .brand-line {
@@ -1082,26 +1003,6 @@ body,
 
 .identity-home .identity-role {
   font-weight:500;
-}
-
-.page-dots {
-  top:30%;
-  left:22px;
-  gap:0;
-  padding:2px 0;
-  border-radius:999px;
-  background:var(--soft);
-}
-
-/* 24px hit area; the visible dot stays 6px. */
-.page-dots button {
-  width:24px;
-  height:24px;
-}
-
-.page-dots span {
-  width:6px;
-  height:6px;
 }
 
 .theme-toggle span,
@@ -1208,28 +1109,6 @@ body {
   color:var(--ink);
 }
 
-.page-dots {
-  top:var(--hero-anchor);
-  transform:translateY(-50%);
-  will-change:transform;
-}
-
-.page-dots button.active span {
-  animation:pill-dot-settle .46s cubic-bezier(.2,.8,.2,1);
-}
-
-.page-dots.is-hinting {
-  animation:pill-invite 1.6s ease-in-out .7s 2;
-}
-
-.page-dots.moving-down {
-  animation:pill-nudge-down .5s cubic-bezier(.2,.8,.2,1);
-}
-
-.page-dots.moving-up {
-  animation:pill-nudge-up .5s cubic-bezier(.2,.8,.2,1);
-}
-
 @media (max-width:759px) {
   .site-shell {
     --hero-anchor:42%;
@@ -1247,20 +1126,11 @@ body {
   .hero-section-links button {
     font-size:.82rem;
   }
-
-  .page-dots {
-    top:var(--hero-anchor);
-  }
 }
 
 @media (prefers-reduced-motion:reduce) {
   .page-section {
     transition:none;
-  }
-
-  .page-dots,
-  .page-dots button.active span {
-    animation:none!important;
   }
 }
 
@@ -1276,17 +1146,6 @@ body {
   background:var(--page);
 }
 
-/* Below the width where the page content reaches the left edge, the dots
-   sit horizontally in the free bottom-left corner, aligned with the header and footer. */
-@media (max-width:1140px) {
-  .page-dots {
-    top:calc(100% - 40px);
-    left:48px;
-    flex-direction:row;
-    padding:0 2px;
-  }
-}
-
 /* Stacked layouts: scale the utility tiles' type with the grid, not the viewport width. */
 @media (max-width:820px) {
   .projects-page .about-tile {
@@ -1299,11 +1158,6 @@ body {
   .portfolio-header {
     min-height:60px;
     padding:16px 18px 0;
-  }
-
-  .page-dots {
-    top:calc(100% - 28px);
-    left:18px;
   }
 }
 
