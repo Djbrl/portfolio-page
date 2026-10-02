@@ -1,9 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-// Runs before first paint to restore the user's saved theme (or system preference)
-// and avoid a white flash for returning dark-mode users. Keep in sync with the
-// 'portfolio-color-theme' key and dataset.theme logic in app.vue.
-const themeInitScript = `(function(){try{var t=localStorage.getItem('portfolio-color-theme');if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}})();`
+// Runs before first paint to pick the theme, so the page never flashes the wrong one.
+// The site is light by default and ignores the system setting. A theme the visitor picked with the
+// toggle is kept for 30 days. Without one, the first visit (and again 30 days after the last one)
+// opens dark for the "lights on" intro: app.vue then reveals the light theme from the toggle.
+// The intro needs view transitions, motion allowed, and a landing on the home page (not a deep link).
+// Keep in sync with the storage keys and dataset logic in app.vue.
+const themeInitScript = `(function(){var d=document.documentElement,t=null;try{var now=Date.now(),month=2592e6,raw=localStorage.getItem('portfolio-color-theme'),saved=raw&&raw.charAt(0)==='{'?JSON.parse(raw):null;if(saved&&(saved.theme==='dark'||saved.theme==='light')&&now-saved.at<month)t=saved.theme;if(!t){var last=Number(localStorage.getItem('portfolio-lights-on'))||0;if(now-last>month&&'startViewTransition' in document&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!/[?&](project|panel)=/.test(location.search)){t='dark';d.dataset.lightsIntro='pending';}}}catch(e){}d.dataset.theme=t||'light';})();`
 
 // Hides the page until Inter is ready (capped at 1.2s) so the headline never paints in the
 // fallback font and then reflows. The font is preloaded below, so this is usually a few frames.

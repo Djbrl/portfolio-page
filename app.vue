@@ -180,6 +180,10 @@ import { gridProjects, translations, type LocalizedText, type PortfolioProject }
 const SITE_URL = 'https://djibrilsy.com/';
 const OG_IMAGE = `${SITE_URL}og-djibrilsy.png`;
 const THEME_STORAGE_KEY = 'portfolio-color-theme';
+// When the "lights on" intro last played; it plays again once this is older than THEME_MEMORY_MS.
+const LIGHTS_ON_STORAGE_KEY = 'portfolio-lights-on';
+// A picked theme, like the intro, is remembered for 30 days (see the head script in nuxt.config.ts).
+const THEME_MEMORY_MS = 30 * 24 * 60 * 60 * 1000;
 
 const route = useRoute();
 const locale = ref<'fr' | 'en'>(route.query.lang === 'fr' ? 'fr' : 'en');
@@ -283,8 +287,9 @@ const selectedProject = shallowRef<PortfolioProject | null>(null);
 const selectedUtility = ref<'contact' | null>(null);
 const inspectionOpen = ref(false);
 const isDark = ref(false);
-// True once the visitor has a stored or toggled theme; until then theme-color follows the system scheme.
+// True once the visitor has picked a theme with the toggle (now, or within the last 30 days).
 const hasExplicitTheme = ref(false);
+let lightsOnTimer: ReturnType<typeof setTimeout> | undefined;
 const inlineProjectCard = ref<HTMLElement | null>(null);
 let inspectionCloseTimer: ReturnType<typeof setTimeout> | undefined;
 let pageTransitionTimer: ReturnType<typeof setTimeout> | undefined;
@@ -520,11 +525,14 @@ const inspectUtility = async (utility: 'contact') => {
   return openInspection(null, utility, { focus: fromOtherPage });
 };
 
+// A picked theme is stored with the time it was picked and ignored once it's older than 30 days.
 const readStoredTheme = () => {
   try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    return stored === 'dark' || stored === 'light' ? stored : null;
+    const saved = JSON.parse(localStorage.getItem(THEME_STORAGE_KEY) ?? 'null') as { theme?: string; at?: number } | null;
+    const fresh = typeof saved?.at === 'number' && Date.now() - saved.at < THEME_MEMORY_MS;
+    return fresh && (saved?.theme === 'dark' || saved?.theme === 'light') ? saved.theme : null;
   } catch {
+    // Missing, blocked, or a value from before themes expired: no stored choice.
     return null;
   }
 };
@@ -534,7 +542,7 @@ const applyTheme = (persist = true) => {
   document.documentElement.dataset.theme = isDark.value ? 'dark' : 'light';
   if (!persist) return;
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, isDark.value ? 'dark' : 'light');
+    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ theme: isDark.value ? 'dark' : 'light', at: Date.now() }));
   } catch {
     // Storage can be unavailable (private mode, blocked site data); the theme still applies for this visit.
   }
@@ -546,7 +554,7 @@ type ViewTransitionDocument = Document & {
 
 // Runs a visual change inside a view transition where the browser supports it (and motion is welcome):
 // the theme reveals as a circle growing from the toggle, the language crossfades. Otherwise it just applies.
-const withViewTransition = (kind: 'theme' | 'language', update: () => void, origin?: { x: number; y: number }) => {
+const withViewTransition = (kind: 'theme' | 'language', update: () => void, origin?: { x: number; y: number }, duration = 560) => {
   const doc = document as ViewTransitionDocument;
   if (!doc.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     update();
@@ -564,14 +572,51 @@ const withViewTransition = (kind: 'theme' | 'language', update: () => void, orig
     const radius = Math.hypot(Math.max(origin.x, window.innerWidth - origin.x), Math.max(origin.y, window.innerHeight - origin.y));
     root.animate(
       { clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${radius}px at ${origin.x}px ${origin.y}px)`] },
-      { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)', pseudoElement: '::view-transition-new(root)' },
+      { duration, easing: 'cubic-bezier(.4,0,.2,1)', pseudoElement: '::view-transition-new(root)' },
     );
   }).catch(() => {});
 };
 
+const themeToggleCenter = (element: Element | null | undefined) => {
+  const box = element?.getBoundingClientRect();
+  return box ? { x: box.left + box.width / 2, y: box.top + box.height / 2 } : undefined;
+};
+
+// Resolves once the font gate in nuxt.config.ts has revealed the page.
+const whenFontsReady = () => new Promise<void>((resolve) => {
+  const root = document.documentElement;
+  if (!root.classList.contains('fonts-pending')) return resolve();
+  const observer = new MutationObserver(() => {
+    if (root.classList.contains('fonts-pending')) return;
+    observer.disconnect();
+    resolve();
+  });
+  observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+});
+
+// "Lights on": first visits (and visits a month after the last intro) open dark, then the light theme
+// grows out of the toggle once the headline has faded in. The head script decides when it plays.
+const playLightsOnIntro = async () => {
+  const root = document.documentElement;
+  await whenFontsReady();
+  lightsOnTimer = setTimeout(() => {
+    delete root.dataset.lightsIntro;
+    // The visitor already switched themes themselves: leave their choice alone.
+    if (hasExplicitTheme.value || !isDark.value) return;
+    try {
+      localStorage.setItem(LIGHTS_ON_STORAGE_KEY, String(Date.now()));
+    } catch {
+      // Without storage the intro simply plays again next time.
+    }
+    withViewTransition('theme', () => {
+      isDark.value = false;
+      applyTheme(false);
+    }, themeToggleCenter(document.querySelector('.theme-toggle')), 1100);
+  }, 1100);
+};
+
 const toggleTheme = (event?: MouseEvent) => {
-  const button = event?.currentTarget instanceof HTMLElement ? event.currentTarget.getBoundingClientRect() : null;
-  const origin = button ? { x: button.left + button.width / 2, y: button.top + button.height / 2 } : undefined;
+  const origin = themeToggleCenter(event?.currentTarget instanceof HTMLElement ? event.currentTarget : null);
   withViewTransition('theme', () => {
     isDark.value = !isDark.value;
     hasExplicitTheme.value = true;
@@ -580,15 +625,14 @@ const toggleTheme = (event?: MouseEvent) => {
 };
 
 onMounted(() => {
-  // An early head script may already have set data-theme; otherwise use the stored choice, then the system preference.
+  // The head script has usually set data-theme already; otherwise use the stored choice, then light.
   const presetTheme = document.documentElement.dataset.theme;
-  const initialTheme = presetTheme === 'dark' || presetTheme === 'light'
-    ? presetTheme
-    : readStoredTheme() ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const initialTheme = presetTheme === 'dark' || presetTheme === 'light' ? presetTheme : readStoredTheme() ?? 'light';
   isDark.value = initialTheme === 'dark';
   hasExplicitTheme.value = readStoredTheme() !== null;
-  // Only an explicit toggle is persisted, so visitors without a stored choice keep following their system theme.
+  // Only an explicit toggle is persisted (for 30 days); the default and the intro's light theme are not.
   applyTheme(false);
+  if (document.documentElement.dataset.lightsIntro === 'pending') void playLightsOnIntro();
   window.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('touchstart', onTouchStart, { passive: true });
   window.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -623,6 +667,7 @@ onBeforeUnmount(() => {
   clearTimeout(projectRevealTimer);
   clearTimeout(projectLeaveTimer);
   clearTimeout(wheelResetTimer);
+  clearTimeout(lightsOnTimer);
   if (import.meta.client) {
     window.removeEventListener('wheel', onWheel);
     window.removeEventListener('touchstart', onTouchStart);
@@ -645,7 +690,8 @@ const switchLanguage = () => {
 
 const localeUrls = { en: SITE_URL, fr: `${SITE_URL}?lang=fr` } as const;
 const themeColors = { light: '#ffffff', dark: '#111111' } as const;
-const themeColorFor = (scheme: 'light' | 'dark') => themeColors[hasExplicitTheme.value ? (isDark.value ? 'dark' : 'light') : scheme];
+// The site ignores the system scheme, so the browser UI colour simply follows the current theme.
+const themeColor = computed(() => themeColors[isDark.value ? 'dark' : 'light']);
 
 useHead(() => {
   const title = isFrench.value ? 'Djibril Sy | Développeur logiciel' : 'Djibril Sy | Software Developer';
@@ -662,10 +708,7 @@ useHead(() => {
     ],
     meta: [
       { name: 'description', content: copy.value.description },
-      // The server can't know a stored choice, so both schemes get a theme-color; an explicit choice sets both to it.
-      // Always the same two unkeyed tags, so the client adopts the server-rendered pair and only patches `content`.
-      { name: 'theme-color', media: '(prefers-color-scheme: light)', content: themeColorFor('light') },
-      { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: themeColorFor('dark') },
+      { name: 'theme-color', content: themeColor.value },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: 'Djibril Sy' },
       { property: 'og:locale', content: isFrench.value ? 'fr_FR' : 'en_US' },
