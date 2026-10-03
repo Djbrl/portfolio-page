@@ -186,7 +186,8 @@ const LIGHTS_ON_STORAGE_KEY = 'portfolio-lights-on';
 const THEME_MEMORY_MS = 30 * 24 * 60 * 60 * 1000;
 
 const route = useRoute();
-const locale = ref<'fr' | 'en'>(route.query.lang === 'fr' ? 'fr' : 'en');
+// French is the default; ?lang=en serves the English version.
+const locale = ref<'fr' | 'en'>(route.query.lang === 'en' ? 'en' : 'fr');
 const isFrench = computed(() => locale.value === 'fr');
 const localize = (value: LocalizedText) => value[locale.value];
 const projectKindLabel = (project: PortfolioProject) => {
@@ -683,12 +684,12 @@ const switchLanguage = () => {
   withViewTransition('language', () => { locale.value = nextLocale; });
 
   const url = new URL(window.location.href);
-  if (nextLocale === 'fr') url.searchParams.set('lang', 'fr');
+  if (nextLocale === 'en') url.searchParams.set('lang', 'en');
   else url.searchParams.delete('lang');
   window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 };
 
-const localeUrls = { en: SITE_URL, fr: `${SITE_URL}?lang=fr` } as const;
+const localeUrls = { fr: SITE_URL, en: `${SITE_URL}?lang=en` } as const;
 const themeColors = { light: '#ffffff', dark: '#111111' } as const;
 // The site ignores the system scheme, so the browser UI colour simply follows the current theme.
 const themeColor = computed(() => themeColors[isDark.value ? 'dark' : 'light']);
@@ -703,7 +704,7 @@ useHead(() => {
       { key: 'canonical', rel: 'canonical', href: pageUrl },
       { key: 'alternate-en', rel: 'alternate', hreflang: 'en', href: localeUrls.en },
       { key: 'alternate-fr', rel: 'alternate', hreflang: 'fr', href: localeUrls.fr },
-      { key: 'alternate-x-default', rel: 'alternate', hreflang: 'x-default', href: localeUrls.en },
+      { key: 'alternate-x-default', rel: 'alternate', hreflang: 'x-default', href: localeUrls.fr },
       { key: 'favicon', rel: 'icon', href: '/favicon.ico' },
     ],
     meta: [
