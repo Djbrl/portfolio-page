@@ -178,7 +178,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 
 import { gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
 const SITE_URL = 'https://djibrilsy.com/';
-const OG_IMAGE = `${SITE_URL}og-djibrilsy.png`;
+const OG_IMAGES = { fr: `${SITE_URL}og-djibrilsy-fr.png`, en: `${SITE_URL}og-djibrilsy.png` } as const;
 const THEME_STORAGE_KEY = 'portfolio-color-theme';
 // When the "lights on" intro last played; it plays again once this is older than THEME_MEMORY_MS.
 const LIGHTS_ON_STORAGE_KEY = 'portfolio-lights-on';
@@ -717,14 +717,14 @@ useHead(() => {
       { property: 'og:url', content: pageUrl },
       { property: 'og:title', content: title },
       { property: 'og:description', content: copy.value.socialDescription },
-      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image', content: OG_IMAGES[locale.value] },
       { property: 'og:image:width', content: '1200' },
       { property: 'og:image:height', content: '630' },
       { property: 'og:image:alt', content: imageAlt },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: copy.value.socialDescription },
-      { name: 'twitter:image', content: OG_IMAGE },
+      { name: 'twitter:image', content: OG_IMAGES[locale.value] },
       { name: 'twitter:image:alt', content: imageAlt },
     ],
     htmlAttrs: { lang: locale.value },
