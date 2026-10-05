@@ -8,6 +8,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "cv": "python3 scripts/cv/build.py",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
