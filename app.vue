@@ -1,4 +1,5 @@
 <template>
+  <div class="site-loader" aria-hidden="true">Djibril Sy<span class="site-loader-bar"></span></div>
   <div class="site-shell" :class="{ 'project-inspection-open': inspectionOpen }">
     <a class="skip-link" href="#main">{{ copy.skip }}</a>
     <header class="portfolio-header">

@@ -8,9 +8,11 @@
 // Keep in sync with the storage keys and dataset logic in app.vue.
 const themeInitScript = `(function(){var d=document.documentElement,t=null;try{var now=Date.now(),month=2592e6,raw=localStorage.getItem('portfolio-color-theme'),saved=raw&&raw.charAt(0)==='{'?JSON.parse(raw):null;if(saved&&(saved.theme==='dark'||saved.theme==='light')&&now-saved.at<month)t=saved.theme;if(!t){var last=Number(localStorage.getItem('portfolio-lights-on'))||0;if(now-last>month&&'startViewTransition' in document&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&!/[?&](project|panel)=/.test(location.search)){t='dark';d.dataset.lightsIntro='pending';}}}catch(e){}d.dataset.theme=t||'light';})();`
 
-// Hides the page until Inter is ready (capped at 1.2s) so the headline never paints in the
-// fallback font and then reflows. The font is preloaded below, so this is usually a few frames.
-const fontGateScript = `(function(){var d=document.documentElement;if(!document.fonts||!document.fonts.load)return;d.classList.add('fonts-pending');var done=function(){d.classList.remove('fonts-pending');};Promise.race([document.fonts.load('650 1em Inter'),new Promise(function(r){setTimeout(r,1200);})]).then(done,done);})();`
+// Holds the loading screen (.site-loader in app.vue) until Inter is ready, so the headline never
+// paints in the fallback font and then reflows. It runs at the top of <body>, after the head styles
+// that declare Inter: asked any earlier, the browser has no Inter face to load and answers at once.
+// The screen stays at least 500ms so it never just flickers, and gives up after 3s on a slow network.
+const fontGateScript = `(function(){var d=document.documentElement;if(!document.fonts||!document.fonts.load)return;d.classList.add('fonts-pending');var start=Date.now(),ended=false,done=function(){if(ended)return;ended=true;setTimeout(function(){d.classList.remove('fonts-pending');},Math.max(0,500-(Date.now()-start)));};setTimeout(done,3000);document.fonts.load('650 1em Inter').then(function(faces){if(faces.length)done();else document.fonts.ready.then(done,done);},done);})();`
 
 const productionNitro = {
   preset: 'cloudflare-pages',
@@ -42,7 +44,7 @@ export default defineNuxtConfig({
         },
         {
           innerHTML: fontGateScript,
-          tagPosition: 'head',
+          tagPosition: 'bodyOpen',
           tagPriority: 'critical',
         },
       ],
