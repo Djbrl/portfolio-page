@@ -108,27 +108,27 @@ const projectGalleries = {
   skindiff: [
     galleryShot(
       'skindiff',
-      'home.webp',
-      { fr: 'Page d’accueil de SkinDiff avec les cartes collection et duo', en: 'SkinDiff home page with collection and duo cards' },
-      { fr: 'La page d’accueil : ajoutez vos skins, invitez un ami, et voyez ce que vous pouvez assortir.', en: 'The home page: bring your skins, invite a friend, and see what you can match.' },
-    ),
-    galleryShot(
-      'skindiff',
       'line-finder.webp',
-      { fr: 'Recherche de gammes affichant Spirit Blossom pour Ahri et Lux', en: 'Line Finder showing the Spirit Blossom line for Ahri and Lux' },
-      { fr: 'La recherche de gammes : choisissez des champions et elle affiche les séries qu’ils partagent, ici Spirit Blossom.', en: 'The line finder: pick champions and it shows the skin series they share, here Spirit Blossom.' },
+      { fr: 'Recherche de gammes avec Ahri, Lux et Yasuo en Spirit Blossom', en: 'Line Finder showing Ahri, Lux and Yasuo in the Spirit Blossom line' },
+      { fr: 'La page d’accueil est la recherche de gammes : choisissez jusqu’à cinq champions et elle affiche la série qu’ils partagent.', en: 'The home page is the line finder: pick up to five champions and it shows the skin line they share.' },
     ),
     galleryShot(
       'skindiff',
       'collection.webp',
-      { fr: 'Éditeur de collection avec des skins d’Ahri sélectionnés et un total de 410 $', en: 'Collection editor with Ahri skins selected and a $410 total' },
-      { fr: 'L’éditeur de collection : cochez les skins que vous possédez, le total se met à jour au fur et à mesure.', en: 'The collection editor: pick the skins you own and the total cost updates as you go.' },
+      { fr: 'Éditeur de collection avec cinq skins d’Ahri sélectionnés', en: 'Collection editor with five Ahri skins selected' },
+      { fr: 'L’éditeur de collection : cochez les skins que vous possédez, au clavier ou à la souris, et le total se met à jour.', en: 'The collection editor: pick the skins you own, by keyboard or mouse, and the total updates as you go.' },
     ),
     galleryShot(
       'skindiff',
-      'skin-preview.webp',
-      { fr: 'Aperçu du skin Arcana Ahri avec ses variantes de couleur', en: 'Arcana Ahri skin preview with its color variants' },
-      { fr: 'Un skin en grand, avec ses versions de couleur (chromas) à ajouter à la collection.', en: 'A skin up close, with its color versions (chromas) to add to your collection.' },
+      'duo.webp',
+      { fr: 'Page Duo avec deux cartes joueur et une invitation', en: 'Duo page with two player cards and an invite button' },
+      { fr: 'Le mode Duo : ajoutez vos skins, invitez un ami, et voyez ce que vous pouvez assortir.', en: 'Duo: bring your skins, invite a friend, and see what you can match.' },
+    ),
+    galleryShot(
+      'skindiff',
+      'five-stack.webp',
+      { fr: 'Page 5 Stack avec cinq cartes joueur', en: '5 Stack page with five player cards' },
+      { fr: 'Le mode 5 Stack : réunissez cinq joueurs pour trouver une gamme commune à toute l’équipe.', en: '5 Stack: gather five players to find a line the whole team can wear.' },
     ),
   ],
   multiprise: [
