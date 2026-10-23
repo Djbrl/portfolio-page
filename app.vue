@@ -1,5 +1,27 @@
 <template>
-  <div class="site-loader" aria-hidden="true">Djibril Sy<span class="site-loader-bar"></span></div>
+  <!-- On large screens the whole site runs inside a laptop: the screen is the real page, scaled
+       down, so everything stays live and clickable. The bezel and base are drawings around it. -->
+  <div class="device">
+  <div class="device-bezel" aria-hidden="true"><span class="device-camera"></span></div>
+  <div class="device-base" aria-hidden="true"></div>
+  <!-- On phones the same trick draws a phone: its body behind the scaled screen, and the camera
+       pill and home bar on top. None of them take clicks. -->
+  <div class="phone-frame" aria-hidden="true"></div>
+  <div class="phone-island" aria-hidden="true"></div>
+  <div class="phone-home" aria-hidden="true"></div>
+  <div class="device-screen">
+  <!-- Loading screen: a skeleton of the hero (header, headline, caption, links, footer), so the
+       screen looks like a page loading its content. -->
+  <div class="site-loader" aria-hidden="true">
+    <div class="sk sk-header"><span class="sk-bar sk-name"></span><span class="sk-dot"></span></div>
+    <div class="sk sk-hero">
+      <span class="sk-bar sk-title"></span>
+      <span class="sk-bar sk-title sk-title-2"></span>
+      <span class="sk-caption"><span class="sk-chip"></span><span class="sk-bar sk-line"></span></span>
+      <span class="sk-links"><span class="sk-bar"></span><span class="sk-bar"></span><span class="sk-bar"></span></span>
+    </div>
+    <div class="sk sk-footer"><span class="sk-bar sk-mail"></span><span class="sk-bar sk-social"></span></div>
+  </div>
   <div class="site-shell" :class="{ 'project-inspection-open': inspectionOpen }">
     <a class="skip-link" href="#main">{{ copy.skip }}</a>
     <header class="portfolio-header">
@@ -36,10 +58,13 @@
         <div class="hero-content" :class="{ 'hero-intro': heroIntro }">
           <!-- One span per word so the first-load intro can stagger them; the words still read as one sentence. -->
           <!-- "I build" stays put while the words after it roll like a slot machine; screen readers get the whole sentence once. -->
+          <!-- The headline and caption form one card that leads to the project grid. -->
+          <div class="hero-card" @click="openReelProject">
           <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1" :aria-label="heroReel.label">
             <span aria-hidden="true"><template v-for="(word, index) in heroReel.lead" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }">{{ word }}</span>{{ ' ' }}</template><span class="tagline-word hero-reel" :style="{ '--word-index': heroReel.lead.length }"><Transition name="reel"><strong :key="`${locale}-${reelIndex}`">{{ heroReel.items[reelIndex].word }}</strong></Transition></span></span>
           </h1>
-          <p class="hero-proof" :style="{ '--word-index': heroReel.lead.length + 1 }"><span :key="`${locale}-${reelIndex}`"><img class="hero-proof-logo" :class="`logo-${heroReel.items[reelIndex].key}`" :src="heroReel.items[reelIndex].logo" alt="" width="24" height="24">{{ heroReel.items[reelIndex].proof }}</span></p>
+          <p class="hero-proof" :style="{ '--word-index': heroReel.lead.length + 1 }"><button class="hero-proof-link" type="button" :key="`${locale}-${reelIndex}`" @click.stop="openReelProject"><img class="hero-proof-logo" :class="`logo-${heroReel.items[reelIndex].key}`" :src="heroReel.items[reelIndex].logo" alt="" width="24" height="24">{{ heroReel.items[reelIndex].proof }}</button></p>
+          </div>
           <nav class="hero-section-links" :aria-label="copy.primaryNavigation" :style="{ '--word-count': heroReel.lead.length + 2 }" @animationend.self="heroIntro = false">
             <button type="button" @click="navigateToPage(2, { focus: true })">{{ copy.navBackground }}</button>
             <button type="button" @click="navigateToPage(1, { focus: true })">{{ projectsTitle }}</button>
@@ -199,13 +224,16 @@
     </footer>
 
   </div>
+  </div>
+  </div>
 </template>
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { githubRepos, gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
 const SITE_URL = 'https://djibrilsy.com/';
-const OG_IMAGES = { fr: `${SITE_URL}og-djibrilsy-fr.png`, en: `${SITE_URL}og-djibrilsy.png` } as const;
+// One English share image for both languages.
+const OG_IMAGE = `${SITE_URL}og-djibrilsy.png`;
 const THEME_STORAGE_KEY = 'portfolio-color-theme';
 // When the "lights on" intro last played; it plays again once this is older than THEME_MEMORY_MS.
 const LIGHTS_ON_STORAGE_KEY = 'portfolio-lights-on';
@@ -239,13 +267,14 @@ const copy = computed(() => translations[locale.value]);
 // The hero sentence: a fixed lead, then a reel of what I build, each backed by a real project.
 const heroReel = computed(() => isFrench.value
   ? {
-      label: 'Je crée des produits, des plateformes et des outils IA.',
-      lead: ['Je', 'crée'],
+      label: 'Je construis des produits, des plateformes et des outils IA.',
+      lead: ['Je', 'construis'],
       items: [
         { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'des produits.', proof: 'Tandemcode, finaliste du hackathon Open Source × AI de Galsen Dev' },
         { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'des plateformes.', proof: 'CyberLab, simulations de phishing pour Reporters sans frontières' },
         { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'des outils IA.', proof: 'Rundown, 3e place au Sénégal au hackathon GOMYCODE × NVIDIA' },
         { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'de la fintech.', proof: 'BitBounty, prix de bronze à Code & Chain Dakar' },
+        { key: 'skindiff', logo: '/work/logos/chips/skindiff.png', word: 'pour les joueurs.', proof: 'SkinDiff, la meilleure app pour assortir ses skins League of Legends' },
         { key: 'thequestboard', logo: '/work/logos/chips/thequestboard.png', word: 'pour les artistes.', proof: 'TheQuestBoard, des commandes venues de plus de 20 forums' },
       ],
     }
@@ -257,10 +286,31 @@ const heroReel = computed(() => isFrench.value
         { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'platforms.', proof: 'CyberLab, phishing simulations for Reporters Without Borders' },
         { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'AI tools.', proof: 'Rundown, 3rd in Senegal at GOMYCODE × NVIDIA' },
         { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'fintech.', proof: 'BitBounty, bronze prize at Code & Chain Dakar' },
+        { key: 'skindiff', logo: '/work/logos/chips/skindiff.png', word: 'for players.', proof: 'SkinDiff, the best skin-matching app for League of Legends' },
         { key: 'thequestboard', logo: '/work/logos/chips/thequestboard.png', word: 'for artists.', proof: 'TheQuestBoard, commissions from 20+ forums' },
       ],
     });
+// On phones the About page must fit one screen. CSS sizes it from the screen; if the text still
+// overflows (a narrow window, French, a large font setting), shrink it in small steps until it fits.
+const PHONE_QUERY = '(max-width: 959.98px), (max-height: 619.98px)';
+const fitBio = () => {
+  const layout = document.querySelector<HTMLElement>('.bio-layout');
+  const page = layout?.closest<HTMLElement>('.bio-page');
+  if (!layout || !page) return;
+  layout.style.setProperty('--bio-fit', '1');
+  if (!window.matchMedia(PHONE_QUERY).matches) return;
+  const style = getComputedStyle(page);
+  const room = page.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+  for (let fit = 1; layout.offsetHeight > room && fit > .62; ) {
+    fit -= .03;
+    layout.style.setProperty('--bio-fit', fit.toFixed(2));
+  }
+};
+const scheduleFitBio = () => requestAnimationFrame(fitBio);
+
 const reelIndex = ref(0);
+// The hero card goes to the project grid, where visitors pick what to open.
+const openReelProject = () => navigateToPage(1, { focus: true });
 let reelTimer: ReturnType<typeof setInterval> | undefined;
 const startReel = () => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -329,6 +379,7 @@ const onSectionMenuKeydown = (event: KeyboardEvent) => {
 
 // Moving to another section by any other route (dots, wheel, keys) closes the menu.
 watch(activePage, () => closeSectionMenu());
+watch(locale, () => nextTick(scheduleFitBio));
 
 const onDocumentPointerDown = (event: PointerEvent) => {
   if (sectionMenuOpen.value && !sectionMenu.value?.contains(event.target as Node)) closeSectionMenu();
@@ -695,6 +746,9 @@ onMounted(() => {
   window.addEventListener('keydown', onKeydown);
   document.addEventListener('pointerdown', onDocumentPointerDown);
   startReel();
+  scheduleFitBio();
+  window.addEventListener('resize', scheduleFitBio);
+  document.fonts?.ready.then(scheduleFitBio);
 
   const searchParams = new URL(window.location.href).searchParams;
   const requestedSlug = searchParams.get('project');
@@ -726,6 +780,7 @@ onBeforeUnmount(() => {
   clearTimeout(wheelResetTimer);
   clearTimeout(lightsOnTimer);
   clearInterval(reelTimer);
+  if (import.meta.client) window.removeEventListener('resize', scheduleFitBio);
   if (import.meta.client) {
     window.removeEventListener('wheel', onWheel);
     window.removeEventListener('touchstart', onTouchStart);
@@ -774,14 +829,14 @@ useHead(() => {
       { property: 'og:url', content: pageUrl },
       { property: 'og:title', content: title },
       { property: 'og:description', content: copy.value.socialDescription },
-      { property: 'og:image', content: OG_IMAGES[locale.value] },
+      { property: 'og:image', content: OG_IMAGE },
       { property: 'og:image:width', content: '1200' },
       { property: 'og:image:height', content: '630' },
       { property: 'og:image:alt', content: imageAlt },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: copy.value.socialDescription },
-      { name: 'twitter:image', content: OG_IMAGES[locale.value] },
+      { name: 'twitter:image', content: OG_IMAGE },
       { name: 'twitter:image:alt', content: imageAlt },
     ],
     htmlAttrs: { lang: locale.value },
@@ -1088,6 +1143,28 @@ useHead(() => {
 }
 
 
+/* The headline and caption sit in a card that greys on hover; clicking it goes to the grid. The
+   negative margins keep the text where it was, with the padding spilling outward. */
+.hero-card {
+  width:fit-content;
+  max-width:calc(100% + 44px);
+  margin:-18px -22px;
+  padding:18px 22px;
+  border-radius:22px;
+  cursor:pointer;
+  transition:background-color .2s ease;
+}
+
+.hero-card:hover {
+  background:var(--soft);
+}
+
+.hero-proof-link:focus-visible {
+  outline:2px solid var(--ink);
+  outline-offset:4px;
+  border-radius:6px;
+}
+
 /* The project behind the current word. */
 .hero-proof {
   min-height:1.4em;
@@ -1098,8 +1175,16 @@ useHead(() => {
   letter-spacing:-.005em;
 }
 
-.hero-proof span {
+.hero-proof-link {
   display:inline-block;
+  padding:0;
+  border:0;
+  background:none;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  text-align:left;
+  cursor:pointer;
   animation:hero-proof-in .5s ease-out both;
 }
 
@@ -1924,7 +2009,7 @@ html.fonts-pending .hero-intro .hero-section-links {
   .hero-intro .tagline-word,
   .hero-intro .hero-section-links,
   .hero-intro .hero-proof,
-  .hero-proof span {
+  .hero-proof-link {
     animation:none;
   }
 }

@@ -31,25 +31,25 @@
   size-adjust:95.5%;
 }
 
-/* Loading screen. It covers the page while the font gate in nuxt.config.ts (which sets
-   html.fonts-pending) waits for Inter, so the page is first seen in its final font. The name is
-   set in the system font, which needs no download. */
+/* Loading screen: a skeleton of the hero page, with a soft shimmer, shown while the font gate in
+   nuxt.config.ts (html.fonts-pending) waits for Inter. It mirrors the real layout: header, two-line
+   headline, caption with its logo chip, section links, and the contact footer. */
 .site-loader {
+  --sk:#ececea;
+  --sk-shine:#f7f7f5;
   position:fixed;
   inset:0;
   z-index:1000;
-  display:grid;
-  place-content:center;
-  justify-items:center;
-  gap:14px;
-  background:var(--page);
-  color:var(--ink);
-  font:600 15px/1 -apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Arial,sans-serif;
-  letter-spacing:-.01em;
+  background:var(--page,#fff);
   opacity:0;
   visibility:hidden;
   pointer-events:none;
-  transition:opacity .35s ease,visibility 0s linear .35s;
+  transition:opacity .45s ease,visibility 0s linear .45s;
+}
+
+:root[data-theme='dark'] .site-loader {
+  --sk:#222220;
+  --sk-shine:#2d2d2b;
 }
 
 html.fonts-pending .site-loader {
@@ -58,38 +58,247 @@ html.fonts-pending .site-loader {
   transition:none;
 }
 
-.site-loader-bar {
-  position:relative;
-  width:56px;
-  height:2px;
-  overflow:hidden;
-  border-radius:2px;
-  background:var(--line);
+.sk-bar,
+.sk-dot,
+.sk-chip {
+  display:block;
+  border-radius:8px;
+  background:linear-gradient(100deg,var(--sk) 40%,var(--sk-shine) 50%,var(--sk) 60%) 0 0 / 300% 100%;
+  animation:sk-shimmer 1.3s linear infinite;
 }
 
-.site-loader-bar::after {
+@keyframes sk-shimmer {
+  from { background-position:100% 0; }
+  to { background-position:-50% 0; }
+}
+
+.sk-header {
   position:absolute;
-  inset:0;
-  width:40%;
-  border-radius:inherit;
-  background:var(--ink);
-  content:'';
-  animation:site-loader-slide .9s cubic-bezier(.45,0,.55,1) infinite;
+  top:42px;
+  left:48px;
+  right:48px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-@keyframes site-loader-slide {
-  from { transform:translateX(-100%); }
-  to { transform:translateX(250%); }
+.sk-name { width:min(220px,40%); height:16px; }
+.sk-dot { width:18px; height:18px; border-radius:50%; }
+
+/* Same anchor and width as the real hero content. */
+.sk-hero {
+  position:absolute;
+  top:var(--hero-anchor,43%);
+  left:50%;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:min(78vw,1120px);
+  transform:translate(-50%,-50%);
+}
+
+.sk-title { width:min(62%,700px); height:clamp(46px,6.2vw,96px); border-radius:14px; }
+.sk-title-2 { width:min(44%,500px); }
+
+.sk-caption { display:flex; align-items:center; gap:12px; margin-top:6px; }
+.sk-chip { flex:none; width:28px; height:28px; border-radius:8px; }
+.sk-line { width:min(58%,460px); height:14px; }
+
+.sk-links { display:flex; gap:22px; margin-top:44px; }
+.sk-links .sk-bar { width:70px; height:14px; }
+
+.sk-footer {
+  position:absolute;
+  right:48px;
+  bottom:40px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:12px;
+}
+
+.sk-mail { width:200px; height:16px; }
+.sk-social { width:140px; height:16px; }
+
+@media (max-width:759px) {
+  .sk-header { top:calc(58px + env(safe-area-inset-top, 0px)); left:24px; right:24px; }
+  .sk-hero { width:calc(100vw - 54px); }
+  .sk-title { width:86%; }
+  .sk-title-2 { width:70%; }
+  .sk-line { width:80%; }
+  .sk-footer { right:26px; bottom:calc(36px + env(safe-area-inset-bottom, 0px)); }
+  .sk-mail { width:170px; }
+  .sk-social { width:120px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .site-loader {
-    transition:none;
+  .site-loader { transition:none; }
+  .sk-bar, .sk-dot, .sk-chip { animation:none; }
+}
+
+/* The laptop. Below the breakpoint the page is the full viewport, framed as a phone instead. */
+.device-bezel,
+.device-base,
+.phone-frame,
+.phone-island,
+.phone-home {
+  display:none;
+}
+
+@media (max-width:959.98px), (max-height:619.98px) {
+  :root {
+    --phone-scale:.86;
+    --phone-edge:9px;
   }
 
-  .site-loader-bar::after {
-    width:100%;
-    animation:none;
+  /* The screen: the page at full viewport size, scaled down into the phone, as on the laptop. */
+  .device-screen {
+    position:fixed;
+    inset:0;
+    z-index:1;
+    overflow:hidden;
+    border-radius:calc(38px / var(--phone-scale));
+    background:var(--page,#fff);
+    transform:scale(var(--phone-scale));
+    transform-origin:50% 50%;
+  }
+
+  /* The body: a graphite frame a little larger than the screen, with its side buttons. */
+  .phone-frame {
+    position:fixed;
+    left:50%;
+    top:50%;
+    z-index:0;
+    display:block;
+    width:calc(100vw * var(--phone-scale) + var(--phone-edge) * 2);
+    height:calc(100vh * var(--phone-scale) + var(--phone-edge) * 2);
+    border-radius:calc(38px + var(--phone-edge));
+    background:#111113;
+    box-shadow:0 0 0 1.5px #4a4a4f,0 0 0 3px #1c1c1f,0 24px 48px -18px rgba(0,0,0,.45);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+  }
+
+  .phone-frame::before,
+  .phone-frame::after {
+    position:absolute;
+    width:3px;
+    border-radius:2px;
+    background:#3a3a3f;
+    content:'';
+  }
+
+  .phone-frame::before {
+    top:18%;
+    left:-4.5px;
+    height:9%;
+    box-shadow:0 calc(100% + 14px) 0 #3a3a3f;
+  }
+
+  .phone-frame::after {
+    top:24%;
+    right:-4.5px;
+    height:12%;
+  }
+
+  .phone-island,
+  .phone-home {
+    position:fixed;
+    left:50%;
+    z-index:2;
+    display:block;
+    pointer-events:none;
+    transform:translateX(-50%);
+  }
+
+  .phone-island {
+    top:calc(50% - 50vh * var(--phone-scale) + 10px);
+    width:84px;
+    height:24px;
+    border-radius:12px;
+    background:#000;
+  }
+
+  .phone-home {
+    bottom:calc(50% - 50vh * var(--phone-scale) + 8px);
+    width:104px;
+    height:4px;
+    border-radius:2px;
+    background:var(--ink);
+    opacity:.7;
+  }
+
+}
+
+
+@media (min-width:960px) and (min-height:620px) {
+  :root {
+    --device-scale:.8;
+    --device-lift:3.5vh;
+    --bezel:14px;
+  }
+
+  /* The screen is the page at full viewport size, scaled down. A transformed ancestor becomes the
+     containing block for the page's fixed elements, so the header, footer and loader stay inside. */
+  .device-screen {
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    border-radius:calc(10px / var(--device-scale));
+    background:var(--page,#fff);
+    transform:translateY(calc(-1 * var(--device-lift))) scale(var(--device-scale));
+    transform-origin:50% 50%;
+  }
+
+  .device-bezel {
+    position:fixed;
+    left:50%;
+    top:50%;
+    display:block;
+    width:calc(100vw * var(--device-scale) + var(--bezel) * 2);
+    height:calc(100vh * var(--device-scale) + var(--bezel) * 2 + 10px);
+    border-radius:22px 22px 6px 6px;
+    background:linear-gradient(#1c1c1e,#0b0b0c);
+    box-shadow:0 0 0 1.5px #3a3a3c,0 30px 60px -20px rgba(0,0,0,.45);
+    transform:translate(-50%,calc(-50% - var(--device-lift) + 5px));
+  }
+
+  .device-camera {
+    position:absolute;
+    top:5px;
+    left:50%;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:#2c2c30;
+    box-shadow:inset 0 0 0 1.2px #121214;
+    transform:translateX(-50%);
+  }
+
+  /* The base: a thin aluminium slab, wider than the screen, with the opening notch in the middle. */
+  .device-base {
+    position:fixed;
+    left:50%;
+    top:calc(50% - var(--device-lift) + 50vh * var(--device-scale) + var(--bezel) + 10px);
+    display:block;
+    width:calc(100vw * var(--device-scale) * 1.14);
+    height:16px;
+    border-radius:2px 2px 14px 14px;
+    background:linear-gradient(#d9dadd,#b9babe 55%,#8e8f93);
+    box-shadow:0 18px 30px -12px rgba(0,0,0,.4);
+    transform:translateX(-50%);
+  }
+
+  .device-base::after {
+    position:absolute;
+    top:0;
+    left:50%;
+    width:min(18%,180px);
+    height:6px;
+    border-radius:0 0 8px 8px;
+    background:linear-gradient(#a9aaae,#c7c8cc);
+    content:'';
+    transform:translateX(-50%);
   }
 }
 
@@ -1299,5 +1508,92 @@ body {
     padding-bottom:100px;
     -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 92px),transparent calc(100% - 60px));
     mask-image:linear-gradient(to bottom,#000 calc(100% - 92px),transparent calc(100% - 60px));
+  }
+}
+
+/* Phone frame: keep the header below the camera pill, the footer above the home bar, and both
+   clear of the rounded corners. Last in the file so it wins over the earlier phone rules. */
+@media (max-width:959.98px), (max-height:619.98px) {
+  .site-shell .portfolio-header {
+    padding-top:calc(52px + env(safe-area-inset-top, 0px));
+    padding-left:24px;
+    padding-right:24px;
+  }
+
+  .site-shell .portfolio-contact {
+    right:26px;
+    bottom:calc(34px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-shell .page-section {
+    padding-top:110px;
+    padding-bottom:124px;
+  }
+}
+
+/* Phone: the About page fits on one screen, so a swipe never scrolls it and then jumps back a
+   section. The heading and portrait share the first row; the copy flows below. Type sizes follow
+   the screen, and --bio-fit (set by app.vue) shrinks them further if the text would still overflow. */
+@media (max-width:959.98px), (max-height:619.98px) {
+  .site-shell .bio-page {
+    height:100%;
+    min-height:0;
+    overflow:hidden;
+    padding-bottom:116px;
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
+
+  .site-shell .bio-layout {
+    --bio-fit:1;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    column-gap:14px;
+    row-gap:0;
+  }
+
+  /* The copy's children join the layout grid, so the portrait can sit beside the heading. */
+  .site-shell .bio-copy {
+    display:contents;
+  }
+
+  .site-shell .bio-layout h2 {
+    grid-column:1;
+    grid-row:1;
+    margin-bottom:calc(16px * var(--bio-fit));
+    font-size:calc(min(clamp(2.4rem,8vh,4rem),(100vw - 140px) / 4.4) * var(--bio-fit));
+  }
+
+  .site-shell .bio-copy > .bio-portrait {
+    grid-column:2;
+    grid-row:1;
+    align-self:start;
+    width:calc(clamp(52px,8.5vh,80px) * var(--bio-fit));
+    margin:0;
+  }
+
+  .site-shell .bio-copy > * {
+    grid-column:1 / -1;
+  }
+
+  .site-shell .bio-copy p {
+    margin:0 0 calc(clamp(10px,1.8vh,18px) * var(--bio-fit));
+    font-size:calc(clamp(.82rem,2.1vh,1rem) * var(--bio-fit));
+    line-height:1.5;
+  }
+
+  .site-shell .bio-copy > a {
+    justify-self:start;
+    margin-top:0;
+    font-size:calc(1rem * var(--bio-fit));
+  }
+}
+
+/* The laptop and the phone sit on a plain white page; the dark theme only changes their screen. */
+@media (min-width:960px) and (min-height:620px), (max-width:959.98px), (max-height:619.98px) {
+  :root[data-theme],
+  :root[data-theme] body {
+    background:#fff !important;
   }
 }

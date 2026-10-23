@@ -318,7 +318,7 @@ export const translations = {
     lightMode: 'Passer au thème clair',
     darkMode: 'Passer au thème sombre',
     role: 'Développeur logiciel',
-    tagline: 'Je crée des produits, des plateformes et des outils IA.',
+    tagline: 'Je construis des produits, des plateformes et des outils IA.',
     pageLabels: ['Introduction', 'Projets', 'À propos'],
     primaryNavigation: 'Navigation principale',
     navWork: 'Projets',
