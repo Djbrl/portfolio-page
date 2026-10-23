@@ -35,10 +35,12 @@
       <section class="page-section hero-page" :class="{ active: activePage === 0 }" :style="pageStyle(0)" :aria-hidden="activePage !== 0" :inert="activePage !== 0" aria-labelledby="hero-title">
         <div class="hero-content" :class="{ 'hero-intro': heroIntro }">
           <!-- One span per word so the first-load intro can stagger them; the words still read as one sentence. -->
-          <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1">
-            <template v-for="(item, index) in taglineWords" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }"><strong v-if="item.strong">{{ item.word }}</strong><template v-else>{{ item.word }}</template><template v-if="index === taglineWords.length - 1">.</template></span>{{ index < taglineWords.length - 1 ? ' ' : '' }}</template>
+          <!-- "I build" stays put while the words after it roll like a slot machine; screen readers get the whole sentence once. -->
+          <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1" :aria-label="heroReel.label">
+            <span aria-hidden="true"><template v-for="(word, index) in heroReel.lead" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }">{{ word }}</span>{{ ' ' }}</template><span class="tagline-word hero-reel" :style="{ '--word-index': heroReel.lead.length }"><Transition name="reel"><strong :key="`${locale}-${reelIndex}`">{{ heroReel.items[reelIndex].word }}</strong></Transition></span></span>
           </h1>
-          <nav class="hero-section-links" :aria-label="copy.primaryNavigation" :style="{ '--word-count': taglineWords.length }" @animationend.self="heroIntro = false">
+          <p class="hero-proof" :style="{ '--word-index': heroReel.lead.length + 1 }"><span :key="`${locale}-${reelIndex}`"><img class="hero-proof-logo" :class="`logo-${heroReel.items[reelIndex].key}`" :src="heroReel.items[reelIndex].logo" alt="" width="24" height="24">{{ heroReel.items[reelIndex].proof }}</span></p>
+          <nav class="hero-section-links" :aria-label="copy.primaryNavigation" :style="{ '--word-count': heroReel.lead.length + 2 }" @animationend.self="heroIntro = false">
             <button type="button" @click="navigateToPage(2, { focus: true })">{{ copy.navBackground }}</button>
             <button type="button" @click="navigateToPage(1, { focus: true })">{{ projectsTitle }}</button>
             <button type="button" @click="inspectUtility('contact')">{{ copy.navContact }}</button>
@@ -59,8 +61,7 @@
                 <img :src="project.tileImage || project.image" :alt="project.tileImage ? project.name : localize(project.alt)" :class="{ contain: project.imageFit === 'contain' }" :loading="index < 3 ? 'eager' : 'lazy'" decoding="async" width="1200" height="800">
                 <span class="tile-label">{{ project.name }}</span>
               </button>
-              <a class="about-tile" href="https://github.com/Djbrl" target="_blank" rel="noopener"><span>{{ isFrench ? 'Plus sur GitHub' : 'More on GitHub' }}</span><span aria-hidden="true">↗</span></a>
-              <div class="grid-spacer" aria-hidden="true"></div>
+              <button class="about-tile" :class="{ selected: selectedUtility === 'github' && inspectionOpen }" type="button" :aria-pressed="selectedUtility === 'github' && inspectionOpen" @click="inspectUtility('github')"><span>{{ isFrench ? 'Plus sur GitHub' : 'More on GitHub' }}</span><span aria-hidden="true">→</span></button>
             </div>
           </div>
 
@@ -76,6 +77,7 @@
                     </div>
                     <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">{{ selectedProject.name }}</h2>
                     <p class="project-subtitle">{{ localize(selectedProject.short) }}</p>
+                    <a v-if="selectedProject.award" class="project-award" :href="selectedProject.award.href" target="_blank" rel="noopener">{{ localize(selectedProject.award.label) }} <span aria-hidden="true">↗</span></a>
                   </header>
                   <!-- A focusable region so keyboard users can scroll the row with the arrow keys. -->
                   <div v-if="selectedProject.gallery?.length" class="project-shots" role="region" tabindex="0" :aria-label="copy.screenshotsLabel">
@@ -99,6 +101,30 @@
                       <div><dt>{{ copy.roleLabel }}</dt><dd>{{ localize(selectedProject.role) }}</dd></div>
                       <div v-if="selectedProject.tags?.length"><dt>{{ copy.technologies }}</dt><dd>{{ selectedProject.tags.join(' · ') }}</dd></div>
                     </dl>
+                  </div>
+                </template>
+                <template v-else-if="selectedUtility === 'github'">
+                  <header class="inline-project-heading">
+                    <div class="project-meta-row" :aria-label="isFrench ? 'Informations' : 'Information'">
+                      <span class="project-meta-item">GitHub</span>
+                      <span class="project-meta-item">{{ isFrench ? `${githubRepos.length} projets` : `${githubRepos.length} projects` }}</span>
+                    </div>
+                    <h2 :id="`inline-panel-${inspectionKey}`" tabindex="-1">{{ isFrench ? 'Plus sur GitHub' : 'More on GitHub' }}</h2>
+                    <p class="project-subtitle">{{ isFrench ? 'D’autres projets publics, de 42 à mes projets personnels.' : 'More public projects, from 42 to things I built on the side.' }}</p>
+                  </header>
+                  <section class="project-features" :aria-labelledby="`repos-${inspectionKey}`">
+                    <h3 :id="`repos-${inspectionKey}`" class="project-section-label">{{ isFrench ? 'Dépôts' : 'Repositories' }}</h3>
+                    <ul>
+                      <li v-for="repo in githubRepos" :key="repo.name" class="project-feature repo-card">
+                        <a :href="`https://github.com/Djbrl/${repo.name}`" target="_blank" rel="noopener">
+                          <h4><span>{{ repo.name }}</span><span class="repo-meta">{{ repo.language }} · {{ repo.year }} <span aria-hidden="true">↗</span></span></h4>
+                          <p>{{ localize(repo.text) }}</p>
+                        </a>
+                      </li>
+                    </ul>
+                  </section>
+                  <div class="inline-project-copy">
+                    <a class="inline-project-cta" href="https://github.com/Djbrl" target="_blank" rel="noopener">{{ isFrench ? 'Voir le profil GitHub' : 'View the GitHub profile' }} <span aria-hidden="true">↗</span></a>
                   </div>
                 </template>
                 <template v-else>
@@ -176,7 +202,7 @@
 </template>
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
-import { gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
+import { githubRepos, gridProjects, translations, type LocalizedText, type PortfolioProject } from '~/data/portfolio';
 
 const SITE_URL = 'https://djibrilsy.com/';
 const OG_IMAGES = { fr: `${SITE_URL}og-djibrilsy-fr.png`, en: `${SITE_URL}og-djibrilsy.png` } as const;
@@ -210,12 +236,39 @@ const projectCtaLabel = (project: PortfolioProject) => {
 const copy = computed(() => translations[locale.value]);
 
 // The hero headline as words; strong phrases are the ones set in full ink.
-const taglineWords = computed(() => {
-  const phrases: [string, boolean][] = isFrench.value
-    ? [['Je conçois et livre des', false], ['produits logiciels', true], ['qui résolvent des', false], ['problèmes concrets', true]]
-    : [['I design and ship', false], ['software products', true], ['that solve', false], ['real-world problems', true]];
-  return phrases.flatMap(([text, strong]) => text.split(' ').map(word => ({ word, strong })));
-});
+// The hero sentence: a fixed lead, then a reel of what I build, each backed by a real project.
+const heroReel = computed(() => isFrench.value
+  ? {
+      label: 'Je crée des produits, des plateformes et des outils IA.',
+      lead: ['Je', 'crée'],
+      items: [
+        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'des produits.', proof: 'Tandemcode, finaliste du hackathon Open Source × AI de Galsen Dev' },
+        { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'des plateformes.', proof: 'CyberLab, simulations de phishing pour Reporters sans frontières' },
+        { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'des outils IA.', proof: 'Rundown, 3e place au Sénégal au hackathon GOMYCODE × NVIDIA' },
+        { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'de la fintech.', proof: 'BitBounty, prix de bronze à Code & Chain Dakar' },
+        { key: 'thequestboard', logo: '/work/logos/chips/thequestboard.png', word: 'pour les artistes.', proof: 'TheQuestBoard, des commandes venues de plus de 20 forums' },
+      ],
+    }
+  : {
+      label: 'I build products, platforms and AI tools.',
+      lead: ['I', 'build'],
+      items: [
+        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'products.', proof: 'Tandemcode, finalist at Galsen Dev’s Open Source × AI 2026' },
+        { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'platforms.', proof: 'CyberLab, phishing simulations for Reporters Without Borders' },
+        { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'AI tools.', proof: 'Rundown, 3rd in Senegal at GOMYCODE × NVIDIA' },
+        { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'fintech.', proof: 'BitBounty, bronze prize at Code & Chain Dakar' },
+        { key: 'thequestboard', logo: '/work/logos/chips/thequestboard.png', word: 'for artists.', proof: 'TheQuestBoard, commissions from 20+ forums' },
+      ],
+    });
+const reelIndex = ref(0);
+let reelTimer: ReturnType<typeof setInterval> | undefined;
+const startReel = () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  reelTimer = setInterval(() => {
+    if (document.hidden || activePage.value !== 0) return;
+    reelIndex.value = (reelIndex.value + 1) % heroReel.value.items.length;
+  }, 2600);
+};
 // True until the first-load headline intro has finished; dropping it leaves the text in its resting state.
 const heroIntro = ref(true);
 
@@ -286,7 +339,8 @@ const projectsLeaving = ref(false);
 const isPageTransitioning = ref(false);
 // Project content is static; only the selection needs to be reactive.
 const selectedProject = shallowRef<PortfolioProject | null>(null);
-const selectedUtility = ref<'contact' | null>(null);
+type Utility = 'contact' | 'github';
+const selectedUtility = ref<Utility | null>(null);
 const inspectionOpen = ref(false);
 const isDark = ref(false);
 // True once the visitor has picked a theme with the toggle (now, or within the last 30 days).
@@ -314,7 +368,7 @@ const projectSlug = (project: PortfolioProject) => project.name.toLowerCase().re
 const isSelectedProject = (project: PortfolioProject) => selectedProject.value === project;
 const inspectionKey = computed(() => selectedProject.value ? `project-${projectSlug(selectedProject.value)}` : `utility-${selectedUtility.value}`);
 
-const updateInspectionUrl = (project: PortfolioProject | null, utility: 'contact' | null = null) => {
+const updateInspectionUrl = (project: PortfolioProject | null, utility: Utility | null = null) => {
   if (!import.meta.client) return;
   const url = new URL(window.location.href);
   if (project) url.searchParams.set('project', projectSlug(project));
@@ -479,7 +533,7 @@ const onKeydown = (event: KeyboardEvent) => {
   void navigateToPage(nextPage, { focus: true });
 };
 
-const openInspection = async (project: PortfolioProject | null, utility: 'contact' | null = null, options: { focus?: boolean } = {}) => {
+const openInspection = async (project: PortfolioProject | null, utility: Utility | null = null, options: { focus?: boolean } = {}) => {
   clearTimeout(inspectionCloseTimer);
   selectedProject.value = project;
   selectedUtility.value = utility;
@@ -514,7 +568,7 @@ const closeInlineProject = (options: { restoreFocus?: boolean } = {}) => {
   }, 360);
 };
 
-const inspectUtility = async (utility: 'contact') => {
+const inspectUtility = async (utility: Utility) => {
   if (selectedUtility.value === utility && !selectedProject.value) {
     closeInlineProject();
     return;
@@ -640,6 +694,7 @@ onMounted(() => {
   window.addEventListener('touchend', onTouchEnd, { passive: true });
   window.addEventListener('keydown', onKeydown);
   document.addEventListener('pointerdown', onDocumentPointerDown);
+  startReel();
 
   const searchParams = new URL(window.location.href).searchParams;
   const requestedSlug = searchParams.get('project');
@@ -649,7 +704,7 @@ onMounted(() => {
     activePage.value = 1;
     selectedProject.value = requestedProject;
     inspectionOpen.value = true;
-  } else if (requestedPanel === 'contact') {
+  } else if (requestedPanel === 'contact' || requestedPanel === 'github') {
     activePage.value = 1;
     selectedUtility.value = requestedPanel;
     inspectionOpen.value = true;
@@ -670,6 +725,7 @@ onBeforeUnmount(() => {
   clearTimeout(projectLeaveTimer);
   clearTimeout(wheelResetTimer);
   clearTimeout(lightsOnTimer);
+  clearInterval(reelTimer);
   if (import.meta.client) {
     window.removeEventListener('wheel', onWheel);
     window.removeEventListener('touchstart', onTouchStart);
@@ -981,12 +1037,83 @@ useHead(() => {
 }
 
 .hero-page .portfolio-tagline {
-  color:var(--quiet);
+  color:var(--ink);
 }
 
 .hero-page .portfolio-tagline strong {
   color:var(--ink);
   font-weight:inherit;
+}
+
+/* The rolling words: each new word rises into place as the old one rises out, both in the same
+   grid cell. Top-aligned with the lead's line height, so the baselines match. The size is capped
+   so the longest word still fits one line on a phone. */
+/* Beats the plain .tagline-word rule below, which would make it an inline-block. */
+.tagline-word.hero-reel {
+  display:inline-grid;
+  vertical-align:top;
+  font-size:min(1em,calc((100vw - 54px) / 6.9));
+}
+
+.hero-reel strong {
+  grid-area:1/1;
+  white-space:nowrap;
+}
+
+.reel-enter-active,
+.reel-leave-active {
+  transition:transform .6s cubic-bezier(.2,.7,.25,1),opacity .45s ease;
+}
+
+.reel-enter-from {
+  opacity:0;
+  transform:translateY(.32em);
+}
+
+.reel-leave-to {
+  opacity:0;
+  transform:translateY(-.32em);
+}
+
+/* The project's logo, as a small rounded tile in front of its caption. */
+.hero-proof-logo {
+  display:inline-block;
+  width:1.75em;
+  height:1.75em;
+  margin-right:.6em;
+  border-radius:.45em;
+  vertical-align:-.55em;
+  object-fit:cover;
+  box-shadow:0 0 0 1px var(--line);
+}
+
+
+/* The project behind the current word. */
+.hero-proof {
+  min-height:1.4em;
+  max-width:64ch;
+  margin:14px 0 0;
+  color:var(--quiet);
+  font-size:clamp(.86rem,1.15vw,1.05rem);
+  letter-spacing:-.005em;
+}
+
+.hero-proof span {
+  display:inline-block;
+  animation:hero-proof-in .5s ease-out both;
+}
+
+@keyframes hero-proof-in {
+  from { opacity:0; transform:translateY(4px); }
+}
+
+.hero-intro .hero-proof {
+  animation:tagline-word-in .5s cubic-bezier(.2,.7,.3,1) both;
+  animation-delay:calc(.05s + var(--word-index) * 25ms);
+}
+
+html.fonts-pending .hero-intro .hero-proof {
+  animation-play-state:paused;
 }
 
 /* First-load intro: a quick, quiet fade-up of the headline, word by word, then the section
@@ -1100,6 +1227,32 @@ html.fonts-pending .hero-intro .hero-section-links {
   background:#fff;
 }
 
+.projects-page .tile-project-rundown {
+  background:#f0f0ed;
+}
+
+.projects-page .tile-project-tandemcode {
+  background:#2f45e8;
+}
+
+.projects-page .tile-project-bitbounty {
+  background:#0b1f17;
+}
+
+.projects-page .tile-project-tandemcode img {
+  object-fit:contain;
+}
+
+.projects-page .tile-project-rundown img {
+  object-fit:contain;
+  object-position:center;
+  padding:10% 14%;
+}
+
+.projects-page .tile-project-bitbounty img {
+  object-fit:contain;
+}
+
 .projects-page .tile-project-multiprise img,
 .projects-page .tile-project-touslespros img {
   object-fit:contain;
@@ -1107,8 +1260,7 @@ html.fonts-pending .hero-intro .hero-section-links {
   padding:12%;
 }
 
-.projects-page .tile-project-skindiff img,
-.projects-page .tile-project-brainstorm img {
+.projects-page .tile-project-skindiff img {
   object-position:center;
 }
 
@@ -1295,6 +1447,27 @@ html.fonts-pending .hero-intro .hero-section-links {
   line-height:1.4;
 }
 
+/* The hackathon result, linking to the organiser's results page. */
+.project-award {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:12px;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  color:var(--ink);
+  font-size:.76rem;
+  font-weight:600;
+  letter-spacing:-.01em;
+  line-height:1.2;
+  text-decoration:none;
+}
+
+.project-award:hover {
+  background:var(--soft);
+}
+
 /* Screenshots: one row that scrolls sideways, bleeding to the panel's edges so the next
    shot peeks in. Heights match; widths follow each image, capped so the row still peeks. */
 .project-shots {
@@ -1473,6 +1646,38 @@ html.fonts-pending .hero-intro .hero-section-links {
   max-width:8ch;
 }
 
+/* GitHub panel: repository cards share the key-feature card, and the whole card is the link. */
+.repo-card a {
+  display:block;
+  color:inherit;
+  text-decoration:none;
+}
+
+.repo-card h4 {
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:12px;
+}
+
+.repo-card a:hover h4 > span:first-child {
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+.repo-meta {
+  flex:none;
+  color:var(--quiet);
+  font-size:.76rem;
+  font-weight:500;
+  letter-spacing:0;
+  font-variant-numeric:tabular-nums;
+}
+
+.repo-card + .repo-card {
+  margin-top:0;
+}
+
 .inline-contact-links {
   display:flex;
   flex-direction:column;
@@ -1521,6 +1726,11 @@ html.fonts-pending .hero-intro .hero-section-links {
 }
 
 @media (max-width:820px) {
+  /* The project captions wrap to two lines here; reserve both so the links below don't jump. */
+  .hero-proof {
+    min-height:2.8em;
+  }
+
   .projects-page {
     display:block;
     padding-right:18px;
@@ -1599,11 +1809,6 @@ html.fonts-pending .hero-intro .hero-section-links {
     border-radius:8px;
   }
 
-  /* Seven projects and one link tile: the empty spacer fills the strip's last two cells. */
-  .projects-page.inspecting .grid-spacer {
-    grid-column:span 2;
-  }
-
   .projects-page.inspecting .about-tile {
     padding:8px;
     font-size:.68rem;
@@ -1662,6 +1867,7 @@ html.fonts-pending .hero-intro .hero-section-links {
 .projects-page.revealing .work-grid>*:nth-child(7) { animation-delay:.52s; }
 .projects-page.revealing .work-grid>*:nth-child(8) { animation-delay:.59s; }
 .projects-page.revealing .work-grid>*:nth-child(9) { animation-delay:.66s; }
+.projects-page.revealing .work-grid>*:nth-child(10) { animation-delay:.73s; }
 
 .projects-page.leaving .work-grid {
   pointer-events:none;
@@ -1681,7 +1887,8 @@ html.fonts-pending .hero-intro .hero-section-links {
 .projects-page.leaving .work-grid>*:nth-child(6) { animation-delay:.13s; }
 .projects-page.leaving .work-grid>*:nth-child(7) { animation-delay:.09s; }
 .projects-page.leaving .work-grid>*:nth-child(8) { animation-delay:.04s; }
-.projects-page.leaving .work-grid>*:nth-child(9) { animation-delay:0s; }
+.projects-page.leaving .work-grid>*:nth-child(9) { animation-delay:.02s; }
+.projects-page.leaving .work-grid>*:nth-child(10) { animation-delay:0s; }
 
 @keyframes grid-block-slide {
   from {
@@ -1715,7 +1922,9 @@ html.fonts-pending .hero-intro .hero-section-links {
   .projects-page.revealing .work-grid>*,
   .projects-page.leaving .work-grid>*,
   .hero-intro .tagline-word,
-  .hero-intro .hero-section-links {
+  .hero-intro .hero-section-links,
+  .hero-intro .hero-proof,
+  .hero-proof span {
     animation:none;
   }
 }

@@ -18,6 +18,7 @@ export type PortfolioProject = {
   description: LocalizedText;
   role: LocalizedText;
   features?: ProjectFeature[];
+  award?: { label: LocalizedText; href: string };
   tags: string[];
   href?: string;
   image: string;
@@ -228,8 +229,8 @@ const projectGalleries = {
     galleryShot(
       'brainstorm',
       'landing.webp',
-      { fr: 'Page d’accueil de Brainstorm : « A live map of your agents. »', en: 'Brainstorm home page: “A live map of your agents.”' },
-      { fr: 'Le site de Brainstorm : une carte en direct de vos agents IA.', en: 'The Brainstorm website: a live map of your AI agents.' },
+      { fr: 'Page d’accueil de Rundown : « A live map of your agents. »', en: 'Rundown home page: “A live map of your agents.”' },
+      { fr: 'Le site de Rundown, qui s’installe comme plugin Claude Code.', en: 'The Rundown website, where it installs as a Claude Code plugin.' },
     ),
     galleryShot(
       'brainstorm',
@@ -256,6 +257,58 @@ const projectGalleries = {
       { fr: 'Places : ce qu’un agent a fait en dehors du code, comme déployer un site ou publier sur GitHub.', en: 'Places: what an agent did outside the code, like deploying a site or pushing to GitHub.' },
     ),
   ],
+  tandemcode: [
+    galleryShot(
+      'tandemcode',
+      'landing.webp',
+      { fr: 'Page d’accueil de Tandemcode : « They pedal, you steer. »', en: 'Tandemcode home page: “They pedal, you steer.”' },
+      { fr: 'Le site, qui sert aussi d’entrée à la démo en ligne.', en: 'The website, which is also the way into the live demo.' },
+    ),
+    galleryShot(
+      'tandemcode',
+      'tandem.webp',
+      { fr: 'Mode Tandem : l’agent propose une modification et attend « Go ahead »', en: 'Tandem mode: the agent proposes a change and waits for “Go ahead”' },
+      { fr: 'Le mode Tandem : l’agent propose la modification exacte et n’écrit rien avant votre accord. Les fichiers visés sont pointillés sur la carte.', en: 'Tandem mode: the agent proposes the exact change and writes nothing until you agree. The files it plans to touch are dotted on the map.' },
+    ),
+    galleryShot(
+      'tandemcode',
+      'studio-light.webp',
+      { fr: 'Une tâche terminée, avec les fichiers modifiés éclairés sur la carte', en: 'A finished task, with the changed files lit on the map' },
+      { fr: 'Une tâche terminée : ce que l’agent a lancé, ce qu’il n’a pas vérifié, et ce que vous avez appris.', en: 'A finished task: what the agent ran, what it didn’t check, and what you learned.' },
+    ),
+    galleryShot(
+      'tandemcode',
+      'studio-dark.webp',
+      { fr: 'La même tâche en thème sombre', en: 'The same task in the dark theme' },
+      { fr: 'La même session en thème sombre.', en: 'The same session in the dark theme.' },
+    ),
+  ],
+  bitbounty: [
+    galleryShot(
+      'bitbounty',
+      'landing.webp',
+      { fr: 'Page d’accueil de BitBounty : « Faites-vous payer pour contribuer. »', en: 'BitBounty home page: “Get paid to contribute.”' },
+      { fr: 'La page d’accueil : une issue GitHub avec une bounty en FCFA.', en: 'The home page: a GitHub issue with a bounty in FCFA.' },
+    ),
+    galleryShot(
+      'bitbounty',
+      'bounty.webp',
+      { fr: 'Page d’une bounty avec ses étapes, ses critères et son financement', en: 'A bounty page with its milestones, criteria and funding' },
+      { fr: 'Une bounty : financée, réclamée, PR, vérifiée par Claude, payée, avec les critères d’acceptation.', en: 'A bounty: funded, claimed, PR, checked by Claude, paid, with its acceptance criteria.' },
+    ),
+    galleryShot(
+      'bitbounty',
+      'board.webp',
+      { fr: 'Tableau public des projets avec des bounties ouvertes', en: 'Public board of projects with open bounties' },
+      { fr: 'Le tableau public : les projets open source qui ont des bounties ouvertes.', en: 'The public board: open-source projects with open bounties.' },
+    ),
+    galleryShot(
+      'bitbounty',
+      'live.webp',
+      { fr: 'Écran en direct des bounties, d’un paiement à l’autre', en: 'Live screen following bounties through to payment' },
+      { fr: 'L’écran en direct de la démo : chaque bounty avance jusqu’au paiement en sats sur Lightning.', en: 'The live demo screen: each bounty moves along until it’s paid in sats over Lightning.' },
+    ),
+  ],
 };
 
 export const translations = {
@@ -265,7 +318,7 @@ export const translations = {
     lightMode: 'Passer au thème clair',
     darkMode: 'Passer au thème sombre',
     role: 'Développeur logiciel',
-    tagline: 'Je conçois et livre des produits logiciels qui résolvent des problèmes concrets.',
+    tagline: 'Je crée des produits, des plateformes et des outils IA.',
     pageLabels: ['Introduction', 'Projets', 'À propos'],
     primaryNavigation: 'Navigation principale',
     navWork: 'Projets',
@@ -293,7 +346,7 @@ export const translations = {
     lightMode: 'Switch to light theme',
     darkMode: 'Switch to dark theme',
     role: 'Software developer',
-    tagline: 'I design and ship software products that solve real-world problems.',
+    tagline: 'I build products, platforms and AI tools.',
     pageLabels: ['Introduction', 'Projects', 'About me'],
     primaryNavigation: 'Primary navigation',
     navWork: 'Projects',
@@ -365,7 +418,7 @@ const projects: PortfolioProject[] = [
     name: 'SkinDiff',
     kind: 'personal',
     year: '2026',
-    short: { fr: 'Lookbook social pour les skins de League of Legends', en: 'A social lookbook for League of Legends skins' },
+    short: { fr: 'La meilleure app pour assortir ses skins League of Legends', en: 'The best skin-matching app for League of Legends' },
     description: {
       fr: 'Les joueurs de League of Legends importent leur collection de skins et la comparent à celles de leurs amis pour trouver des skins assortis en duo ou à cinq, avec profils publics et connexion Discord.',
       en: 'League of Legends players import their skin collections and compare them with friends’ to find matching skins for duos and five-player teams, with public profiles and Discord sign-in.',
@@ -421,7 +474,7 @@ const projects: PortfolioProject[] = [
     name: 'Multiprise',
     kind: 'personal',
     year: '2026',
-    short: { fr: 'Centre de contrôle pour projets en local', en: 'A control center for local development projects' },
+    short: { fr: 'Un centre de contrôle pour vos serveurs de développement, avec une CLI et un serveur MCP pour vos agents', en: 'A control center for your development servers, with a CLI and an MCP server for your agents' },
     description: {
       fr: 'Travailler sur plusieurs projets à la fois finit en jonglage de terminaux : quelle commande lance quoi, quel port est libre, quel terminal tient le processus qui refuse de s’arrêter. Multiprise est une application macOS qui lit les fichiers que chaque projet possède déjà, démarre ses services sur des ports qui n’entrent jamais en conflit, et réunit leurs logs, leurs adresses et un aperçu en direct dans une seule fenêtre. Les agents de code s’en servent aussi, via une CLI et un serveur MCP, pour réutiliser les services déjà lancés au lieu d’en démarrer des doublons.',
       en: 'Working on several projects at once turns into terminal juggling: which command starts what, which port is free, which terminal owns the process that won’t stop. Multiprise is a macOS app that reads the files each project already has, starts its services on ports that never collide, and keeps their logs, addresses and a live preview in one window. Coding agents use it too, through a CLI and an MCP server, so they reuse the services already running instead of starting duplicates.',
@@ -475,14 +528,14 @@ const projects: PortfolioProject[] = [
     gallery: projectGalleries.multiprise,
   },
   {
-    name: 'Brainstorm',
+    name: 'Rundown',
     kind: 'personal',
-    tileImage: '/work/logos/brainstorm.svg',
+    tileImage: '/work/logos/rundown.svg',
     year: '2026',
     short: { fr: 'Une carte en direct des agents IA qui travaillent dans votre code', en: 'A live map of the AI agents working in your code' },
     description: {
-      fr: 'Avec les agents de code, on perd vite le fil de son propre projet. Brainstorm tourne à côté de Claude Code et rend chaque session lisible : une chronologie en direct de chaque étape, une carte du code où chaque agent se déplace de fichier en fichier, et une question « pourquoi ? » sur n’importe quelle étape ou fichier. Construit en un après-midi, il a remporté la 3e place du hackathon GOMYCODE × NVIDIA « Come Build with AI » 2026, et s’installe désormais comme plugin Claude Code.',
-      en: 'AI coding agents make it easy to lose track of your own project. Brainstorm runs next to Claude Code and makes every session readable: a live timeline of each step, a map of the codebase where each agent moves from file to file, and a “why?” you can ask about any step or file. Built in one afternoon, it took 3rd place at GOMYCODE × NVIDIA’s “Come Build with AI” 2026 hackathon, and now installs as a Claude Code plugin.',
+      fr: 'Avec les agents de code, on perd vite le fil de son propre projet. Rundown (d’abord appelé Brainstorm) tourne à côté de Claude Code et rend chaque session lisible : une chronologie en direct de chaque étape, une carte du code où chaque agent se déplace de fichier en fichier, et une question « pourquoi ? » sur n’importe quelle étape ou fichier. Construit en un après-midi, il a remporté la 3e place au Sénégal et le prix Real-World AI Impact du hackathon GOMYCODE × NVIDIA « Come Build with AI » 2026, et s’installe désormais comme plugin Claude Code.',
+      en: 'AI coding agents make it easy to lose track of your own project. Rundown (first called Brainstorm) runs next to Claude Code and makes every session readable: a live timeline of each step, a map of the codebase where each agent moves from file to file, and a “why?” you can ask about any step or file. Built in one afternoon, it took 3rd place in Senegal and the Real-World AI Impact Award at GOMYCODE × NVIDIA’s “Come Build with AI” 2026 hackathon, and now installs as a Claude Code plugin.',
     },
     role: {
       fr: 'Idée, conception produit et architecture. J’ai dirigé un agent Claude Code principal et quatre sous-agents qui construisaient en parallèle, puis fait passer le prototype du hackathon au plugin installable.',
@@ -525,11 +578,130 @@ const projects: PortfolioProject[] = [
         },
       },
     ],
+    award: {
+      label: { fr: '3e place · GOMYCODE × NVIDIA 2026', en: '3rd place · GOMYCODE × NVIDIA 2026' },
+      href: 'https://hackathon.gomycode.com/onboarding/winners',
+    },
     tags: ['React', 'NestJS', 'Claude API', 'Nemotron'],
-    href: 'https://brainstorm-landing.vercel.app',
+    href: 'https://rundown-dev.vercel.app',
     image: '/work/case-studies/brainstorm/landing.webp',
-    alt: { fr: 'Page d’accueil de Brainstorm', en: 'Brainstorm home page' },
+    alt: { fr: 'Page d’accueil de Rundown', en: 'Rundown home page' },
     gallery: projectGalleries.brainstorm,
+  },
+  {
+    name: 'Tandemcode',
+    kind: 'personal',
+    tileImage: '/work/logos/tandemcode.svg',
+    year: '2026',
+    short: { fr: 'Travaillez en tandem avec vos agents, et prenez des notes en chemin', en: 'Work in tandem with your agents, and take notes along the way' },
+    description: {
+      fr: 'De plus en plus de développeurs et d’étudiants livrent du code écrit par une IA qu’ils ne savent ni lire, ni expliquer, ni corriger. Tandemcode est un environnement pour agents de code pensé pour apprendre : le projet s’affiche comme une carte où l’agent se déplace de fichier en fichier, le mode Tandem lui fait demander comment vous vous y prendriez avant d’écrire quoi que ce soit, et chaque tâche se termine par ce que vous avez appris, un quiz et un exercice. Finaliste du hackathon Open Source × AI 2026 de Galsen Dev, piste Éducation & apprentissage. Open source, licence MIT.',
+      en: 'More and more developers and students ship code an AI wrote that they can’t read, explain or fix. Tandemcode is a coding-agent harness built for learning: your project is drawn as a map the agent moves across, Tandem mode has it ask how you would do it before it writes anything, and every task ends with what you learned, a quiz and an exercise. Finalist at Galsen Dev’s Open Source × AI Hackathon 2026, Education & learning track. Open source, MIT licence.',
+    },
+    role: {
+      fr: 'Idée, conception produit et l’essentiel du développement : l’agent et son environnement, la carte du projet, le mode Tandem et le site de démo.',
+      en: 'Idea, product design and most of the development: the agent and its harness, the project map, Tandem mode and the demo site.',
+    },
+    features: [
+      {
+        title: { fr: 'La carte du projet', en: 'Project map' },
+        text: {
+          fr: 'Le projet est dessiné comme une carte, et l’agent est un repère qui se déplace vers chaque fichier qu’il lit ou modifie.',
+          en: 'The project is drawn as a map, and the agent is a marker moving to every file it reads or edits.',
+        },
+      },
+      {
+        title: { fr: 'Mode Tandem', en: 'Tandem mode' },
+        text: {
+          fr: 'Activé par défaut : l’agent demande comment vous feriez, et n’écrit rien tant que vous n’avez pas dit « vas-y ».',
+          en: 'On by default: the agent asks how you would do it, and writes nothing until you say “go ahead”.',
+        },
+      },
+      {
+        title: { fr: 'Apprendre en avançant', en: 'Learn as you go' },
+        text: {
+          fr: 'Chaque étape est expliquée simplement, et chaque tâche se termine par un résumé, un quiz et un exercice à faire soi-même.',
+          en: 'Every step is explained in plain words, and each task ends with a summary, a quiz and an exercise to try yourself.',
+        },
+      },
+      {
+        title: { fr: 'Vérifié, et réversible', en: 'Checked, and reversible' },
+        text: {
+          fr: 'Les tests tournent quand l’agent dit avoir fini. Chaque commande est validée par vous, et une tâche s’annule d’un clic.',
+          en: 'Your tests run when the agent says it’s done. You approve every command, and a task can be undone in one click.',
+        },
+      },
+      {
+        title: { fr: 'N’importe quel modèle', en: 'Any model' },
+        text: {
+          fr: 'Claude par défaut, ou des modèles ouverts : Qwen3-Coder sur son propre GPU, ou Ollama hors ligne, sans facture d’API.',
+          en: 'Claude by default, or open models: Qwen3-Coder on your own GPU, or Ollama offline with no API bill.',
+        },
+      },
+    ],
+    award: {
+      label: { fr: 'Finaliste · Galsen Dev Open Source × AI 2026', en: 'Finalist · Galsen Dev Open Source × AI 2026' },
+      href: 'https://hacktoberfest.galsen.dev/hackathon',
+    },
+    tags: ['React', 'Hono', 'Claude Agent SDK', 'Ollama'],
+    href: 'https://tandemcode-app.vercel.app',
+    image: '/work/case-studies/tandemcode/landing.webp',
+    alt: { fr: 'Page d’accueil de Tandemcode', en: 'Tandemcode home page' },
+    gallery: projectGalleries.tandemcode,
+  },
+  {
+    name: 'BitBounty',
+    kind: 'personal',
+    year: '2026',
+    short: { fr: 'Des bounties sur les issues GitHub, payées en sats sur Lightning', en: 'Bounties on GitHub issues, paid in sats over Lightning' },
+    description: {
+      fr: 'Une application GitHub qui met des primes sur les issues open source. Le mainteneur fixe un montant en FCFA et le finance via Bitnob en payant une facture Lightning ; un développeur réclame l’issue, Claude vérifie sa PR par rapport aux critères, et la fusion déclenche le paiement en sats. Construite en 24 heures par une équipe de quatre, elle a remporté le prix de bronze de Code & Chain Dakar 2026, le hackathon Bitcoin de Bitnob.',
+      en: 'A GitHub App that puts bounties on open-source issues. The maintainer sets an amount in FCFA and funds it through Bitnob by paying a Lightning invoice; a developer claims the issue, Claude checks their PR against the criteria, and the merge triggers the payout in sats. Built in 24 hours by a team of four, it won the bronze prize at Code & Chain Dakar 2026, Bitnob’s Bitcoin hackathon.',
+    },
+    role: {
+      fr: 'Capitaine de l’équipe. J’ai construit le bot GitHub, la vérification par Claude, les pages web et la démo, avec du code écrit entièrement par des agents IA.',
+      en: 'Team captain. I built the GitHub bot, the Claude verification, the web pages and the demo, with all the code written by AI agents.',
+    },
+    features: [
+      {
+        title: { fr: 'Commandes dans GitHub', en: 'Commands in GitHub' },
+        text: {
+          fr: 'Tout se passe dans les commentaires des issues : /bounty, /claim, /hold, /pay. Un commentaire de statut se met à jour à chaque étape.',
+          en: 'Everything happens in issue comments: /bounty, /claim, /hold, /pay. A status comment updates at each step.',
+        },
+      },
+      {
+        title: { fr: 'Vérification par Claude', en: 'Checked by Claude' },
+        text: {
+          fr: 'Claude compare chaque PR aux critères de l’issue et publie le résultat comme un check GitHub. Il conseille, sans jamais déplacer d’argent.',
+          en: 'Claude compares each PR with the issue’s criteria and posts the result as a GitHub check. It advises and never moves money.',
+        },
+      },
+      {
+        title: { fr: 'Paiement via Bitnob', en: 'Payments through Bitnob' },
+        text: {
+          fr: 'Financement par facture Lightning, puis paiement en sats à l’adresse Lightning du développeur, au taux de Bitnob.',
+          en: 'Funded with a Lightning invoice, then paid in sats to the developer’s Lightning Address, at Bitnob’s rate.',
+        },
+      },
+      {
+        title: { fr: 'Pour les agents IA aussi', en: 'For AI agents too' },
+        text: {
+          fr: 'Une API et un serveur MCP permettent à un agent de publier des bounties, dans un budget fixé par son propriétaire.',
+          en: 'An API and an MCP server let an AI agent post bounties, within a budget its owner sets.',
+        },
+      },
+    ],
+    award: {
+      label: { fr: 'Prix de bronze · Code & Chain Dakar 2026', en: 'Bronze prize · Code & Chain Dakar 2026' },
+      href: 'https://codeandchain.xyz/hall-of-fame',
+    },
+    tags: ['Next.js', 'Node.js', 'Lightning', 'Claude API'],
+    href: 'https://bitbounty-app.vercel.app',
+    tileImage: '/work/logos/bitbounty.svg',
+    image: '/work/case-studies/bitbounty/landing.webp',
+    alt: { fr: 'Page d’accueil de BitBounty', en: 'BitBounty home page' },
+    gallery: projectGalleries.bitbounty,
   },
 ];
 
@@ -693,4 +865,33 @@ const clientProjects: PortfolioProject[] = [
   },
 ];
 
-export const gridProjects = [projects[2], projects[3], projects[1], clientProjects[2], clientProjects[1], clientProjects[0], projects[0]];
+// Public repositories that aren't in the grid, for the "More on GitHub" panel.
+export const githubRepos: { name: string; language: string; year: string; text: LocalizedText }[] = [
+  {
+    name: 'ft_irc', language: 'C++', year: '2023',
+    text: { fr: 'Un serveur IRC complet conforme à la RFC 1459, avec une interface en terminal.', en: 'A full RFC 1459 IRC server with a terminal interface.' },
+  },
+  {
+    name: 'transcendence-online', language: 'Vue', year: '2023',
+    text: { fr: 'Un Pong en ligne avec chat et connexion 42 ou Google, le projet final du tronc commun de 42.', en: 'Online Pong with chat and 42 or Google sign-in, the final project of 42’s common core.' },
+  },
+  {
+    name: 'sus-meter', language: 'JavaScript', year: '2026',
+    text: { fr: 'Un classifieur anti-NSFW par mots-clés pour Twitter, avec un petit twist.', en: 'A keyword-based anti-NSFW classifier for Twitter, with a twist.' },
+  },
+  {
+    name: 'la-coloc-arena', language: 'Markdown', year: '2026',
+    text: { fr: 'Un défi hebdomadaire par ville pour La Coloc : forkez, ouvrez une pull request, gagnez un titre.', en: 'A weekly challenge in every city for La Coloc: fork, open a pull request, win a title.' },
+  },
+  {
+    name: 'git-peer-class', language: 'Git', year: '2022',
+    text: { fr: 'Le dépôt d’exercices de mon atelier Git à 42 : branches, conflits, contribution.', en: 'The practice repo for my Git workshop at 42: branches, conflicts, contributing.' },
+  },
+  {
+    name: '42Projects', language: 'C', year: '2023',
+    text: { fr: 'L’archive de mes projets à 42.', en: 'An archive of my projects at 42.' },
+  },
+];
+
+// Grid order (see the tile-N areas in css/main.css): one 2×2 feature, three wide tiles, five squares.
+export const gridProjects = [projects[4], projects[2], projects[3], projects[1], projects[5], clientProjects[2], clientProjects[1], clientProjects[0], projects[0]];
