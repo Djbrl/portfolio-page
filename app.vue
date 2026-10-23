@@ -61,7 +61,7 @@
           <!-- The headline and caption form one card that leads to the project grid. -->
           <div class="hero-card" @click="openReelProject">
           <h1 id="hero-title" class="portfolio-tagline page-heading" tabindex="-1" :aria-label="heroReel.label">
-            <span aria-hidden="true"><template v-for="(word, index) in heroReel.lead" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }">{{ word }}</span>{{ ' ' }}</template><span class="tagline-word hero-reel" :style="{ '--word-index': heroReel.lead.length }"><Transition name="reel"><strong :key="`${locale}-${reelIndex}`">{{ heroReel.items[reelIndex].word }}</strong></Transition></span></span>
+            <span aria-hidden="true"><template v-for="(word, index) in heroReel.lead" :key="`${locale}-${index}`"><span class="tagline-word" :style="{ '--word-index': index }">{{ word }}</span>{{ index < heroReel.lead.length - 1 ? ' ' : '' }}</template><br><span class="tagline-word hero-reel" :style="{ '--word-index': heroReel.lead.length }"><Transition name="reel"><strong :key="`${locale}-${reelIndex}`">{{ heroReel.items[reelIndex].word }}</strong></Transition></span></span>
           </h1>
           <p class="hero-proof" :style="{ '--word-index': heroReel.lead.length + 1 }"><button class="hero-proof-link" type="button" :key="`${locale}-${reelIndex}`" @click.stop="openReelProject"><img class="hero-proof-logo" :class="`logo-${heroReel.items[reelIndex].key}`" :src="heroReel.items[reelIndex].logo" alt="" width="24" height="24">{{ heroReel.items[reelIndex].proof }}</button></p>
           </div>
