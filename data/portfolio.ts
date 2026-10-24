@@ -595,8 +595,8 @@ const projects: PortfolioProject[] = [
     year: '2026',
     short: { fr: 'Travaillez en tandem avec vos agents, et prenez des notes en chemin', en: 'Work in tandem with your agents, and take notes along the way' },
     description: {
-      fr: 'De plus en plus de développeurs et d’étudiants livrent du code écrit par une IA qu’ils ne savent ni lire, ni expliquer, ni corriger. Tandemcode est un environnement pour agents de code pensé pour apprendre : le projet s’affiche comme une carte où l’agent se déplace de fichier en fichier, le mode Tandem lui fait demander comment vous vous y prendriez avant d’écrire quoi que ce soit, et chaque tâche se termine par ce que vous avez appris, un quiz et un exercice. Finaliste du hackathon Open Source × AI 2026 de Galsen Dev, piste Éducation & apprentissage. Open source, licence MIT.',
-      en: 'More and more developers and students ship code an AI wrote that they can’t read, explain or fix. Tandemcode is a coding-agent harness built for learning: your project is drawn as a map the agent moves across, Tandem mode has it ask how you would do it before it writes anything, and every task ends with what you learned, a quiz and an exercise. Finalist at Galsen Dev’s Open Source × AI Hackathon 2026, Education & learning track. Open source, MIT licence.',
+      fr: 'De plus en plus de développeurs et d’étudiants livrent du code écrit par une IA qu’ils ne savent ni lire, ni expliquer, ni corriger. Tandemcode est un environnement pour agents de code pensé pour apprendre : le projet s’affiche comme une carte où l’agent se déplace de fichier en fichier, le mode Tandem lui fait demander comment vous vous y prendriez avant d’écrire quoi que ce soit, et chaque tâche se termine par ce que vous avez appris, un quiz et un exercice. 2e place au hackathon Open Source × AI 2026 de Galsen Dev, piste Éducation & apprentissage. Open source, licence MIT.',
+      en: 'More and more developers and students ship code an AI wrote that they can’t read, explain or fix. Tandemcode is a coding-agent harness built for learning: your project is drawn as a map the agent moves across, Tandem mode has it ask how you would do it before it writes anything, and every task ends with what you learned, a quiz and an exercise. 2nd place at Galsen Dev’s Open Source × AI Hackathon 2026, Education & learning track. Open source, MIT licence.',
     },
     role: {
       fr: 'Idée, conception produit et l’essentiel du développement : l’agent et son environnement, la carte du projet, le mode Tandem et le site de démo.',
@@ -640,7 +640,7 @@ const projects: PortfolioProject[] = [
       },
     ],
     award: {
-      label: { fr: 'Finaliste · Galsen Dev Open Source × AI 2026', en: 'Finalist · Galsen Dev Open Source × AI 2026' },
+      label: { fr: '2e place · Galsen Dev Open Source × AI 2026', en: '2nd place · Galsen Dev Open Source × AI 2026' },
       href: 'https://hacktoberfest.galsen.dev/hackathon',
     },
     tags: ['React', 'Hono', 'Claude Agent SDK', 'Ollama'],

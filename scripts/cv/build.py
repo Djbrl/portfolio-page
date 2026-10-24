@@ -50,7 +50,7 @@ CV = {
       ('AI tools', 'Codex, Claude platform, open-weight models (Nemotron, Qwen) on NVIDIA Brev, Mobbin MCP'),
     ],
     'hackathons': [
-      ('Galsen Dev Open Source × AI 2026', 'Finalist, Education & learning track, with Tandemcode', 'Oct 2026'),
+      ('Galsen Dev Open Source × AI 2026', '2nd place, Education & learning track, with Tandemcode', 'Oct 2026'),
       ('Code & Chain Dakar 2026 (Bitnob)', 'Bronze prize (3rd place), with BitBounty', 'Oct 2026'),
       ('GOMYCODE × NVIDIA 2026', '3rd place in Senegal, Real-World AI Impact Award, with Rundown', 'Sep 2026'),
     ],
@@ -128,7 +128,7 @@ CV = {
       ('Outils IA', 'Codex, plateforme Claude, modèles open-weight sur NVIDIA Brev, MCP Mobbin'),
     ],
     'hackathons': [
-      ('Galsen Dev Open Source × AI 2026', 'Finaliste, piste Éducation & apprentissage, avec Tandemcode', 'Oct 2026'),
+      ('Galsen Dev Open Source × AI 2026', '2e place, piste Éducation & apprentissage, avec Tandemcode', 'Oct 2026'),
       ('Code & Chain Dakar 2026 (Bitnob)', 'Prix de bronze (3e place), avec BitBounty', 'Oct 2026'),
       ('GOMYCODE × NVIDIA 2026', '3e place au Sénégal, prix Real-World AI Impact, avec Rundown', 'Sept 2026'),
     ],

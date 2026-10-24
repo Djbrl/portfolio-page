@@ -270,7 +270,7 @@ const heroReel = computed(() => isFrench.value
       label: 'Je construis des produits, des plateformes et des outils IA.',
       lead: ['Je', 'construis'],
       items: [
-        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'des produits.', proof: 'Tandemcode, finaliste du hackathon Open Source × AI de Galsen Dev' },
+        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'des produits.', proof: 'Tandemcode, 2e place au hackathon Open Source × AI de Galsen Dev' },
         { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'des plateformes.', proof: 'CyberLab, simulations de phishing pour Reporters sans frontières' },
         { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'des outils IA.', proof: 'Rundown, 3e place au Sénégal au hackathon GOMYCODE × NVIDIA' },
         { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'de la fintech.', proof: 'BitBounty, prix de bronze à Code & Chain Dakar' },
@@ -282,7 +282,7 @@ const heroReel = computed(() => isFrench.value
       label: 'I build products, platforms and AI tools.',
       lead: ['I', 'build'],
       items: [
-        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'products.', proof: 'Tandemcode, finalist at Galsen Dev’s Open Source × AI 2026' },
+        { key: 'tandemcode', logo: '/work/logos/chips/tandemcode.svg', word: 'products.', proof: 'Tandemcode, 2nd place at Galsen Dev’s Open Source × AI 2026' },
         { key: 'cyberlab', logo: '/work/logos/chips/cyberlab.png', word: 'platforms.', proof: 'CyberLab, phishing simulations for Reporters Without Borders' },
         { key: 'rundown', logo: '/work/logos/chips/rundown.svg', word: 'AI tools.', proof: 'Rundown, 3rd in Senegal at GOMYCODE × NVIDIA' },
         { key: 'bitbounty', logo: '/work/logos/chips/bitbounty.svg', word: 'fintech.', proof: 'BitBounty, bronze prize at Code & Chain Dakar' },
