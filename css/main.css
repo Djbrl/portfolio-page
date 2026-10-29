@@ -275,6 +275,24 @@ html.fonts-pending .site-loader {
     transform:translateX(-50%);
   }
 
+  /* The whole laptop leans toward the mouse (set from app.vue). As a full-viewport box, the
+     .device keeps the geometry of its fixed children. */
+  .device {
+    position:fixed;
+    inset:0;
+    transform:perspective(1600px) rotateX(var(--tilt-y,0deg)) rotateY(var(--tilt-x,0deg));
+    transition:transform .25s ease-out;
+  }
+
+  .device-screen::after {
+    position:absolute;
+    z-index:99;
+    inset:0;
+    background:linear-gradient(calc(110deg + var(--tilt-x,0deg) * 6),transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%);
+    content:'';
+    pointer-events:none;
+  }
+
   /* The base: a thin aluminium slab, wider than the screen, with the opening notch in the middle. */
   .device-base {
     position:fixed;
@@ -1590,11 +1608,14 @@ body {
   }
 }
 
-/* The laptop and the phone sit on a plain white page; the dark theme only changes their screen. */
+/* The laptop and the phone sit on a soft light gradient; the dark theme only changes their screen. */
 @media (min-width:960px) and (min-height:620px), (max-width:959.98px), (max-height:619.98px) {
-  :root[data-theme],
+  :root[data-theme] {
+    background:radial-gradient(120% 90% at 50% 0%,#eef1ff 0%,#f7f7f5 55%,#ecebe6 100%) fixed !important;
+  }
+
   :root[data-theme] body {
-    background:#fff !important;
+    background:transparent !important;
   }
 
   /* The page never scrolls in a frame, so don't reserve a scrollbar gutter: with always-visible

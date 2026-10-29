@@ -732,6 +732,14 @@ const toggleTheme = (event?: MouseEvent) => {
 };
 
 onMounted(() => {
+  // The laptop leans a few degrees toward the mouse.
+  const tiltQuery = matchMedia('(min-width: 960px) and (min-height: 620px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+  addEventListener('pointermove', (event) => {
+    if (!tiltQuery.matches) return;
+    const root = document.documentElement;
+    root.style.setProperty('--tilt-x', `${((event.clientX / innerWidth) - .5) * 4}deg`);
+    root.style.setProperty('--tilt-y', `${((event.clientY / innerHeight) - .5) * -3}deg`);
+  }, { passive: true });
   // The head script has usually set data-theme already; otherwise use the stored choice, then light.
   const presetTheme = document.documentElement.dataset.theme;
   const initialTheme = presetTheme === 'dark' || presetTheme === 'light' ? presetTheme : readStoredTheme() ?? 'light';
