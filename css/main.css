@@ -234,7 +234,7 @@ html.fonts-pending .site-loader {
 @media (min-width:960px) and (min-height:620px) {
   :root {
     --device-scale:.8;
-    --device-lift:3.5vh;
+    --device-lift:13px;
     --bezel:14px;
   }
 
@@ -1595,5 +1595,11 @@ body {
   :root[data-theme],
   :root[data-theme] body {
     background:#fff !important;
+  }
+
+  /* The page never scrolls in a frame, so don't reserve a scrollbar gutter: with always-visible
+     scrollbars it would shift the device off-center. */
+  html {
+    scrollbar-gutter:auto;
   }
 }
